@@ -1,59 +1,62 @@
 #pragma once
 #include <iostream>
-#include "generic.cpp"
+#include <vector>
 
 namespace DS {
-    template<class T>
-    struct Tree_Node
-    {
-        T value;
-        int children_count;
-        Tree_Node<T>* left;
-        Tree_Node<T>* right;
+    enum NodeType {
+        Leaf,
+        Internal
+    };
+    enum Blocked {
+        None,
+        Left,
+        Right 
     };
 
+    template<class T>
+    struct Tree {
+        NodeType type;
+        T value;
+        unsigned int count;
+        Blocked blocked;
+        Tree<T>* left;
+        Tree<T>* right;
+    };
 
-    template<size_t SIZE, class T>
-    static Tree_Node<T>* generate_tree(T entries[SIZE]) {
-        return DS::generate_tree(entries, 0, (int)(SIZE) - 1);
+    template<class T>
+    static Tree<T>* generate_tree(std::vector<T> entries) {
+        return DS::generate_tree(entries, 0, (int)entries.size() - 1);
     }
 
     template<class T>
     // Takes an ordered list of items as input
-    static Tree_Node<T>* generate_tree(T entries[], int begin, int end) {
-        if (end < begin) {
-            return nullptr;
-        }
-        else if (begin == end) {
-            // return leaf-ish
-            Tree_Node<T>* node = (Tree_Node<T> *)malloc(sizeof(Tree_Node<T>));
-            node->value = entries[begin];
-            node->children_count = 1;
-            node->left = node->right = nullptr;
-            return node;
+    static Tree<T>* generate_tree(std::vector<T> entries, int begin, int end) {
+        if (begin >= end) {
+            Tree<T>* leaf = (Tree<T> *)malloc(sizeof(Tree<T>));
+            leaf->type = Leaf;
+            leaf->value = entries[begin];
+            leaf->count = 1;
+            return leaf;
         }
         else {
-            // Create split halfway, recurse on two halves
-            int middle = (begin + end) / 2;
-            Tree_Node<T>* root = (Tree_Node<T> *)malloc(sizeof(Tree_Node<T>));
-            root->value = entries[middle];
-
-            Tree_Node<T>* left = generate_tree(entries, begin, middle - 1);
-            Tree_Node<T>* right = generate_tree(entries, middle + 1, end);
-            root->children_count = 1;
-            if (left) root->children_count += left->children_count;
-            if (right) root->children_count += right->children_count;
-            root->left = left;
-            root->right = right;
-            return root;
+            int middle = (begin + end) / 2 + 1; // +1 for right biased tree 
+            Tree<T>* node = (Tree<T> *)malloc(sizeof(Tree<T>));
+            node->type = Internal;
+            node->value = entries[middle];
+            node->left = generate_tree(entries, begin, middle - 1);
+            node->right = generate_tree(entries, middle, end);
+            node->count = node->left->count + node->right->count;
+            return node;
         }
     }
 
     template<class T>
     // Free memory allocated for tree
-    static void cleanup_tree(Tree_Node<T>* node) {
-        if (node->left) cleanup_tree(node->left);
-        if (node->right) cleanup_tree(node->right);
+    static void cleanup_tree(Tree<T>* node) {
+        if (node->type == Internal) {
+            cleanup_tree(node->left);
+            cleanup_tree(node->right);
+        }
         free(node);
     }
 }

@@ -1,10 +1,11 @@
 #include <iostream>
 #include <random>
-#include <array> 
+#include <vector>
 #include <CGAL/Simple_cartesian.h>
 #include "datastructures/tree.cpp";
 
 #define DEBUG_PRINTING
+#define DEBUG_EXCEPTIONS
 
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef Kernel::Point_2 Point_2;
@@ -31,11 +32,9 @@ int main()
     Point_2 points[point_count];
     get_random_points(points, point_count);
 
-    int list[10] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
-    auto tree = DS::generate_tree<10, int>(list);
+    std::vector<int> list = { 0, 1, 2, 3, 4, 5, 6, 7 };
+    auto tree = DS::generate_tree<int>(list);
     DS::cleanup_tree(tree);
-
-
     
     std::string str;
     std::cin >> str;
