@@ -25,9 +25,11 @@ int main()
 #endif // DEBUG_PRINTING
 
     // Then, do query for q = 5 with k = 3
-    double q = 5, k = 3;
+    double q = 5, k = 8;
     auto search_path = DS::query_tree<double>(tree, q, &less_than);
-    DS::update_tree_counts<double>(tree, search_path);
+    DS::set_tree_counts<double>(search_path);
+    auto res = DS::find_k_nearest(tree, k);
+    std::cout << res->value << std::endl;
 
 #pragma region cleanup
     std::string str;
