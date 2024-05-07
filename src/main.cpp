@@ -13,7 +13,8 @@ typedef Kernel::Point_2 Point_2;
 typedef Kernel::Segment_2 Segment_2;
 
 bool less_than(double a, double b) { return a < b; }
-double between(double a, double b) { return a / 2 + b / 2;  }
+double between(double a, double b) { return a / 2 + b / 2; }
+double distance(double a, double b) { return abs(a - b); }
 
 int main()
 {
@@ -25,11 +26,11 @@ int main()
 #endif // DEBUG_PRINTING
 
     // Then, do query for q = 5 with k = 3
-    double q = 5, k = 8;
+    double q = 0.9, k = 5;
     auto search_path = DS::query_tree<double>(tree, q, &less_than);
     DS::set_tree_counts<double>(search_path);
-    auto res = DS::find_k_nearest(tree, k);
-    std::cout << res->value << std::endl;
+    auto res = DS::find_k_nearest<double>(tree, k, q, &distance);
+    std::cout << res << std::endl;
 
 #pragma region cleanup
     std::string str;
