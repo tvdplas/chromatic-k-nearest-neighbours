@@ -4,355 +4,223 @@
 #include <functional>
 
 namespace DS {
-    enum NodeType {
-        Leaf,
-        Internal
-    };
-    enum Blocked {
-        None,
-        Smaller,
-        Split,
-    };
-    enum Direction {
-        N, 
-        L, 
-        R,
-    };
+	enum NodeType {
+		Internal = 0,
+		Leaf = 1, 
+	};
 
-    template<class T>
-    struct Tree {
-        NodeType type;
-        T value;
-        unsigned int count;
-        Blocked blocked = None;
-        Direction direction = N;
-        int left_count = -1;
-        int right_count = -1;
-        Tree<T>* left;
-        Tree<T>* right;
-    };
+	enum SearchDirection {
+		None = 0,
+		Left = 1,
+		Right = 2,
+	};
 
-    template<class T>
-    struct SearchNode {
-        Tree<T>* node;
-        Direction direction;
-    };
+	enum SplitSide {
+		LeftSide = 1,
+		RightSide = 2,
+	};
 
-    template<class T>
-    static Tree<T>* generate_tree(std::vector<T> entries, std::function<T(T,T)> between) {
-        if (entries.size() == 0) return nullptr;
+	static SplitSide flip(SplitSide side) {
+		return (side == LeftSide) ? RightSide : LeftSide;
+	}
 
-        return DS::generate_tree(entries, between, 0, (int)entries.size() - 1);
-    }
+	enum TreeSide {
+		LEQ, 
+		GE,
+	};
 
-    template<class T>
-    // Takes an ordered list of items as input
-    static Tree<T>* generate_tree(std::vector<T> entries, std::function<T(T, T)> between, int begin, int end) {
-        if (begin >= end) {
-            Tree<T>* leaf = (Tree<T> *)malloc(sizeof(Tree<T>));
-            leaf->type = Leaf;
-            leaf->value = entries[begin];
-            leaf->count = 1;
-            leaf->left_count = leaf->right_count = -1;
-            leaf->blocked = None;
-            leaf->direction = N;
-            return leaf;
-        }
-        else {
-            int middle = (begin + end) / 2 + 1; // +1 for right biased tree 
-            Tree<T>* node = (Tree<T> *)malloc(sizeof(Tree<T>));
-            node->type = Internal;
-            node->left = generate_tree(entries, between, begin, middle - 1);
-            node->right = generate_tree(entries, between, middle, end);
-            node->value = get_max(node->left);
-            node->count = node->left->count + node->right->count;
-            node->left_count = node->right_count = -1;
-            node->blocked = None;
-            node->direction = N;
-            return node;
-        }
-    }
+	template <class T> struct Tree {
+		NodeType type;
+		T value;
+		int unsplit_count;
+		int left_split_count = -1;
+		int right_split_count = -1;
+		Tree* left = nullptr;
+		Tree* right = nullptr;
+		SearchDirection direction = None;
+	};
 
-    template<class T>
-    static T get_max(Tree<T>* tree) {
-        while (tree->type != Leaf)
-            tree = tree->right;
-        return tree->value;
-    }
+	template <class T> struct SearchNode {
+		Tree<T>* node;
+		SearchDirection direction;
+	};
 
-    template<class T> 
-    static void print_tree(Tree<T>* tree, int depth = 0) {
-        for (int i = 0; i < depth; i++) std::cout << "  ";
-        std::cout << ((tree->type == Leaf) ? "leaf: " : "") << tree->value << std::endl;
-        if (tree->type == Internal) {
-            print_tree(tree->left, depth + 1);
-            print_tree(tree->right, depth + 1);
-        }
-    }
+	template <class T> Tree<T>* generate_tree(std::vector<T> sorted_items) {
+		return generate_tree(sorted_items, 0, (int)sorted_items.size() - 1);
+	}
 
-    template <class T>
-    static std::vector<SearchNode<T>> query_tree(Tree<T>* tree, T query_value, std::function<bool(T, T)> pred) {
-        SearchNode<T> root;
-        root.node = tree;
+	template <class T> Tree<T>* generate_tree(std::vector<T> sorted_items, int begin, int end) {
+		if (begin >= end) {
+			Tree<T>* leaf = (Tree<T>*)malloc(sizeof(Tree<T>));
+			leaf = new Tree<T>;
+			leaf->type = Leaf;
+			leaf->value = sorted_items[begin];
+			leaf->unsplit_count = 1;
+			return leaf;
+		}
+		else {
+			int middle = (begin + end) / 2 + 1;
+			Tree<T>* node = (Tree<T> *)malloc(sizeof(Tree<T>));
+			node = new Tree<T>;
+			node->type = Internal;
+			node->left = generate_tree(sorted_items, begin, middle - 1);
+			node->right = generate_tree(sorted_items, middle, end);
+			node->value = get_max(node->left);
+			node->unsplit_count = node->left->unsplit_count + node->right->unsplit_count;
+			return node;
+		}
+	}
 
-        std::vector<SearchNode<T>> search_path = { root };
-        while (tree->type != Leaf) {
-            if (pred(query_value, tree->value)) {
-                (*(search_path.end() - 1)).direction = L;
-                tree = tree->left;
-            }
-            else {
-                (*(search_path.end() - 1)).direction = R;
-                tree = tree->right;
-            }
-            SearchNode<T> new_node;
-            new_node.node = tree;
-            search_path.push_back(new_node);
-        }
-        (*(search_path.end() - 1)).direction = pred(query_value, tree->value) ? L : R;
+	template <class T> bool is_leaf(Tree<T>* tree) {
+		return tree->type == Leaf;
+	}
 
-        std::cout << "Search path: ";
-        for (auto i = search_path.begin(); i < search_path.end(); i++)
-            std::cout << (*i).node->value << std::endl;
-        std::cout << std::endl;
-        return search_path;
-    }
+	template <class T> T get_max(Tree<T>* tree) {
+		while (!is_leaf(tree)) {
+			tree = tree->right;
+		}
+		return tree->value;
+	}
 
-    template <class T>
-    static void set_tree_counts(std::vector<SearchNode<T>> search_path) {
-        // Set all nodes to be split; used in later step
-        for (auto i = search_path.begin(); i < search_path.end(); i++) {
-            i->node->blocked = Split;
-            i->node->direction = i->direction;
-        }
+	template <class T> std::vector<SearchNode<T>> get_search_path(Tree<T>* tree, T query_point, std::function<bool(T,T)> leq) {
+		SearchNode<T> root = { tree };
+		std::vector<SearchNode<T>> search_path = { root };
+		while (!is_leaf(tree)) {
+			auto direction = leq(query_point, tree->value) ? Left : Right;
+			(*(search_path.end() - 1)).direction = direction;
 
-        // TODO: combine this, less pointer access
-        // First, create counts for the left split
-        for (int i = (int)search_path.size() - 1; i >= 0; i--) {
-            if (search_path[i].node->type == Leaf) {
-                search_path[i].node->left_count = search_path[i].direction == L ? 0 : 1;
-            }
-            else {
-                auto left_contribution = search_path[i].node->left->left_count == -1 ? search_path[i].node->left->count : search_path[i].node->left->left_count;
-                auto right_contribution = search_path[i].direction == R ? search_path[i].node->right->left_count : 0;
-                search_path[i].node->left_count = left_contribution + right_contribution;
-            }
-        }
+			tree = direction == Left ? tree->left : tree->right;
+			SearchNode<T> next = { tree };
+			search_path.push_back(next);
+		}
+		(*(search_path.end() - 1)).direction = leq(query_point, tree->value) ? Left : Right;
+		return search_path;
+	}
+	
+	template <class T> Tree<T>* get_tree_side(Tree<T>* tree, SplitSide split_side, TreeSide tree_side) {
+		if (is_leaf(tree)) {
+			std::cout << "ERROR: TRIED TO GET CHILD OF LEAF";
+			return tree;
+		}
 
-        // Then, basically do the same thing for the right split but in reverse
-        for (int i = (int)search_path.size() - 1; i >= 0; i--) {
-            if (search_path[i].node->type == Leaf) {
-                search_path[i].node->right_count = search_path[i].direction == R ? 0 : 1;
-            }
-            else {
-                auto right_contribution = search_path[i].node->right->right_count == -1 ? search_path[i].node->right->count : search_path[i].node->right->right_count;
-                auto left_contribution = search_path[i].direction == L ? search_path[i].node->left->right_count : 0;
-                search_path[i].node->right_count = left_contribution + right_contribution;
-            }
-        }
-    }
+		if (tree->direction == Right && split_side == RightSide && tree_side == LEQ) {
+			std::cout << "ERROR: CANNOT ENTER BLOCKED PART OF TREE (R, R, LEQ)";
+			return nullptr;
+		}
+		if (tree->direction == Left && split_side == LeftSide && tree_side == LEQ) {
+			std::cout << "ERROR: CANNOT ENTER BLOCKED PART OF TREE (L, L, LEQ)";
+			return nullptr;
+		}
+		return (split_side == LeftSide) == (tree_side == LEQ) ? tree->right : tree->left;
+	}
+	// get the count on a certain side of a tree, given which split we are in
+	template <class T> int get_split_count(Tree<T>* tree, SplitSide split_side, TreeSide tree_side) {
+		auto target = get_tree_side(tree, split_side, tree_side);
+		if (target == nullptr) return 0;
+		return get_split_count(target, split_side);
+	}
+	// get the count of a tree, given which split we are in 
+	template <class T> int get_split_count(Tree<T>* tree, SplitSide side) {
+		if (side == LeftSide) {
+			return tree->left_split_count == -1 ? tree->unsplit_count : tree->left_split_count;
+		}
+		else {
+			return tree->right_split_count == -1 ? tree->unsplit_count : tree->right_split_count;
+		}
+	}
 
-    template <class T>
-    static void reset_tree_counts(std::vector<SearchNode<T>> search_path) {
-        for (auto i = search_path.begin(); i < search_path.end(); i++) {
-            i->node->left_count = i->node->right_count = -1;
-            i->node->blocked = None;
-            i->node->direction = N;
-        }
-    }
+	template <class T> void split_tree(std::vector<SearchNode<T>> search_path) {
+		for (auto i = search_path.begin(); i < search_path.end(); i++) 
+			i->node->direction = i->direction;
+		
+		for (int i = (int)search_path.size() - 1; i >= 0; i--) {
+			Tree<T>* node = search_path[i].node;
+			if (is_leaf(node)) {
+				node->left_split_count = node->direction == Left ? 0 : 1;
+			}
+			else {
+				int left_contribution = get_split_count(search_path[i].node->left, LeftSide);
+				int right_contribution = node->direction == Right ? node->right->left_split_count : 0;
+				node->left_split_count = left_contribution + right_contribution;
+			}
+		}
 
-    template <class T>
-    // Takes a tree which is already split by a searchpath for q
-    static T find_k_nearest(Tree<T>* tree, int k, T q, std::function<double(T, T)> distance_from) {
-        auto blue = tree, red = tree;
-        bool blueIsLeft = true;
+		for (int i = (int)search_path.size() - 1; i >= 0; i--) {
+			Tree<T>* node = search_path[i].node;
+			if (is_leaf(node)) {
+				node->right_split_count = node->direction == Right ? 0 : 1;
+			}
+			else {
+				auto right_contribution = get_split_count(node->right, RightSide);
+				auto left_contribution = node->direction == Left ? node->left->right_split_count : 0;
+				node->right_split_count = left_contribution + right_contribution;
+			}
+		}
+	}
 
-        
+	// TODO: distance measure could be more generic; instead of directly comparing distance
+	// have a function which returns which of the two points is closer.
+	template <class T> T get_k_nearest(Tree<T>* tree, T q, int k, std::function<double(T, T)> distance) {
+		// From now on, we have a red and a blue tree
+		// where the root of blue is leq than the root of red. 
 
-        // erwin als je hiernaar kijkt: het spijt me
-        while (blue->type != Leaf  && red->type != Leaf) {
-            // First, determine which tree will be which.
-            if (distance_from(q, blue->value) > distance_from(q, red->value)) {
-                // switch trees
-                auto temp = blue;
-                blue = red;
-                red = temp;
-                blueIsLeft = !blueIsLeft;
-            }
+		Tree<T> *red = tree, *blue = tree;
+		// Update this whenever necessary to keep track of whch side of the tree is right / left.
+		// Red side should be determined based on this value
+		SplitSide blue_side = LeftSide;  
 
-            std::cout << "Red (" << (blueIsLeft ? "right): " : "left): ") <<  red->value << std::endl;
-            std::cout << "Blue (" << (!blueIsLeft ? "right): " : "left): ") << blue->value << std::endl;
+		while (red != nullptr && blue != nullptr && !is_leaf(red) && !is_leaf(blue)) {
+			// First, check if orientation of trees is correct
+			if (distance(q, blue->value) > distance(q, red->value)) {
+				// time to flip
+				auto temp = red;
+				red = blue;
+				blue = temp;
+				blue_side = flip(blue_side);
+			}
+			std::cout << "R/B status after correction: " << std::endl;
+			std::cout << "Red " << (blue_side == LeftSide ? "(right): " : "(left): ") << get_split_count(red, flip(blue_side)) << std::endl;
+			std::cout << "Blue " << (blue_side == RightSide ? "(right): " : "(left): ") << get_split_count(blue, blue_side) << std::endl;
 
-            // Now, we need to determine the contribution of the smaller than side of the red and blue subtree
-            int red_contribution, blue_contribution;
-            if (blueIsLeft) {
-                // Red contribution
-                // Red is the right subtree; therefore, the left side of each node is < and the right side is >=
-                if (red->blocked == Smaller || red->blocked == Split && red->direction == R) {
-                    // Either red is blocked from accesing its smaller side (due to earlier l <= k operation), or the split on q
-                    // prevents the tree from accessing the left part of the node. Either way, no count. 
-                    red_contribution = 0;
-                }
-                else if (red->left->right_count >= 0) {
-                    // We are not blocked from going left, however we are on one of the seperator nodes. We must now use 
-                    // the adjusted count
-                    red_contribution = red->left->right_count;
-                }
-                else {
-                    // We are not blocked, and we are in a normal internal node. We can safely use the original count. 
-                    red_contribution = red->left->count;
-                }
+			// then, we can determine the l measure. no +1 due to leafs only having content
+			int blue_leq_count = get_split_count(blue, blue_side, LEQ);
+			int red_leq_count = get_split_count(red, flip(blue_side), LEQ);
+			int l = blue_leq_count + red_leq_count;
+			std::cout << "l: " << l << std::endl;
+			std::cout << "k: " << k << std::endl;
 
-                // Blue contribution
-                // Blue is the left subtree here, therefore right side is < and left side is >=
-                if (blue->blocked == Smaller || blue->blocked == Split && blue->direction == L) {
-                    // Either blue is blocked on the smaller side by unknown operation(due to earlier l <= k operation), or the split on q
-                    // prevents the tree from accessing the right part of the node. Either way, no count. 
-                    blue_contribution = 0;
-                }
-                else if (blue->right->left_count >= 0) {
-                    // We are not blocked from going right, however we are on one of the seperator nodes. We must now use 
-                    // the adjusted count
-                    blue_contribution = blue->right->left_count;
-                }
-                else {
-                    // We are not blocked, and we are in a normal internal node. We can safely use the original count. 
-                    blue_contribution = blue->right->count;
-                }
-            }
-            else {
-                // Same as above, however now orientation of trees is swapped. TODO (that probably wont be done): refactor 
-                // Red contribution
-                // Red is the left subtree; therefore, the left side of each node is >= and the right side is <
-                if (red->blocked == Smaller || red->blocked == Split && red->direction == L) {
-                    // Either red is blocked from accesing its smaller side (due to earlier l <= k operation), or the split on q
-                    // prevents the tree from accessing the right part of the node. Either way, no count. 
-                    red_contribution = 0;
-                }
-                else if (red->right->left_count >= 0) {
-                    // We are not blocked from going right, however we are on one of the seperator nodes. We must now use 
-                    // the adjusted count
-                    red_contribution = red->right->left_count;
-                }
-                else {
-                    // We are not blocked, and we are in a normal internal node. We can safely use the original count. 
-                    red_contribution = red->right->count;
-                }
+			// based on l, we now update red and blue
+			if (l <= k) {
+				// recurse on B> and r, as we have no info about R<
+				k -= blue_leq_count; // we only throw away B<
+				blue = get_tree_side(blue, blue_side, GE);
+			}
+			else {
+				red = get_tree_side(red, flip(blue_side), LEQ);
+			}
+		}
 
-                // Blue contribution
-                // Blue is the right subtree here, therefore left side is < and right side is >=
-                if (blue->blocked == Smaller || blue->blocked == Split && blue->direction == R) {
-                    // Either blue is blocked on the smaller side by unknown operation(due to earlier l <= k operation), or the split on q
-                    // prevents the tree from accessing the left part of the node. Either way, no count. 
-                    blue_contribution = 0;
-                }
-                else if (blue->left->right_count >= 0) {
-                    // We are not blocked from going left, however we are on one of the seperator nodes. We must now use 
-                    // the adjusted count
-                    blue_contribution = blue->left->right_count;
-                }
-                else {
-                    // We are not blocked, and we are in a normal internal node. We can safely use the original count. 
-                    blue_contribution = blue->left->count;
-                }
-            }
+		if (red == nullptr || blue == nullptr) {
+			// a tree was accessed that was not available; this means that we need to continue the
+			// search in the remaining tree using the latest k.
+			auto rt = red == nullptr ? blue : red;
+			auto rt_side = red == nullptr ? blue_side : flip(blue_side);
 
-            // Now that that mess is done, we can determine l and update the trees 
-            // No +1 due to r not containing an actual node
-            int l = red_contribution + blue_contribution;
-            std::cout << "l: " << l << std::endl;
-            std::cout << "k: " << k << std::endl;
-            std::cout << std::endl;
+			while (!is_leaf(rt)) {
+				int closerCount = get_split_count(rt, rt_side, LEQ);
 
-            if (l <= k) {
-                // red doesnt change due to fact that we have no info about R<
-                // however, this means that we can only subtract the blue contribution
-                // from our target
-                k -= blue_contribution;
-                blue = (blueIsLeft ^ (k == 0)) ? blue->left : blue->right;
-            }
-            else {
-                // Depending on whether a greater than node is available, go there
-                // Otherwise, fall back to existing node;
-                auto target = blueIsLeft ?
-                    // we want to go left, but if not available go right
-                    (red->blocked == Split && red->direction == R) ? red->right : red->left
-                    // we want to go right, but if not available go left
-                    : (red->blocked == Split && red->direction == L) ? red->left : red->right;
-                red = target;
-            }
-        }
+				if (closerCount <= k) {
+					k -= closerCount;
+					rt = get_tree_side(rt, rt_side, GE);
+				}
+				else {
+					rt = get_tree_side(rt, rt_side, LEQ);
+				}
+			}
+			return rt->value;
+		}
 
-        std::cout << "Red (" << (blueIsLeft ? "right): " : "left): ") << red->value << (red->type == Leaf ? " leaf!" : "") << std::endl;
-        std::cout << "Blue (" << (!blueIsLeft ? "right): " : "left): ") << blue->value << (blue->type == Leaf ? " leaf!" : "") << std::endl;
-
-        // if one of the tree pointers is updated to a dead end (no count) (can happen due to implementation)
-        // the problem turns into getting the k-largest in the remaining tree; this is easy-ish
-        bool finalIsBlue = blue->type == Leaf;
-        int target_count = -1;
-        if (finalIsBlue) {
-            if (blueIsLeft) {
-                if (blue->left_count >= 0) target_count = blue->left_count;
-                else target_count = blue->count;
-            }
-            else {
-                if (blue->right_count >= 0) target_count = blue->right_count;
-                else target_count = blue->count;
-            }
-        } 
-        else {
-            if (blueIsLeft) {
-                if (red->right_count >= 0) target_count = red->right_count;
-                else target_count = red->count;
-            }
-            else {
-                if (red->left_count >= 0) target_count = red->left_count;
-                else target_count = red->count;
-            }
-        }
-
-        if (target_count <= 0) {
-            // We hit a dead end; iterate on the other tree in order to get the k-th item.
-            auto rt = finalIsBlue ? red : blue;
-            auto rtIsLeft = finalIsBlue != blueIsLeft; // XNOR
-
-            while (rt->type != Leaf) {
-                auto closerBlocked = rtIsLeft ? L : R;
-                auto furtherBlocked = rtIsLeft ? R : L;
-
-                auto closerSide = rtIsLeft ? rt->right : rt->left;
-                auto furtherSide = rtIsLeft ? rt->left : rt->right;
-
-                int closerSideCount = rtIsLeft ? closerSide->left_count : closerSide->right_count;
-                int closerCount = rt->direction == closerBlocked && closerSide->direction != N ? 0 :
-                    closerSideCount >= 0 ? closerSideCount : closerSide->count;
-
-                int furtherSideCount = rtIsLeft ? furtherSide->left_count : furtherSide->right_count;
-                int furtherCount = rt->direction == furtherBlocked && furtherSide->direction != N ? 0 :
-                    furtherSideCount >= 0 ? furtherSideCount : furtherSide->count;
-
-                if (closerCount <= k) {
-                    k -= closerCount;
-                    rt = k > 0 ? furtherSide : closerSide;
-                }
-                else {
-                    rt = closerSide;
-                }
-            }
-            return rt->value;
-        }
-        else {
-            return finalIsBlue ? blue->value : red->value;
-        }
-    }
-
-    template<class T>
-    // Free memory allocated for tree
-    static void cleanup_tree(Tree<T>* node) {
-        if (node->type == Internal) {
-            cleanup_tree(node->left);
-            cleanup_tree(node->right);
-        }
-        free(node);
-    }
+		Tree<T>* leafed_tree = is_leaf(blue) ? blue : red;
+		return leafed_tree->value;
+	}
 }
