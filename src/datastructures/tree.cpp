@@ -167,8 +167,10 @@ namespace DS {
         auto blue = tree, red = tree;
         bool blueIsLeft = true;
 
+        
+
         // erwin als je hiernaar kijkt: het spijt me
-        while (blue->type != Leaf && red->type != Leaf) {
+        while (blue->type != Leaf  && red->type != Leaf) {
             // First, determine which tree will be which.
             if (distance_from(q, blue->value) > distance_from(q, red->value)) {
                 // switch trees
@@ -263,11 +265,11 @@ namespace DS {
             std::cout << std::endl;
 
             if (l <= k) {
-                blue = blueIsLeft ? blue->left : blue->right;
                 // red doesnt change due to fact that we have no info about R<
                 // however, this means that we can only subtract the blue contribution
                 // from our target
                 k -= blue_contribution;
+                blue = (blueIsLeft ^ (k == 0)) ? blue->left : blue->right;
             }
             else {
                 // Depending on whether a greater than node is available, go there
@@ -281,7 +283,67 @@ namespace DS {
             }
         }
 
-        return blue->type == Leaf ? blue->value : red->value;
+        std::cout << "Red (" << (blueIsLeft ? "right): " : "left): ") << red->value << (red->type == Leaf ? " leaf!" : "") << std::endl;
+        std::cout << "Blue (" << (!blueIsLeft ? "right): " : "left): ") << blue->value << (blue->type == Leaf ? " leaf!" : "") << std::endl;
+
+        // if one of the tree pointers is updated to a dead end (no count) (can happen due to implementation)
+        // the problem turns into getting the k-largest in the remaining tree; this is easy-ish
+        bool finalIsBlue = blue->type == Leaf;
+        int target_count = -1;
+        if (finalIsBlue) {
+            if (blueIsLeft) {
+                if (blue->left_count >= 0) target_count = blue->left_count;
+                else target_count = blue->count;
+            }
+            else {
+                if (blue->right_count >= 0) target_count = blue->right_count;
+                else target_count = blue->count;
+            }
+        } 
+        else {
+            if (blueIsLeft) {
+                if (red->right_count >= 0) target_count = red->right_count;
+                else target_count = red->count;
+            }
+            else {
+                if (red->left_count >= 0) target_count = red->left_count;
+                else target_count = red->count;
+            }
+        }
+
+        if (target_count <= 0) {
+            // We hit a dead end; iterate on the other tree in order to get the k-th item.
+            auto rt = finalIsBlue ? red : blue;
+            auto rtIsLeft = finalIsBlue != blueIsLeft; // XNOR
+
+            while (rt->type != Leaf) {
+                auto closerBlocked = rtIsLeft ? L : R;
+                auto furtherBlocked = rtIsLeft ? R : L;
+
+                auto closerSide = rtIsLeft ? rt->right : rt->left;
+                auto furtherSide = rtIsLeft ? rt->left : rt->right;
+
+                int closerSideCount = rtIsLeft ? closerSide->left_count : closerSide->right_count;
+                int closerCount = rt->direction == closerBlocked && closerSide->direction != N ? 0 :
+                    closerSideCount >= 0 ? closerSideCount : closerSide->count;
+
+                int furtherSideCount = rtIsLeft ? furtherSide->left_count : furtherSide->right_count;
+                int furtherCount = rt->direction == furtherBlocked && furtherSide->direction != N ? 0 :
+                    furtherSideCount >= 0 ? furtherSideCount : furtherSide->count;
+
+                if (closerCount <= k) {
+                    k -= closerCount;
+                    rt = k > 0 ? furtherSide : closerSide;
+                }
+                else {
+                    rt = closerSide;
+                }
+            }
+            return rt->value;
+        }
+        else {
+            return finalIsBlue ? blue->value : red->value;
+        }
     }
 
     template<class T>

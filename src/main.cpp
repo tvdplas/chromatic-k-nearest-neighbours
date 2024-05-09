@@ -26,7 +26,7 @@ int main()
 #endif // DEBUG_PRINTING
 
     // Then, do query for q = 5 with k = 3
-    double q = 0.9, k = 5;
+    double q = 0.9, k = 2;
     auto search_path = DS::query_tree<double>(tree, q, &less_than);
     DS::set_tree_counts<double>(search_path);
     auto res = DS::find_k_nearest<double>(tree, k, q, &distance);
