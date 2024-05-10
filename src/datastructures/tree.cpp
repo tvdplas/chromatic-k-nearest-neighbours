@@ -50,11 +50,11 @@ namespace DS {
 		SearchDirection direction;
 	};
 
-	template <class T> Tree<T>* generate_tree(std::vector<T> sorted_items) {
-		return generate_tree(sorted_items, 0, (int)sorted_items.size() - 1);
+	template <class T> Tree<T>* generate_tree(std::vector<T> sorted_items, std::function<T(T,T)> plusEps) {
+		return generate_tree(sorted_items, 0, (int)sorted_items.size() - 1, plusEps);
 	}
 
-	template <class T> Tree<T>* generate_tree(std::vector<T> sorted_items, int begin, int end) {
+	template <class T> Tree<T>* generate_tree(std::vector<T> sorted_items, int begin, int end, std::function<T(T, T)> plusEps) {
 		if (begin >= end) {
 			Tree<T>* leaf = (Tree<T>*)malloc(sizeof(Tree<T>));
 			leaf = new Tree<T>;
@@ -68,9 +68,9 @@ namespace DS {
 			Tree<T>* node = (Tree<T> *)malloc(sizeof(Tree<T>));
 			node = new Tree<T>;
 			node->type = Internal;
-			node->left = generate_tree(sorted_items, begin, middle - 1);
-			node->right = generate_tree(sorted_items, middle, end);
-			node->value = get_max(node->left);
+			node->left = generate_tree(sorted_items, begin, middle - 1, plusEps);
+			node->right = generate_tree(sorted_items, middle, end, plusEps);
+			node->value = plusEps(get_max(node->left), get_min(node->right));
 			node->unsplit_count = node->left->unsplit_count + node->right->unsplit_count;
 			return node;
 		}
@@ -83,6 +83,12 @@ namespace DS {
 	template <class T> T get_max(Tree<T>* tree) {
 		while (!is_leaf(tree)) {
 			tree = tree->right;
+		}
+		return tree->value;
+	}
+	template <class T> T get_min(Tree<T>* tree) {
+		while (!is_leaf(tree)) {
+			tree = tree->left;
 		}
 		return tree->value;
 	}
@@ -109,11 +115,11 @@ namespace DS {
 		}
 
 		if (tree->direction == Right && split_side == RightSide && tree_side == LEQ) {
-			std::cout << "ERROR: CANNOT ENTER BLOCKED PART OF TREE (R, R, LEQ)";
+			//std::cout << "ERROR: CANNOT ENTER BLOCKED PART OF TREE (R, R, LEQ)";
 			return nullptr;
 		}
 		if (tree->direction == Left && split_side == LeftSide && tree_side == LEQ) {
-			std::cout << "ERROR: CANNOT ENTER BLOCKED PART OF TREE (L, L, LEQ)";
+			//std::cout << "ERROR: CANNOT ENTER BLOCKED PART OF TREE (L, L, LEQ)";
 			return nullptr;
 		}
 		return (split_side == LeftSide) == (tree_side == LEQ) ? tree->right : tree->left;
@@ -126,8 +132,8 @@ namespace DS {
 		auto target = get_tree_side(tree, split_side, tree_side);
 		if (target == nullptr) return 0;
 
-		auto other = get_tree_side(tree, split_side, flip(tree_side));
-		return get_split_count(target, split_side) + (is_leaf(other) ? 1 : 0);
+		//auto other = get_tree_side(tree, split_side, flip(tree_side));  (is_leaf(other) ? 1 : 0)
+		return get_split_count(target, split_side);
 	}
 	// get the count of a tree, given which split we are in 
 	template <class T> int get_split_count(Tree<T>* tree, SplitSide side) {
@@ -219,12 +225,16 @@ namespace DS {
 			std::cout << "k: " << k << std::endl;
 
 			// based on l, we now update red and blue
-			//if (l == k && blue_leq_count == k) {
+			//if (l == k) {
 			//	std::cout << "using k == l" << std::endl;
 			//	return blue->value; // shortcut
 			//}
-			//else 
-			if (l <= k) {
+			//else
+
+			// if l == k, we know that the smallest element in R> has rank 
+			// |B<| + |R<| + 1, therefore we can throw this side away.
+			// Not the same as paper!!
+			if (l < k) {
 				// recurse on B> and r, as we have no info about R<
 				k -= blue_leq_count; //only throw away B< 
 				blue = get_tree_side(blue, blue_side, GE);
@@ -245,12 +255,12 @@ namespace DS {
 		}
 		else {
 			std::cout << "ERROR: SHOULD NOT OCCUR" << std::endl;
-			// tree that is not leaf should be explored
-			std::cout << (is_leaf(red) ? "red " : "blue ") << "became leaf, using other as rt with k=" << k << std::endl;
-			auto rt = is_leaf(red)  ? blue : red;
-			auto rt_side = is_leaf(red) ? blue_side : flip(blue_side);
+			//// tree that is not leaf should be explored
+			//std::cout << (is_leaf(red) ? "red " : "blue ") << "became leaf, using other as rt with k=" << k << std::endl;
+			//auto rt = is_leaf(red)  ? blue : red;
+			//auto rt_side = is_leaf(red) ? blue_side : flip(blue_side);
 
-			return get_k_nearest_single(rt, k, rt_side);
+			//return get_k_nearest_single(rt, k, rt_side);
 		}
 	}
 }
