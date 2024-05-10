@@ -3,264 +3,179 @@
 #include <vector>
 #include <functional>
 
-namespace DS {
-	enum NodeType {
-		Internal = 0,
-		Leaf = 1, 
-	};
+// im just testing stuff out at this point, but macros are fun!
+#define casted_malloc(type) (type)malloc(sizeof(type))
+#define for_each(pointer_name, items) for(auto pointer_name = items.begin(); pointer_name < items.end(); pointer_name++)
 
-	enum SearchDirection {
+namespace DS {
+	enum Side {
 		None = 0,
-		Left = 1,
+		Left = 1, 
 		Right = 2,
 	};
-
-	enum SplitSide {
-		LeftSide = 1,
-		RightSide = 2,
-	};
-
-	static SplitSide flip(SplitSide side) {
-		return (side == LeftSide) ? RightSide : LeftSide;
+	
+	static Side flip(Side side) {
+		return side == Left ? Right : Left;
 	}
 
-	enum TreeSide {
-		LEQ, 
-		GE,
+	enum Color {
+		Red,
+		Blue,
 	};
 
-	static TreeSide flip(TreeSide side) {
-		return (side == LEQ) ? GE : LEQ;
+	static Color flip(Color color) {
+		return color == Red ? Blue : Red;
 	}
 
-
+	// leafs are simply nullptrs
 	template <class T> struct Tree {
-		NodeType type;
 		T value;
-		int unsplit_count;
-		int left_split_count = -1;
-		int right_split_count = -1;
-		Tree* left = nullptr;
-		Tree* right = nullptr;
-		SearchDirection direction = None;
+		int unsplit_count = 1;
+		int left_count = -1;
+		int right_count = -1;
+		Side direction = None;
+		Tree<T>* left = nullptr;
+		Tree<T>* right = nullptr;
 	};
 
-	template <class T> struct SearchNode {
+	template <class T> struct SearchedNode {
 		Tree<T>* node;
-		SearchDirection direction;
+		Side direction;
 	};
-
-	template <class T> Tree<T>* generate_tree(std::vector<T> sorted_items, std::function<T(T,T)> plusEps) {
-		return generate_tree(sorted_items, 0, (int)sorted_items.size() - 1, plusEps);
-	}
-
-	template <class T> Tree<T>* generate_tree(std::vector<T> sorted_items, int begin, int end, std::function<T(T, T)> plusEps) {
-		if (begin >= end) {
-			Tree<T>* leaf = (Tree<T>*)malloc(sizeof(Tree<T>));
-			leaf = new Tree<T>;
-			leaf->type = Leaf;
-			leaf->value = sorted_items[begin];
-			leaf->unsplit_count = 1;
-			return leaf;
+	
+	// Generates new tree. Input must already be a sorted list, because I am lazy
+	template <class T> Tree<T>* generate_tree(std::vector<T> items) { return generate_tree(items, 0, (int)items.size() - 1); }
+	template <class T> Tree<T>* generate_tree(std::vector<T> items, int begin, int end) {
+		Tree<T>* node = casted_malloc(Tree<T>*);
+		node = new Tree<T>;
+		if (begin > end) {
+			return nullptr; // leaf
+		}
+		else if (begin == end) {
+			node->value = items[begin];
 		}
 		else {
-			int middle = (begin + end) / 2 + 1;
-			Tree<T>* node = (Tree<T> *)malloc(sizeof(Tree<T>));
-			node = new Tree<T>;
-			node->type = Internal;
-			node->left = generate_tree(sorted_items, begin, middle - 1, plusEps);
-			node->right = generate_tree(sorted_items, middle, end, plusEps);
-			node->value = plusEps(get_max(node->left), get_min(node->right));
-			node->unsplit_count = node->left->unsplit_count + node->right->unsplit_count;
-			return node;
+			int middle = (begin + end) / 2;
+			auto right = generate_tree(items, middle + 1, end);
+			node->value = items[middle];
+			node->left = generate_tree(items, begin, middle - 1);
+			node->right = generate_tree(items, middle + 1, end);
+			node->unsplit_count = 1 + 
+				(node->left == nullptr ? 0 : node->left->unsplit_count)
+			  + (node->right == nullptr ? 0 : node->right->unsplit_count);
 		}
+
+		return node;
 	}
 
-	template <class T> bool is_leaf(Tree<T>* tree) {
-		return tree->type == Leaf;
-	}
-
-	template <class T> T get_max(Tree<T>* tree) {
-		while (!is_leaf(tree)) {
-			tree = tree->right;
-		}
-		return tree->value;
-	}
-	template <class T> T get_min(Tree<T>* tree) {
-		while (!is_leaf(tree)) {
-			tree = tree->left;
-		}
-		return tree->value;
-	}
-
-	template <class T> std::vector<SearchNode<T>> get_search_path(Tree<T>* tree, T query_point, std::function<bool(T,T)> leq) {
-		SearchNode<T> root = { tree };
-		std::vector<SearchNode<T>> search_path = { root };
-		while (!is_leaf(tree)) {
+	// Gets a search path for a given query point, along with the direction that was taken during the search
+	template <class T> std::vector<SearchedNode<T>> get_search_path(Tree<T>* tree, T query_point, std::function<bool(T, T)> leq) {
+		SearchedNode<T> root = { tree };
+		std::vector<SearchedNode<T>> search_path = { root };
+		while (tree) {
 			auto direction = leq(query_point, tree->value) ? Left : Right;
 			(*(search_path.end() - 1)).direction = direction;
 
 			tree = direction == Left ? tree->left : tree->right;
-			SearchNode<T> next = { tree };
+			SearchedNode<T> next = { tree };
 			search_path.push_back(next);
 		}
-		(*(search_path.end() - 1)).direction = leq(query_point, tree->value) ? Left : Right;
+		search_path.pop_back();
 		return search_path;
 	}
-	
-	template <class T> Tree<T>* get_tree_side(Tree<T>* tree, SplitSide split_side, TreeSide tree_side) {
-		if (is_leaf(tree)) {
-			std::cout << "ERROR: TRIED TO GET CHILD OF LEAF";
-			return nullptr;
-		}
 
-		if (tree->direction == Right && split_side == RightSide && tree_side == LEQ) {
-			//std::cout << "ERROR: CANNOT ENTER BLOCKED PART OF TREE (R, R, LEQ)";
-			return nullptr;
-		}
-		if (tree->direction == Left && split_side == LeftSide && tree_side == LEQ) {
-			//std::cout << "ERROR: CANNOT ENTER BLOCKED PART OF TREE (L, L, LEQ)";
-			return nullptr;
-		}
-		return (split_side == LeftSide) == (tree_side == LEQ) ? tree->right : tree->left;
-	}
-	// get the count on a certain side of a tree, given which split we are in
-	template <class T> int get_split_count(Tree<T>* tree, SplitSide split_side, TreeSide tree_side) {
-		if (is_leaf(tree)) 
-			return get_split_count(tree, split_side);
-
-		auto target = get_tree_side(tree, split_side, tree_side);
-		if (target == nullptr) return 0;
-
-		//auto other = get_tree_side(tree, split_side, flip(tree_side));  (is_leaf(other) ? 1 : 0)
-		return get_split_count(target, split_side);
-	}
-	// get the count of a tree, given which split we are in 
-	template <class T> int get_split_count(Tree<T>* tree, SplitSide side) {
-		if (side == LeftSide) {
-			return tree->left_split_count == -1 ? tree->unsplit_count : tree->left_split_count;
+	// set count for certain split
+	template <class T> void set_side_count(Tree<T>* tree, int count, Side split_side) {
+		if (split_side == Left) {
+			tree->left_count = count;
 		}
 		else {
-			return tree->right_split_count == -1 ? tree->unsplit_count : tree->right_split_count;
+			tree->right_count = count;
 		}
 	}
+	// get the count of a tree node given the fact that it is in a split side
+	template <class T> int get_side_count(Tree<T>* tree, Side split_side) {
+		if (!tree) return 0; // leaf
 
-	template <class T> void split_tree(std::vector<SearchNode<T>> search_path) {
-		for (auto i = search_path.begin(); i < search_path.end(); i++) 
-			i->node->direction = i->direction;
-		
-		for (int i = (int)search_path.size() - 1; i >= 0; i--) {
-			Tree<T>* node = search_path[i].node;
-			if (is_leaf(node)) {
-				node->left_split_count = node->direction == Left ? 0 : 1;
-			}
-			else {
-				int left_contribution = get_split_count(search_path[i].node->left, LeftSide);
-				int right_contribution = node->direction == Right ? node->right->left_split_count : 0;
-				node->left_split_count = left_contribution + right_contribution;
-			}
-		}
-
-		for (int i = (int)search_path.size() - 1; i >= 0; i--) {
-			Tree<T>* node = search_path[i].node;
-			if (is_leaf(node)) {
-				node->right_split_count = node->direction == Right ? 0 : 1;
-			}
-			else {
-				auto right_contribution = get_split_count(node->right, RightSide);
-				auto left_contribution = node->direction == Left ? node->left->right_split_count : 0;
-				node->right_split_count = left_contribution + right_contribution;
-			}
-		}
-	}
-
-	// Find the k nearest in a single tree
-	template <class T> T get_k_nearest_single(Tree<T>* tree, int k, SplitSide split_side) {
-		while (!is_leaf(tree)) {
-			int closerCount = get_split_count(tree, split_side, LEQ);
-
-			if (closerCount <= k) {
-				k -= closerCount;
-				tree = get_tree_side(tree, split_side, GE);
-			}
-			else {
-				tree = get_tree_side(tree, split_side, LEQ);
-			}
-		}
-		return tree->value;
-	}
-
-	// TODO: distance measure could be more generic; instead of directly comparing distance
-	// have a function which returns which of the two points is closer.
-	template <class T> T get_k_nearest(Tree<T>* tree, T q, int k, std::function<double(T, T)> distance) {
-		// From now on, we have a red and a blue tree
-		// where the root of blue is leq than the root of red. 
-
-		Tree<T> *red = tree, *blue = tree;
-		// Update this whenever necessary to keep track of whch side of the tree is right / left.
-		// Red side should be determined based on this value
-		SplitSide blue_side = LeftSide;  
-
-		//&& !is_leaf(red) && !is_leaf(blue)
-		while (red != nullptr && blue != nullptr) {
-			// First, check if orientation of trees is correct
-			if (distance(q, blue->value) > distance(q, red->value)) {
-				// time to flip
-				auto temp = red;
-				red = blue;
-				blue = temp;
-				blue_side = flip(blue_side);
-			}
-			std::cout << "R/B status after correction: " << std::endl;
-			std::cout << "Red " << (blue_side == LeftSide ? "(right): " : "(left): ") << "value: " << red->value << " count: " << get_split_count(red, flip(blue_side)) << std::endl;
-			std::cout << "Blue " << (blue_side == RightSide ? "(right): " : "(left): ") << "value: "  << blue->value << " count: " << get_split_count(blue, blue_side) << std::endl;
-
-			// then, we can determine the l measure. no +1 due to leafs only having content
-			int blue_leq_count = get_split_count(blue, blue_side, LEQ);
-			int red_leq_count = get_split_count(red, flip(blue_side), LEQ);
-			int l = blue_leq_count + red_leq_count;
-			std::cout << "red_leq: " << red_leq_count << std::endl;
-			std::cout << "blue_leq: " << blue_leq_count << std::endl;
-			std::cout << "l: " << l << std::endl;
-			std::cout << "k: " << k << std::endl;
-
-			// based on l, we now update red and blue
-			//if (l == k) {
-			//	std::cout << "using k == l" << std::endl;
-			//	return blue->value; // shortcut
-			//}
-			//else
-
-			// if l == k, we know that the smallest element in R> has rank 
-			// |B<| + |R<| + 1, therefore we can throw this side away.
-			// Not the same as paper!!
-			if (l < k) {
-				// recurse on B> and r, as we have no info about R<
-				k -= blue_leq_count; //only throw away B< 
-				blue = get_tree_side(blue, blue_side, GE);
-			}
-			else {
-				red = get_tree_side(red, flip(blue_side), LEQ);
-			}
-		}
-
-		if (red == nullptr || blue == nullptr) {
-			// a tree was accessed that was not available; this means that we need to continue the
-			// search in the remaining tree using the latest k.
-			std::cout << (red == nullptr ? "red " : "blue ") << "became nullptr, using other as rt with k=" << k << std::endl;
-			auto rt = red == nullptr ? blue : red;
-			auto rt_side = red == nullptr ? blue_side : flip(blue_side);
-
-			return get_k_nearest_single(rt, k, rt_side);
+		if (split_side == Left) {
+			tree->left_count == -1 ? tree->unsplit_count : tree->left_count;
 		}
 		else {
-			std::cout << "ERROR: SHOULD NOT OCCUR" << std::endl;
-			//// tree that is not leaf should be explored
-			//std::cout << (is_leaf(red) ? "red " : "blue ") << "became leaf, using other as rt with k=" << k << std::endl;
-			//auto rt = is_leaf(red)  ? blue : red;
-			//auto rt_side = is_leaf(red) ? blue_side : flip(blue_side);
-
-			//return get_k_nearest_single(rt, k, rt_side);
+			tree->right_count == -1 ? tree->unsplit_count : tree->right_count;
 		}
+	}
+	// set the left/right side of tree
+	template <class T> void set_side(Tree<T>* parent, Tree<T>* child, Side side) {
+		if (side == Left) {
+			parent->left= child;
+		}
+		else {
+			parent->right = child;
+		}
+	}
+	// get the left/right side of tree
+	template <class T> Tree<T>* get_side(Tree<T>* tree, Side side) {
+		return side == Left ? tree->left : tree->right;
+	}
+
+
+	// Splits a tree along a given search path
+	// TODO: return a list of modified node pointers, along with copies of their original contents.
+	// This way, we can restore in O(lg n) time.
+	template <class T> std::vector<Tree<T>*> split_tree(std::vector<SearchedNode<T>> search_path) {
+		// First, update tree such that directions are stored.
+		// Is used in order to determine bounds during count calculations
+		for_each(sn, search_path) {
+			 sn->node->direction = sn->direction;
+		}
+
+		// Now, we begin hell :tm: 
+		// We need to construct two semi-balanced trees from the mess that we created, while also updating counts correctly
+		// We start with the former, by always "glueing" a search path node to the previous entry in the tree
+		// see https://pasteboard.co/qQWyoic20926.jpg for a rough sketch
+
+		// the two new roots
+		Tree<T>* left_root = nullptr, * right_root = nullptr;
+		// the most recent in the sequence; used to append to.
+		Tree<T>* left_latest = nullptr, * right_latest = nullptr;
+		for (int i = 0; i < search_path.size(); i++) {
+			Tree<T>* node = search_path[i].node;
+				
+			// If search direction was right, the node itself must be part of left tree and vice versa
+			auto addition_target = node->direction == Left ? &right_latest : &left_latest;
+
+			// No root was yet set for this side of the tree; we will set it now.
+			// As there was no root yet, no children need to be updated yet. 
+			if (*addition_target == nullptr) {
+				if (node->direction == Right) left_root = left_latest = node;
+				else right_root = right_latest = node;
+			}
+			else {
+				// Otherwise, the latest node needs to be connected to our current node. 
+				// Afterwards, it is updated for possible future addition.
+				set_side(*addition_target, node, node->direction); // node direction and addition direction are always the same
+				*addition_target = node;
+			}
+			
+			// edge case; if no more children our found for this node, dont link to other side of tree
+			// due to existing children
+			set_side(*addition_target, (Tree<T>*)nullptr, node->direction);
+		}
+
+		// Now that the trees are split, we can update the counts. Only the counts along the splitting edge are affected,
+		// and we can propegate the changes from the bottom up. 
+		for (int i = search_path.size() - 1; i >= 0; i--) {
+			auto node = search_path[i].node;
+			 // First, get the side that might have been affected earlier
+			auto affected_child = get_side(node, node->direction);
+			auto non_affected_child = get_side(node, flip(node->direction));
+
+			// Then, get its count, and add it to the unaffected side's count to get ours (+1 for own contribution)
+			// get_side_count only used for convenience for non_affected, it should always return normal count
+			int our_count = get_side_count(affected_child, flip(node->direction)) + get_side_count(non_affected_child, flip(node->direction)) + 1;
+			set_side_count(node, our_count, flip(node->direction));
+		}
+
+		return { left_root, right_root };
 	}
 }

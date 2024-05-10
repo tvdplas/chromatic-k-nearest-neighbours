@@ -6,7 +6,6 @@ find_package(CGAL REQUIRED)
 set(EXECUTABLE_OUTPUT_PATH "bin")
 
 add_executable(chromatic_k_nearest_neighbours
-    src/datastructures/generic.cpp
     src/datastructures/tree.cpp
     src/main.cpp
 )
