@@ -13,7 +13,8 @@ int main()
     auto tree = DS::generate_tree(input);
     auto search_path = DS::get_search_path<double>(tree, 4.1, &leq);
     DS::split_tree(search_path);
-    auto res = DS::get_k_nearest<double>(tree, 4.1, 4, &distance);
+    auto res = DS::get_k_nearest<double>(tree, 4.2, 3, &distance);
+    std::cout << res;
 
 #pragma region cleanup
     std::string str;

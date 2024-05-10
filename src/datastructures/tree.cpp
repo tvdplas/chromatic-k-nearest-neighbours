@@ -29,6 +29,11 @@ namespace DS {
 		GE,
 	};
 
+	static TreeSide flip(TreeSide side) {
+		return (side == LEQ) ? GE : LEQ;
+	}
+
+
 	template <class T> struct Tree {
 		NodeType type;
 		T value;
@@ -100,7 +105,7 @@ namespace DS {
 	template <class T> Tree<T>* get_tree_side(Tree<T>* tree, SplitSide split_side, TreeSide tree_side) {
 		if (is_leaf(tree)) {
 			std::cout << "ERROR: TRIED TO GET CHILD OF LEAF";
-			return tree;
+			return nullptr;
 		}
 
 		if (tree->direction == Right && split_side == RightSide && tree_side == LEQ) {
@@ -115,9 +120,14 @@ namespace DS {
 	}
 	// get the count on a certain side of a tree, given which split we are in
 	template <class T> int get_split_count(Tree<T>* tree, SplitSide split_side, TreeSide tree_side) {
+		if (is_leaf(tree)) 
+			return get_split_count(tree, split_side);
+
 		auto target = get_tree_side(tree, split_side, tree_side);
 		if (target == nullptr) return 0;
-		return get_split_count(target, split_side);
+
+		auto other = get_tree_side(tree, split_side, flip(tree_side));
+		return get_split_count(target, split_side) + (is_leaf(other) ? 1 : 0);
 	}
 	// get the count of a tree, given which split we are in 
 	template <class T> int get_split_count(Tree<T>* tree, SplitSide side) {
@@ -158,6 +168,22 @@ namespace DS {
 		}
 	}
 
+	// Find the k nearest in a single tree
+	template <class T> T get_k_nearest_single(Tree<T>* tree, int k, SplitSide split_side) {
+		while (!is_leaf(tree)) {
+			int closerCount = get_split_count(tree, split_side, LEQ);
+
+			if (closerCount <= k) {
+				k -= closerCount;
+				tree = get_tree_side(tree, split_side, GE);
+			}
+			else {
+				tree = get_tree_side(tree, split_side, LEQ);
+			}
+		}
+		return tree->value;
+	}
+
 	// TODO: distance measure could be more generic; instead of directly comparing distance
 	// have a function which returns which of the two points is closer.
 	template <class T> T get_k_nearest(Tree<T>* tree, T q, int k, std::function<double(T, T)> distance) {
@@ -169,7 +195,8 @@ namespace DS {
 		// Red side should be determined based on this value
 		SplitSide blue_side = LeftSide;  
 
-		while (red != nullptr && blue != nullptr && !is_leaf(red) && !is_leaf(blue)) {
+		//&& !is_leaf(red) && !is_leaf(blue)
+		while (red != nullptr && blue != nullptr) {
 			// First, check if orientation of trees is correct
 			if (distance(q, blue->value) > distance(q, red->value)) {
 				// time to flip
@@ -179,20 +206,27 @@ namespace DS {
 				blue_side = flip(blue_side);
 			}
 			std::cout << "R/B status after correction: " << std::endl;
-			std::cout << "Red " << (blue_side == LeftSide ? "(right): " : "(left): ") << get_split_count(red, flip(blue_side)) << std::endl;
-			std::cout << "Blue " << (blue_side == RightSide ? "(right): " : "(left): ") << get_split_count(blue, blue_side) << std::endl;
+			std::cout << "Red " << (blue_side == LeftSide ? "(right): " : "(left): ") << "value: " << red->value << " count: " << get_split_count(red, flip(blue_side)) << std::endl;
+			std::cout << "Blue " << (blue_side == RightSide ? "(right): " : "(left): ") << "value: "  << blue->value << " count: " << get_split_count(blue, blue_side) << std::endl;
 
 			// then, we can determine the l measure. no +1 due to leafs only having content
 			int blue_leq_count = get_split_count(blue, blue_side, LEQ);
 			int red_leq_count = get_split_count(red, flip(blue_side), LEQ);
 			int l = blue_leq_count + red_leq_count;
+			std::cout << "red_leq: " << red_leq_count << std::endl;
+			std::cout << "blue_leq: " << blue_leq_count << std::endl;
 			std::cout << "l: " << l << std::endl;
 			std::cout << "k: " << k << std::endl;
 
 			// based on l, we now update red and blue
+			//if (l == k && blue_leq_count == k) {
+			//	std::cout << "using k == l" << std::endl;
+			//	return blue->value; // shortcut
+			//}
+			//else 
 			if (l <= k) {
 				// recurse on B> and r, as we have no info about R<
-				k -= blue_leq_count; // we only throw away B<
+				k -= blue_leq_count; //only throw away B< 
 				blue = get_tree_side(blue, blue_side, GE);
 			}
 			else {
@@ -203,24 +237,20 @@ namespace DS {
 		if (red == nullptr || blue == nullptr) {
 			// a tree was accessed that was not available; this means that we need to continue the
 			// search in the remaining tree using the latest k.
+			std::cout << (red == nullptr ? "red " : "blue ") << "became nullptr, using other as rt with k=" << k << std::endl;
 			auto rt = red == nullptr ? blue : red;
 			auto rt_side = red == nullptr ? blue_side : flip(blue_side);
 
-			while (!is_leaf(rt)) {
-				int closerCount = get_split_count(rt, rt_side, LEQ);
-
-				if (closerCount <= k) {
-					k -= closerCount;
-					rt = get_tree_side(rt, rt_side, GE);
-				}
-				else {
-					rt = get_tree_side(rt, rt_side, LEQ);
-				}
-			}
-			return rt->value;
+			return get_k_nearest_single(rt, k, rt_side);
 		}
+		else {
+			std::cout << "ERROR: SHOULD NOT OCCUR" << std::endl;
+			// tree that is not leaf should be explored
+			std::cout << (is_leaf(red) ? "red " : "blue ") << "became leaf, using other as rt with k=" << k << std::endl;
+			auto rt = is_leaf(red)  ? blue : red;
+			auto rt_side = is_leaf(red) ? blue_side : flip(blue_side);
 
-		Tree<T>* leafed_tree = is_leaf(blue) ? blue : red;
-		return leafed_tree->value;
+			return get_k_nearest_single(rt, k, rt_side);
+		}
 	}
 }
