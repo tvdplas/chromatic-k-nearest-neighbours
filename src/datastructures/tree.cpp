@@ -13,6 +13,11 @@ namespace DS {
 		Left = 1, 
 		Right = 2,
 	};
+
+	enum SortedSide {
+		LessThan,
+		GreaterThan,
+	};
 	
 	static Side flip(Side side) {
 		return side == Left ? Right : Left;
@@ -104,6 +109,12 @@ namespace DS {
 			tree->right_count == -1 ? tree->unsplit_count : tree->right_count;
 		}
 	}
+	// get the count of a tree node sort side given the fact that it is in a split side
+	template <class T> int get_side_count(Tree<T>* tree, SortedSide sorted_side, Side split_side) {
+		auto child = get_side(tree, sorted_side, split_side);
+		return get_side_count(child, split_side);
+	}
+
 	// set the left/right side of tree
 	template <class T> void set_side(Tree<T>* parent, Tree<T>* child, Side side) {
 		if (side == Left) {
@@ -116,6 +127,11 @@ namespace DS {
 	// get the left/right side of tree
 	template <class T> Tree<T>* get_side(Tree<T>* tree, Side side) {
 		return side == Left ? tree->left : tree->right;
+	}
+
+	// get the LE/GE side of tree depending on split side
+	template <class T> Tree<T>* get_side(Tree<T>* tree, SortedSide sorted_side, Side split_side) {
+		return ((split_side == Left) == (sorted_side == LessThan)) ? tree->right : tree->left;
 	}
 
 
@@ -177,5 +193,68 @@ namespace DS {
 		}
 
 		return { left_root, right_root };
+	}
+
+	// Get the k nearest neighbour in a single tree, measured from the smallest side of the tree
+	// Todo: test individually.
+	template <class T> T get_k_nearest_single(Tree<T>* tree, int k, Side split_side) {
+		if (k > get_side_count(tree, split_side))
+			std::cout << "ERROR: attempting to get k=" << k << " neighbour in tree of size " << get_side_count(tree, split_side);
+
+		while (k > 1) {
+			int closerCount = get_side_count(tree, LessThan, split_side);
+
+			if (closerCount + 1 == k) {
+				// root is kth neighbour!
+				return tree->value;
+			}
+			else if (closerCount + 1 < k) {
+				// root and LE side aren't it, therefore we continue on greater side
+				k -= closerCount + 1;
+				tree = get_side(tree, GreaterThan, split_side);
+			}
+			else {
+				// root and GE side aren't it, therefore continue on smaller side
+				tree = get_side(tree, LessThan, split_side);
+			}
+		}
+		return tree->value;
+	}
+
+	template <class T> T get_k_nearest(Tree<T>* left, Tree<T>* right, int k, T q, std::function<double(T, T)> distance) {
+		Tree<T>* red = right, * blue = left;
+		Side blue_side = Left;
+		
+		while (red != nullptr && blue != nullptr) {
+			if (distance(q, blue->value) > distance(q, red->value)) {
+				auto temp = red;
+				red = blue;
+				blue = temp;
+				blue_side = flip(blue_side);
+			}
+
+			int blue_le_count = get_side_count(blue, LessThan, blue_side);
+			int red_le_count = get_side_count(red, LessThan, flip(blue_side));
+			int l = blue_le_count + red_le_count + 1; // +1 is back >:)
+			std::cout << "R/B status after correction: " << std::endl;
+			std::cout << "Red " << (blue_side == Left ? "(right): " : "(left): ") << "value: " << red->value << " count: " << get_side_count(red, flip(blue_side)) << std::endl;
+			std::cout << "Blue " << (blue_side == Right ? "(right): " : "(left): ") << "value: " << blue->value << " count: " << get_side_count(blue, blue_side) << std::endl;
+			std::cout << "red_leq: " << red_le_count << std::endl;
+			std::cout << "blue_leq: " << blue_le_count << std::endl;
+			std::cout << "l: " << l << std::endl;
+			std::cout << "k: " << k << std::endl;
+			if (l <= k) {
+				blue = get_side(blue, GreaterThan, blue_side);
+				k -= blue_le_count + 1;
+			}
+			else {
+				red = get_side(red, LessThan, flip(blue_side));
+			}
+		}
+
+		// Now get kth in remaining tree
+		auto rt = red == nullptr ? blue : red;
+		auto rt_side = red == nullptr ? blue_side : flip(blue_side);
+		return get_k_nearest_single(rt, k, rt_side);
 	}
 }
