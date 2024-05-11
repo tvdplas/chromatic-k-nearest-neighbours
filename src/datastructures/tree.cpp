@@ -201,7 +201,7 @@ namespace DS {
 		if (k > get_side_count(tree, split_side))
 			std::cout << "ERROR: attempting to get k=" << k << " neighbour in tree of size " << get_side_count(tree, split_side);
 
-		while (k > 1) {
+		while (tree->left != nullptr || tree->right != nullptr) {
 			int closerCount = get_side_count(tree, LessThan, split_side);
 
 			if (closerCount + 1 == k) {
@@ -243,7 +243,13 @@ namespace DS {
 			std::cout << "blue_leq: " << blue_le_count << std::endl;
 			std::cout << "l: " << l << std::endl;
 			std::cout << "k: " << k << std::endl;
-			if (l <= k) {
+			if (l == k) {
+				// then our target must be in b or B< or R<
+				red = get_side(red, LessThan, flip(blue_side));
+				auto blue_ge_side = get_side(blue, GreaterThan, blue_side);
+				blue_ge_side = nullptr;
+			}
+			else if (l < k) {
 				blue = get_side(blue, GreaterThan, blue_side);
 				k -= blue_le_count + 1;
 			}
