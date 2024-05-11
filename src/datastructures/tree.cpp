@@ -47,6 +47,23 @@ namespace DS {
 		Tree<T>* node;
 		Side direction;
 	};
+
+	// Saves a reference to a node that should be restored, along with the original state of said node
+	template <class T> struct RestoreNode {
+		Tree<T>* ref;
+		Tree<T> original_content;
+	};
+
+	template <class T> struct SplitRes {
+		Tree<T>* left_root;
+		Tree<T>* right_root;
+		std::vector<RestoreNode<T>> restore_nodes;
+	};
+
+	template <class T> struct QueryRes {
+		T value;
+		std::vector<RestoreNode<T>> restore_nodes;
+	};
 	
 	// Generates new tree. Input must already be a sorted list, because I am lazy
 	template <class T> Tree<T>* generate_tree(std::vector<T> items) { return generate_tree(items, 0, (int)items.size() - 1); }
@@ -138,11 +155,14 @@ namespace DS {
 	// Splits a tree along a given search path
 	// TODO: return a list of modified node pointers, along with copies of their original contents.
 	// This way, we can restore in O(lg n) time.
-	template <class T> std::vector<Tree<T>*> split_tree(std::vector<SearchedNode<T>> search_path) {
-		// First, update tree such that directions are stored.
+	template <class T> SplitRes<T> split_tree(std::vector<SearchedNode<T>> search_path) {
+		std::vector<RestoreNode<T>> restore_nodes = {};
+
+		// First, save copies of the nodes, then update tree such that directions are stored.
 		// Is used in order to determine bounds during count calculations
 		for_each(sn, search_path) {
-			 sn->node->direction = sn->direction;
+			restore_nodes.push_back(RestoreNode<T>{ sn->node, *sn->node });
+			sn->node->direction = sn->direction;
 		}
 
 		// Now, we begin hell :tm: 
@@ -192,11 +212,10 @@ namespace DS {
 			set_side_count(node, our_count, flip(node->direction));
 		}
 
-		return { left_root, right_root };
+		return SplitRes<T>{ left_root, right_root, restore_nodes };
 	}
 
 	// Get the k nearest neighbour in a single tree, measured from the smallest side of the tree
-	// Todo: test individually.
 	template <class T> T get_k_nearest_single(Tree<T>* tree, int k, Side split_side) {
 		if (k > get_side_count(tree, split_side))
 			std::cout << "ERROR: attempting to get k=" << k << " neighbour in tree of size " << get_side_count(tree, split_side);
@@ -221,10 +240,15 @@ namespace DS {
 		return tree->value;
 	}
 
-	template <class T> T get_k_nearest(Tree<T>* left, Tree<T>* right, int k, T q, std::function<double(T, T)> distance) {
+	template <class T> QueryRes<T> get_k_nearest(Tree<T>* left, Tree<T>* right, int k, T q, std::function<double(T, T)> distance) {
 		Tree<T>* red = right, * blue = left;
 		Side blue_side = Left;
 		
+		// Some nodes might have their child blocked off during search
+		// This also needs to be reversed when done, but should be done in reverse order to prevent
+		// double overrides.
+		std::vector<RestoreNode<T>> restore_nodes = {};
+
 		while (red != nullptr && blue != nullptr) {
 			if (distance(q, blue->value) > distance(q, red->value)) {
 				auto temp = red;
@@ -246,6 +270,11 @@ namespace DS {
 			if (l == k) {
 				// then our target must be in b or B< or R<
 				red = get_side(red, LessThan, flip(blue_side));
+				
+				// blue is going to be changed, so save to restore
+				restore_nodes.push_back(RestoreNode<T>{ blue, *blue });
+
+				// now block ge side
 				auto blue_ge_side = get_side(blue, GreaterThan, blue_side);
 				blue_ge_side = nullptr;
 			}
@@ -261,6 +290,27 @@ namespace DS {
 		// Now get kth in remaining tree
 		auto rt = red == nullptr ? blue : red;
 		auto rt_side = red == nullptr ? blue_side : flip(blue_side);
-		return get_k_nearest_single(rt, k, rt_side);
+		return QueryRes<T>{ get_k_nearest_single(rt, k, rt_side), restore_nodes };
+	}
+
+	template <class T> void restore_tree(std::vector<RestoreNode<T>> split_restores, std::vector<RestoreNode<T>> search_restores) {
+		// restore nodes must be restored from back, as there may be nodes that are changed multiple times
+		for (int i = search_restores.size() - 1; i >= 0; i--) {
+			RestoreNode<T> res_node = search_restores[i];
+			*res_node.ref = res_node.original_content;
+		}
+		// then undo split
+		for (int i = split_restores.size() - 1; i >= 0; i--) {
+			RestoreNode<T> res_node = split_restores[i];
+			*res_node.ref = res_node.original_content;
+		}
+	}
+
+	template <class T> T query_k_nearest(Tree<T>* tree, int k, T q, std::function<bool(T, T)> leq, std::function<double(T, T)> distance) {
+		auto path = get_search_path<double>(tree, q, leq);
+		auto split_trees = split_tree(path);
+		auto res = get_k_nearest(split_trees.left_root, split_trees.right_root, k, q, distance);
+		restore_tree(split_trees.restore_nodes, res.restore_nodes);
+		return res.value;
 	}
 }
