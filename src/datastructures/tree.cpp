@@ -6,6 +6,7 @@
 // im just testing stuff out at this point, but macros are fun!
 #define casted_malloc(type) (type)malloc(sizeof(type))
 #define for_each(pointer_name, items) for(auto pointer_name = items.begin(); pointer_name < items.end(); pointer_name++)
+//#define DEBUG_PRINT
 
 namespace DS {
 	enum Side {
@@ -217,8 +218,11 @@ namespace DS {
 
 	// Get the k nearest neighbour in a single tree, measured from the smallest side of the tree
 	template <class T> T get_k_nearest_single(Tree<T>* tree, int k, Side split_side) {
+#ifdef DEBUG_PRINT
 		if (k > get_side_count(tree, split_side))
 			std::cout << "ERROR: attempting to get k=" << k << " neighbour in tree of size " << get_side_count(tree, split_side);
+#endif // DEBUG_PRINT
+
 
 		while (tree->left != nullptr || tree->right != nullptr) {
 			int closerCount = get_side_count(tree, LessThan, split_side);
@@ -260,6 +264,8 @@ namespace DS {
 			int blue_le_count = get_side_count(blue, LessThan, blue_side);
 			int red_le_count = get_side_count(red, LessThan, flip(blue_side));
 			int l = blue_le_count + red_le_count + 1; // +1 is back >:)
+
+#ifdef DEBUG_PRINT
 			std::cout << "R/B status after correction: " << std::endl;
 			std::cout << "Red " << (blue_side == Left ? "(right): " : "(left): ") << "value: " << red->value << " count: " << get_side_count(red, flip(blue_side)) << std::endl;
 			std::cout << "Blue " << (blue_side == Right ? "(right): " : "(left): ") << "value: " << blue->value << " count: " << get_side_count(blue, blue_side) << std::endl;
@@ -267,6 +273,7 @@ namespace DS {
 			std::cout << "blue_leq: " << blue_le_count << std::endl;
 			std::cout << "l: " << l << std::endl;
 			std::cout << "k: " << k << std::endl;
+#endif // DEBUG_PRINT
 			if (l == k) {
 				// then our target must be in b or B< or R<
 				red = get_side(red, LessThan, flip(blue_side));
