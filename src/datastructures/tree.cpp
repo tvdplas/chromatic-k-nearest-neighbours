@@ -79,7 +79,6 @@ namespace DS {
 		}
 		else {
 			int middle = (begin + end) / 2;
-			auto right = generate_tree(items, middle + 1, end);
 			node->value = items[middle];
 			node->left = generate_tree(items, begin, middle - 1);
 			node->right = generate_tree(items, middle + 1, end);
