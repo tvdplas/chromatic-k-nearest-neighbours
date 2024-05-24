@@ -19,21 +19,37 @@ typedef struct { STy S; SPrimeTy SPrime; } S_S_Prime;
 typedef struct { Color color; uint frequency; } Mode;
 
 namespace DS {
-	static ATy generate_Colors(int count, int distinct_Colors) {
+	static Mode get_mode_naive(ATy A, uint start, uint end) {
+		// Simple counting approach; Could be made more efficient, but eh :shrug:
+		auto num_colors = (uint)(*std::max_element(A.begin() + start, A.begin() + end));
+		std::vector<uint> counts(num_colors + 1);
+
+		for (uint i = start; i < end; i++) {
+			counts[A[i]]++;
+		}
+
+		// then, find max index
+		auto max = std::max_element(counts.begin(), counts.end());
+		auto max_color = (uint)std::distance(counts.begin(), max);
+
+		return { max_color, *max };
+	}
+
+	static ATy generate_colors(int count, int distinct_colors) {
 		ATy Colors = ATy(count);
 		unsigned int re_seed = std::chrono::system_clock::now().time_since_epoch().count();
-		std::uniform_real_distribution<double> rnd(0, distinct_Colors);
+		std::uniform_real_distribution<double> rnd(0, distinct_colors);
 		std::default_random_engine re(re_seed);
 
 		for (int i = 0; i < count; i++) {
-			Colors[i] = rnd(re) + 1;
+			Colors[i] = rnd(re);
 		}
 
 		return Colors;
 	}
 
 	static QTy generate_Q(ATy A) {
-		auto count = (uint)(*std::max_element(A.begin(), A.end()));
+		auto count = (uint)(*std::max_element(A.begin(), A.end())) + 1;
 
 		QTy Q = {};
 		for (int i = 0; i < count; i++) {
@@ -42,7 +58,7 @@ namespace DS {
 
 		uint n = (uint)A.size();
 		for (uint i = 0; i < n; i++) {
-			Q[(uint)A[i] - 1].push_back(i);
+			Q[(uint)A[i]].push_back(i);
 		}
 
 		return Q;
@@ -59,54 +75,41 @@ namespace DS {
 	}
 
 	static S_S_Prime generate_S_S_Prime(ATy A, uint s) {
-		uint t = std::ceil((double)A.size() / (double)s);
+		uint t = (uint)std::ceil((double)A.size() / (double)s);
 		
 		// Initialize S and SPrime with empty vectors
 		STy S = STy(s);
 		SPrimeTy SPrime = SPrimeTy(s);
-		for (int i = 0; i < s; i++) {
+		for (uint i = 0; i < s; i++) {
 			S[i] = {};
 			SPrime[i] = {};
+			for (uint j = 0; j < s; j++) {
+				S[i].push_back({});
+				SPrime[i].push_back({});
+			}
 		}
 
 		// Generate S
-		for (int i = 0; i < s; i++) {
-			for (int j = i; j < s; j++) {
+		for (uint i = 0; i < s; i++) {
+			for (uint j = i; j < s; j++) {
 				uint start = i * t; // no +1, arrays are 0 indexed;
 				uint end = std::min((j + 1) * t, (uint)A.size()); // exclusive end index
 
-				Mode mode = get_mode_naive(A, start, end);
-				S[i].push_back(mode.color);
-				SPrime[i].push_back(mode.frequency);
+				Mode mode = DS::get_mode_naive(A, start, end);
+				S[i][j] = mode.color;
+				SPrime[i][j] = mode.frequency;
 			}
 		}
 
 		return { S, SPrime };
 	}
 
-	static Mode get_mode_naive(ATy A, uint start, uint end) {
-		// Simple counting approach; Could be made more efficient, but eh :shrug:
-		auto num_colors = (uint)(*std::max_element(&A[start], &A[end]));
-		uint* counts = new uint[num_colors];
-		uint N = sizeof(counts) / sizeof(uint);
-
-		for (int i = start; i < end; i++) {
-			counts[A[i]]++;
-		}
-		
-		// then, find max index
-		auto max = std::max_element(counts, counts + N);
-		auto max_color = (uint)std::distance(counts, max);
-
-		return { max_color, *max };
-	}
-
 	// inclusive start, exclusive end
 	static Mode get_mode(ATy A, APrimeTy APrime, QTy Q, STy S, SPrimeTy SPrime, uint start, uint end, uint s) {
-		uint t = std::ceil((double)A.size() / (double)s);
+		uint t = (uint)std::ceil((double)A.size() / (double)s);
 		// no need for -1 in bi due to 0 indexing, no change to bj due to exclusive
-		uint bi = std::ceil((double)start / (double)t);
-		uint bj = std::floor((double)end / (double)t) - 1;
+		uint bi = (uint)std::ceil((double)start / (double)t);
+		uint bj = (uint)std::floor((double)end / (double)t) - 1;
 		
 		// Span: A[bi*t : bj * t)
 		// prefix: A[start : min(bi*t, end))
