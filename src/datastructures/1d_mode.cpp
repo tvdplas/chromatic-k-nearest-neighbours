@@ -1,3 +1,5 @@
+// Based on DOI 10.1007/s00224-013-9455-2
+
 #pragma once
 
 #include <vector>
@@ -78,6 +80,8 @@ namespace DS {
 				SPrime[i].push_back(mode.frequency);
 			}
 		}
+
+		return { S, SPrime };
 	}
 
 	static Mode get_mode_naive(ATy A, uint start, uint end) {
@@ -95,5 +99,67 @@ namespace DS {
 		auto max_color = (uint)std::distance(counts, max);
 
 		return { max_color, *max };
+	}
+
+	// inclusive start, exclusive end
+	static Mode get_mode(ATy A, APrimeTy APrime, QTy Q, STy S, SPrimeTy SPrime, uint start, uint end, uint s) {
+		uint t = std::ceil((double)A.size() / (double)s);
+		// no need for -1 in bi due to 0 indexing, no change to bj due to exclusive
+		uint bi = std::ceil((double)start / (double)t);
+		uint bj = std::floor((double)end / (double)t) - 1;
+		
+		// Span: A[bi*t : bj * t)
+		// prefix: A[start : min(bi*t, end))
+		// suffix: A[max((bj + 1)*t, start) : end)
+
+		// Best color from span
+		Color candidate_mode = S[bi][bj];
+		uint candidate_frequency = SPrime[bi][bj];
+
+		// Now check values from prefix/postfix by lemma 2
+		// prefix
+		for (uint i = start; i < std::min(bi * t, end); i++) {
+			if (APrime[i] > 1 && Q[A[i]][APrime[i] - 1] >= start) {
+				// entry was already counted
+				continue;
+			}
+			// < instead of <= for end due to exclusive
+			if (!(APrime[i] + candidate_frequency - 1 < Q[A[i]].size() && Q[A[i]][APrime[i] + candidate_frequency - 1] < end)) {
+				// entry must have lower frequency than current candidate
+				continue;
+			}
+			
+			// linear scan in Q[A[i]] in order to find the new frequency
+			uint y = APrime[i] + candidate_frequency - 1;
+			while (y < Q[A[i]].size() && Q[A[i]][y] < end) {
+				y++;
+			}
+			candidate_mode = A[i];
+			candidate_frequency = y - APrime[i];
+		}
+
+		// exact same for suffix; code is copy pasted for i am lazy
+		for (uint i = std::max((bj + 1) * t, start); i < end; i++) {
+			if (APrime[i] > 1 && Q[A[i]][APrime[i] - 1] >= start) {
+				// entry was already counted
+				continue;
+			}
+			// < instead of <= for end due to exclusive
+			if (!(APrime[i] + candidate_frequency - 1 < Q[A[i]].size() && Q[A[i]][APrime[i] + candidate_frequency - 1] < end)) {
+				// entry must have lower frequency than current candidate
+				continue;
+			}
+
+			// linear scan in Q[A[i]] in order to find the new frequency
+			uint y = APrime[i] + candidate_frequency - 1;
+			while (y < Q[A[i]].size() && Q[A[i]][y] < end) {
+				y++;
+			}
+			candidate_mode = A[i];
+			candidate_frequency = y - APrime[i];
+		}
+
+		// prefix and suffix done, therefore candidate must now be final
+		return { candidate_mode, candidate_frequency };
 	}
 }
