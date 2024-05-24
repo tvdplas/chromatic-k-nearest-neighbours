@@ -10,6 +10,9 @@
     <ClCompile Include="C:\Users\thoma\Desktop\chromatic-k-nearest-neighbours\src\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\datastructures\1d_mode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="C:\Users\thoma\Desktop\chromatic-k-nearest-neighbours\CMakeLists.txt" />

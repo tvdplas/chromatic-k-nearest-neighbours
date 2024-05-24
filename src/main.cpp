@@ -1,25 +1,17 @@
 #include <iostream>
 #include <random>
 #include <vector>
-#include <algorithm>
-#include "datastructures/tree.cpp";
-#include "tests/1d_range_finding.cpp";
 
-#define DEBUG_PRINT
+#include "datastructures/1d_mode.cpp"
 
-using namespace std;
-
-static bool leq(double a, double b) {
-    return a <= b; 
-}
-static double distance(double a, double b) {
-    return abs(a - b);
-}
 
 int main()
 {
-    Test::run_1d_range_finding(1, 10000, 1000, -50000, 50000, 100);
-
+    int n = 100, Delta = 10;
+    auto A = DS::generate_colors(n, Delta); // color generation already does rank reduction
+    auto Q = DS::generate_Q(A);
+    auto APrime = DS::generate_A_prime(A, Q);
+    
 
 #pragma region cleanup
     std::string str;
