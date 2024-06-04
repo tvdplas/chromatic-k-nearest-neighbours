@@ -6,8 +6,9 @@ find_package(CGAL REQUIRED)
 set(EXECUTABLE_OUTPUT_PATH "bin")
 
 add_executable(chromatic_k_nearest_neighbours
-    src/tests/1d_range_finding.cpp
+    src/tests/1d.cpp
     src/datastructures/tree.cpp
+    src/datastructures/1d_mode.cpp
     src/main.cpp
 )
 

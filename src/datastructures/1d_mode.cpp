@@ -17,6 +17,15 @@ typedef std::vector<std::vector<Color>> STy;
 typedef std::vector<std::vector<uint>> SPrimeTy;
 typedef struct { STy S; SPrimeTy SPrime; } S_S_Prime;
 typedef struct { Color color; uint frequency; } Mode;
+typedef struct { 
+	ATy A; 
+	APrimeTy APrime; 
+	QTy Q;
+	STy S;
+	SPrimeTy SPrime;
+	uint s;
+} PreprocessedData;
+
 
 namespace DS {
 	static Mode get_mode_naive(ATy A, uint start, uint end) {
@@ -105,7 +114,7 @@ namespace DS {
 	}
 
 	// inclusive start, exclusive end
-	static Mode get_mode(ATy A, APrimeTy APrime, QTy Q, STy S, SPrimeTy SPrime, uint start, uint end, uint s) {
+	static Color get_mode(ATy A, APrimeTy APrime, QTy Q, STy S, SPrimeTy SPrime, uint start, uint end, uint s) {
 		uint t = (uint)std::ceil((double)A.size() / (double)s);
 		// no need for -1 in bi due to 0 indexing, no change to bj due to exclusive
 		uint bi = (uint)std::ceil((double)start / (double)t);
@@ -116,7 +125,7 @@ namespace DS {
 		// suffix: A[max((bj + 1)*t, start) : end)
 
 		// Best color from span
-		Color candidate_mode = S[bi][bj];
+		Color candidate_mode = (Color)S[bi][bj];
 		uint candidate_frequency = SPrime[bi][bj];
 
 		// Now check values from prefix/postfix by lemma 2
@@ -137,7 +146,7 @@ namespace DS {
 			while (y < Q[A[i]].size() && Q[A[i]][y] < end) {
 				y++;
 			}
-			candidate_mode = A[i];
+			candidate_mode = (Color)A[i];
 			candidate_frequency = y - APrime[i];
 		}
 
@@ -158,11 +167,35 @@ namespace DS {
 			while (y < Q[A[i]].size() && Q[A[i]][y] < end) {
 				y++;
 			}
-			candidate_mode = A[i];
+			candidate_mode = (Color)A[i];
 			candidate_frequency = y - APrime[i];
 		}
 
 		// prefix and suffix done, therefore candidate must now be final
-		return { candidate_mode, candidate_frequency };
+		return candidate_mode;
 	}
+
+	static Color get_mode(PreprocessedData* pre, uint start, uint end) {
+		return get_mode(pre->A, pre->APrime, pre->Q, pre->S, pre->SPrime, start, end, pre->s);
+	}
+
+	static PreprocessedData* preprocess(ATy A) {
+		PreprocessedData* data = (PreprocessedData*)malloc(sizeof(PreprocessedData*));
+		data = new PreprocessedData();
+
+		uint s = (uint)std::sqrt(A.size());
+		auto Q = generate_Q(A);
+		auto APrime = generate_A_prime(A, Q);
+		auto S_S_Prime = generate_S_S_Prime(A, s);
+
+		data->A = A;
+		data->APrime = APrime;
+		data->Q = Q;
+		data->S = S_S_Prime.S;
+		data->SPrime = S_S_Prime.SPrime;
+		data->s = s;
+
+		return data;
+	}
+
 }

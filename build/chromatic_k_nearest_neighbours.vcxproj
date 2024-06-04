@@ -120,8 +120,7 @@
       <ProxyFileName>%(Filename)_p.c</ProxyFileName>
     </Midl>
     <PostBuildEvent>
-      <Message>
-      </Message>
+      <Message></Message>
       <Command>setlocal
 C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -noprofile -executionpolicy Bypass -file C:/tools/vcpkg/scripts/buildsystems/msbuild/applocal.ps1 -targetBinary C:/Users/thoma/Desktop/chromatic-k-nearest-neighbours/build/bin/Debug/chromatic_k_nearest_neighbours.exe -installedDir C:/tools/vcpkg/installed/x64-windows/debug/bin -OutVariable out
 if %errorlevel% neq 0 goto :cmEnd
@@ -181,8 +180,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
       <ProxyFileName>%(Filename)_p.c</ProxyFileName>
     </Midl>
     <PostBuildEvent>
-      <Message>
-      </Message>
+      <Message></Message>
       <Command>setlocal
 C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -noprofile -executionpolicy Bypass -file C:/tools/vcpkg/scripts/buildsystems/msbuild/applocal.ps1 -targetBinary C:/Users/thoma/Desktop/chromatic-k-nearest-neighbours/build/bin/Release/chromatic_k_nearest_neighbours.exe -installedDir C:/tools/vcpkg/installed/x64-windows/bin -OutVariable out
 if %errorlevel% neq 0 goto :cmEnd
@@ -242,8 +240,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
       <ProxyFileName>%(Filename)_p.c</ProxyFileName>
     </Midl>
     <PostBuildEvent>
-      <Message>
-      </Message>
+      <Message></Message>
       <Command>setlocal
 C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -noprofile -executionpolicy Bypass -file C:/tools/vcpkg/scripts/buildsystems/msbuild/applocal.ps1 -targetBinary C:/Users/thoma/Desktop/chromatic-k-nearest-neighbours/build/bin/MinSizeRel/chromatic_k_nearest_neighbours.exe -installedDir C:/tools/vcpkg/installed/x64-windows/bin -OutVariable out
 if %errorlevel% neq 0 goto :cmEnd
@@ -302,8 +299,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
       <ProxyFileName>%(Filename)_p.c</ProxyFileName>
     </Midl>
     <PostBuildEvent>
-      <Message>
-      </Message>
+      <Message></Message>
       <Command>setlocal
 C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -noprofile -executionpolicy Bypass -file C:/tools/vcpkg/scripts/buildsystems/msbuild/applocal.ps1 -targetBinary C:/Users/thoma/Desktop/chromatic-k-nearest-neighbours/build/bin/RelWithDebInfo/chromatic_k_nearest_neighbours.exe -installedDir C:/tools/vcpkg/installed/x64-windows/bin -OutVariable out
 if %errorlevel% neq 0 goto :cmEnd
@@ -386,9 +382,9 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\src\datastructures\1d_mode.cpp" />
-    <ClCompile Include="C:\Users\thoma\Desktop\chromatic-k-nearest-neighbours\src\tests\1d_range_finding.cpp" />
+    <ClCompile Include="C:\Users\thoma\Desktop\chromatic-k-nearest-neighbours\src\tests\1d.cpp" />
     <ClCompile Include="C:\Users\thoma\Desktop\chromatic-k-nearest-neighbours\src\datastructures\tree.cpp" />
+    <ClCompile Include="C:\Users\thoma\Desktop\chromatic-k-nearest-neighbours\src\datastructures\1d_mode.cpp" />
     <ClCompile Include="C:\Users\thoma\Desktop\chromatic-k-nearest-neighbours\src\main.cpp" />
   </ItemGroup>
   <ItemGroup>

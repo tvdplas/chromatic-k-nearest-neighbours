@@ -36,6 +36,7 @@ namespace DS {
 	// leafs are simply nullptrs
 	template <class T> struct Tree {
 		T value;
+		int index = -1;
 		int unsplit_count = 1;
 		int left_count = -1;
 		int right_count = -1;
@@ -62,11 +63,11 @@ namespace DS {
 	};
 
 	template <class T> struct QueryRes {
-		T value;
+		Tree<T>* value;
 		std::vector<RestoreNode<T>> restore_nodes;
 	};
 	
-	// Generates new tree. Input must already be a sorted list, because I am lazy
+	// Generates new tree. Input must already be a sorted list
 	template <class T> Tree<T>* generate_tree(std::vector<T> items) { return generate_tree(items, 0, (int)items.size() - 1); }
 	template <class T> Tree<T>* generate_tree(std::vector<T> items, int begin, int end) {
 		Tree<T>* node = casted_malloc(Tree<T>*);
@@ -76,10 +77,12 @@ namespace DS {
 		}
 		else if (begin == end) {
 			node->value = items[begin];
+			node->index = begin;
 		}
 		else {
 			int middle = (begin + end) / 2;
 			node->value = items[middle];
+			node->index = middle;
 			node->left = generate_tree(items, begin, middle - 1);
 			node->right = generate_tree(items, middle + 1, end);
 			node->unsplit_count = 1 + 
@@ -216,7 +219,7 @@ namespace DS {
 	}
 
 	// Get the k nearest neighbour in a single tree, measured from the smallest side of the tree
-	template <class T> T get_k_nearest_single(Tree<T>* tree, int k, Side split_side) {
+	template <class T> Tree<T>* get_k_nearest_single(Tree<T>* tree, int k, Side split_side) {
 #ifdef DEBUG_PRINT
 		if (k > get_side_count(tree, split_side))
 			std::cout << "ERROR: attempting to get k=" << k << " neighbour in tree of size " << get_side_count(tree, split_side);
@@ -228,7 +231,7 @@ namespace DS {
 
 			if (closerCount + 1 == k) {
 				// root is kth neighbour!
-				return tree->value;
+				return tree;
 			}
 			else if (closerCount + 1 < k) {
 				// root and LE side aren't it, therefore we continue on greater side
@@ -240,7 +243,7 @@ namespace DS {
 				tree = get_side(tree, LessThan, split_side);
 			}
 		}
-		return tree->value;
+		return tree;
 	}
 
 	template <class T> QueryRes<T> get_k_nearest(Tree<T>* left, Tree<T>* right, int k, T q, std::function<double(T, T)> distance) {
@@ -312,11 +315,20 @@ namespace DS {
 		}
 	}
 
-	template <class T> T query_k_nearest(Tree<T>* tree, int k, T q, std::function<bool(T, T)> leq, std::function<double(T, T)> distance) {
+	template <class T> unsigned int query_k_nearest(Tree<T>* tree, int k, T q, std::function<bool(T, T)> leq, std::function<double(T, T)> distance) {
 		auto path = get_search_path<double>(tree, q, leq);
 		auto split_trees = split_tree(path);
 		auto res = get_k_nearest(split_trees.left_root, split_trees.right_root, k, q, distance);
 		restore_tree(split_trees.restore_nodes, res.restore_nodes);
-		return res.value;
+		return res.value->index;
+	}
+
+	template <class T> void free_tree(Tree<T>* tree) {
+		if (tree->right != nullptr)
+			free_tree(tree->right);
+		if (tree->left != nullptr)
+			free_tree(tree->left);
+
+		free(tree);
 	}
 }
