@@ -323,11 +323,13 @@ namespace DS {
 		return res.value->index;
 	}
 
-	template <class T> void free_tree(Tree<T>* tree) {
-		if (tree->right != nullptr)
-			free_tree(tree->right);
-		if (tree->left != nullptr)
-			free_tree(tree->left);
+	template <class T> void free_tree(Tree<T>* tree, bool recursive = true) {
+		if (recursive) {
+			if (tree->right != nullptr)
+				free_tree(tree->right);
+			if (tree->left != nullptr)
+				free_tree(tree->left);
+		}
 
 		free(tree);
 	}

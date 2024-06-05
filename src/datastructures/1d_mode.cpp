@@ -114,8 +114,8 @@ namespace DS {
 	}
 
 	// inclusive start, exclusive end
-	static Color get_mode(ATy A, APrimeTy APrime, QTy Q, STy S, SPrimeTy SPrime, uint start, uint end, uint s) {
-		uint t = (uint)std::ceil((double)A.size() / (double)s);
+	static Color get_mode(PreprocessedData* pre, uint start, uint end) {
+		uint t = (uint)std::ceil((double)pre->A.size() / (double)pre->s);
 		// no need for -1 in bi due to 0 indexing, no change to bj due to exclusive
 		uint bi = (uint)std::ceil((double)start / (double)t);
 		uint bj = (uint)std::floor((double)end / (double)t) - 1;
@@ -125,58 +125,54 @@ namespace DS {
 		// suffix: A[max((bj + 1)*t, start) : end)
 
 		// Best color from span
-		Color candidate_mode = (Color)S[bi][bj];
-		uint candidate_frequency = SPrime[bi][bj];
+		Color candidate_mode = (Color)pre->S[bi][bj];
+		uint candidate_frequency = pre->SPrime[bi][bj];
 
 		// Now check values from prefix/postfix by lemma 2
 		// prefix
 		for (uint i = start; i < std::min(bi * t, end); i++) {
-			if (APrime[i] > 1 && Q[A[i]][APrime[i] - 1] >= start) {
+			if (pre->APrime[i] > 1 && pre->Q[pre->A[i]][pre->APrime[i] - 1] >= start) {
 				// entry was already counted
 				continue;
 			}
 			// < instead of <= for end due to exclusive
-			if (!(APrime[i] + candidate_frequency - 1 < Q[A[i]].size() && Q[A[i]][APrime[i] + candidate_frequency - 1] < end)) {
+			if (!(pre->APrime[i] + candidate_frequency - 1 < pre->Q[pre->A[i]].size() && pre->Q[pre->A[i]][pre->APrime[i] + candidate_frequency - 1] < end)) {
 				// entry must have lower frequency than current candidate
 				continue;
 			}
 			
 			// linear scan in Q[A[i]] in order to find the new frequency
-			uint y = APrime[i] + candidate_frequency - 1;
-			while (y < Q[A[i]].size() && Q[A[i]][y] < end) {
+			uint y = pre->APrime[i] + candidate_frequency - 1;
+			while (y < pre->Q[pre->A[i]].size() && pre->Q[pre->A[i]][y] < end) {
 				y++;
 			}
-			candidate_mode = (Color)A[i];
-			candidate_frequency = y - APrime[i];
+			candidate_mode = (Color)pre->A[i];
+			candidate_frequency = y - pre->APrime[i];
 		}
 
 		// exact same for suffix; code is copy pasted for i am lazy
 		for (uint i = std::max((bj + 1) * t, start); i < end; i++) {
-			if (APrime[i] > 1 && Q[A[i]][APrime[i] - 1] >= start) {
+			if (pre->APrime[i] > 1 && pre->Q[pre->A[i]][pre->APrime[i] - 1] >= start) {
 				// entry was already counted
 				continue;
 			}
 			// < instead of <= for end due to exclusive
-			if (!(APrime[i] + candidate_frequency - 1 < Q[A[i]].size() && Q[A[i]][APrime[i] + candidate_frequency - 1] < end)) {
+			if (!(pre->APrime[i] + candidate_frequency - 1 < pre->Q[pre->A[i]].size() && pre->Q[pre->A[i]][pre->APrime[i] + candidate_frequency - 1] < end)) {
 				// entry must have lower frequency than current candidate
 				continue;
 			}
 
 			// linear scan in Q[A[i]] in order to find the new frequency
-			uint y = APrime[i] + candidate_frequency - 1;
-			while (y < Q[A[i]].size() && Q[A[i]][y] < end) {
+			uint y = pre->APrime[i] + candidate_frequency - 1;
+			while (y < pre->Q[pre->A[i]].size() && pre->Q[pre->A[i]][y] < end) {
 				y++;
 			}
-			candidate_mode = (Color)A[i];
-			candidate_frequency = y - APrime[i];
+			candidate_mode = (Color)pre->A[i];
+			candidate_frequency = y - pre->APrime[i];
 		}
 
 		// prefix and suffix done, therefore candidate must now be final
 		return candidate_mode;
-	}
-
-	static Color get_mode(PreprocessedData* pre, uint start, uint end) {
-		return get_mode(pre->A, pre->APrime, pre->Q, pre->S, pre->SPrime, start, end, pre->s);
 	}
 
 	static PreprocessedData* preprocess(ATy A) {

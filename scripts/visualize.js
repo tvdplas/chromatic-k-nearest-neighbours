@@ -37,8 +37,7 @@ const run = async () => {
         4, 4, colors[point.c]
       )
     )
-      
-
+    
     const encoded = await image.encode()
 
     await fs.writeFileSync(`../figs/renders/${NAME}.png`, encoded);

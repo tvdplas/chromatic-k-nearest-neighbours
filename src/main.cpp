@@ -6,7 +6,7 @@
 
 int main()
 {
-    Test::run_1d(1, 10000, 20000, -25000, 25000, 100, 1000);
+    Test::run_1d(1, 10000, 1000, -25000, 25000, 100, 1000);
 #pragma region cleanup
     std::string str;
     std::cin >> str;
