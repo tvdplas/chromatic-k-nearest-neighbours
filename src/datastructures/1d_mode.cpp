@@ -28,13 +28,13 @@ typedef struct {
 
 
 namespace DS {
-	static Mode get_mode_naive(ATy A, uint start, uint end) {
+	static Mode get_mode_naive(ATy* A, uint start, uint end) {
 		// Simple counting approach; Could be made more efficient, but eh :shrug:
-		auto num_colors = (uint)(*std::max_element(A.begin() + start, A.begin() + end));
+		auto num_colors = (uint)(*std::max_element(A->begin() + start, A->begin() + end));
 		std::vector<uint> counts(num_colors + 1);
 
 		for (uint i = start; i < end; i++) {
-			counts[A[i]]++;
+			counts[(*A)[i]]++;
 		}
 
 		// then, find max index
@@ -44,7 +44,7 @@ namespace DS {
 		return { max_color, *max };
 	}
 
-	static ATy generate_colors(int count, int distinct_colors) {
+	static ATy generate_colors(int count, int distinct_colors, double gamma = 0, double alpha = 0) {
 		ATy Colors = ATy(count);
 		unsigned int re_seed = std::chrono::system_clock::now().time_since_epoch().count();
 		std::uniform_real_distribution<double> rnd(0, distinct_colors);
@@ -104,7 +104,7 @@ namespace DS {
 				uint start = i * t; // no +1, arrays are 0 indexed;
 				uint end = std::min((j + 1) * t, (uint)A.size()); // exclusive end index
 
-				Mode mode = DS::get_mode_naive(A, start, end);
+				Mode mode = DS::get_mode_naive(&A, start, end);
 				S[i][j] = mode.color;
 				SPrime[i][j] = mode.frequency;
 			}
@@ -116,6 +116,12 @@ namespace DS {
 	// inclusive start, exclusive end
 	static Color get_mode(PreprocessedData* pre, uint start, uint end) {
 		uint t = (uint)std::ceil((double)pre->A.size() / (double)pre->s);
+
+		// if start and end are in the same block, there is no use in applying this method
+		// naive query is used instead
+		if (start / t >= (end - 1) / t)
+			return (Color)get_mode_naive(&pre->A, start, end).color;
+
 		// no need for -1 in bi due to 0 indexing, no change to bj due to exclusive
 		uint bi = (uint)std::ceil((double)start / (double)t);
 		uint bj = (uint)std::floor((double)end / (double)t) - 1;

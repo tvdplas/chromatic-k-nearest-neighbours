@@ -222,7 +222,7 @@ namespace Test {
 		//std::cout << "Avg fast mode query time: " << avg_fast_mode << std::endl;
 		//std::cout << "Avg naive mode query time: " << avg_naive_mode << std::endl;
 
-		std::cout << avg_gen << " & " << avg_build << " & " << avg_tree_query << " & " << avg_less_naive << " & " << avg_fast_mode << " & " << avg_naive_mode << "\\\\" << std::endl;
+		std::cout << avg_gen << " & " << avg_build << " & " << avg_tree_query << " & " << avg_less_naive << " & " << avg_build << " & " << avg_fast_mode << " & " << avg_naive_mode << "\\\\" << std::endl;
 
 		std::ofstream gen_raw("..\\results\\gen.txt", std::ios_base::app);
 		std::ofstream build_raw("..\\results\\build.txt", std::ios_base::app);
