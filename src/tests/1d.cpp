@@ -4,14 +4,55 @@
 #include <random>
 #include <chrono> 
 #include <numeric>
+#include <string>
 #include <fstream> 
 #include "../datastructures/tree.cpp";
 #include "../datastructures/1d_mode.cpp";
+#include "./read_data.cpp";
 
 typedef struct { unsigned int begin; unsigned int end; } IndexRange;
 typedef struct { double pos; Color color; } Point;
 
 namespace Test {
+	static std::vector<std::string> split(std::string s, std::string seperator = ";") {
+		std::vector<std::string> res;
+
+		int pos = 0;
+		while (pos != -1 && s.size() > 0) {
+			pos = s.find(seperator);
+			res.push_back(s.substr(0, pos));
+			s.erase(0, pos + seperator.size());
+		}
+
+		return res;
+	}
+
+	static std::vector<Point> read_file(std::string filename, int dim) {
+		std::string text;
+		std::vector<Point> points = {};
+
+		std::ifstream file(filename);
+
+		// Use a while loop together with the getline() function to read the file line by line
+		while (std::getline(file, text)) {
+			// determine dimensionality of line
+			std::vector<std::string> args = split(text);
+			int dims = args.size() - 1;
+
+			points.push_back({ std::stod(args[dim]), (Color)std::stoi(args[args.size() - 1]) });
+		}
+
+		file.close();
+
+		auto compare = [](const Point &a, const Point &b)
+		{
+			return a.pos < b.pos;
+		};
+		std::sort(points.begin(), points.end(), compare);
+
+		return points;
+	}
+
 	// Reference implementation
 	// O(n lg n) (sorting entire input array)
 	static unsigned int sort_all(std::vector<double>* input, int k, double q) {
@@ -126,17 +167,12 @@ namespace Test {
 	}
 
 	static void run_1d_single(
-		int num_runs, 
-		int num_items, 
-		int num_queries, 
-		double min, 
-		double max, 
-		unsigned int Delta, 
-		int k, 
-		double gamma, 
-		double alpha
+		int num_queries,
+		int k,
+		std::vector<std::vector<Point>>* pre_gen_points
 	) {
-		//std::cout << "k = " << k << std::endl;
+		int num_runs = pre_gen_points->size();
+
 		std::vector<long> generation_times = {},
 			tree_build_times = {},
 			tree_query_times = {},
@@ -144,21 +180,23 @@ namespace Test {
 			naive_mode_times = {},
 			fast_mode_times = {};
 
-
 		for (int run_num = 1; run_num <= num_runs; run_num++) {
 			std::vector<unsigned int> indexes_tree = std::vector<unsigned int>(num_queries);
 			std::vector<unsigned int> indexes_naive = std::vector<unsigned int>(num_queries);
 
 			auto run_start = std::chrono::high_resolution_clock::now();
-			
+
 			// instance generation
-			auto points = generate_sequence(min, max, num_items, Delta, gamma, alpha);
-			std::vector<double> positions = std::vector<double>(num_items);
-			std::vector<Color> A = std::vector<Color>(num_items);
-			for (int i = 0; i < num_items; i++) {
+			auto points = (*pre_gen_points)[run_num - 1];
+			std::vector<double> positions = std::vector<double>(points.size());
+			std::vector<Color> A = std::vector<Color>(points.size());
+			for (int i = 0; i < points.size(); i++) {
 				positions[i] = points[i].pos;
 				A[i] = points[i].color;
 			}
+
+			double min = *std::min_element(positions.begin(), positions.end());
+			double max = *std::max_element(positions.begin(), positions.end());
 
 			auto query_points = generate_positions(min, max, num_queries);
 			auto mode_preprocessed = DS::preprocess(A);
@@ -209,18 +247,9 @@ namespace Test {
 		auto avg_gen = std::accumulate(generation_times.begin(), generation_times.end(), 0) / num_runs;
 		auto avg_build = std::accumulate(tree_build_times.begin(), tree_build_times.end(), 0) / num_runs;
 		auto avg_tree_query = std::accumulate(tree_query_times.begin(), tree_query_times.end(), 0) / num_runs;
-		//auto avg_naive_query = std::accumulate(naive_query_times.begin(), naive_query_times.end(), 0) / num_runs;
 		auto avg_less_naive = std::accumulate(less_naive_query_times.begin(), less_naive_query_times.end(), 0) / num_runs;
 		auto avg_fast_mode = std::accumulate(fast_mode_times.begin(), fast_mode_times.end(), 0) / num_runs;
 		auto avg_naive_mode = std::accumulate(naive_mode_times.begin(), naive_mode_times.end(), 0) / num_runs;
-
-		//std::cout << "Avg gen time: " << avg_gen << std::endl;
-		//std::cout << "Avg build time: " << avg_build << std::endl;
-		//std::cout << "Avg tree range query time: " << avg_tree_query << std::endl;
-		////std::cout << "Avg naive query time: " << avg_naive_query << std::endl;
-		//std::cout << "Avg naive range query time: " << avg_less_naive << std::endl;
-		//std::cout << "Avg fast mode query time: " << avg_fast_mode << std::endl;
-		//std::cout << "Avg naive mode query time: " << avg_naive_mode << std::endl;
 
 		std::cout << avg_gen << " & " << avg_build << " & " << avg_tree_query << " & " << avg_less_naive << " & " << avg_fast_mode << " & " << avg_naive_mode << "\\\\" << std::endl;
 
@@ -255,6 +284,25 @@ namespace Test {
 		naive_mode_raw.close();
 	}
 
+	static void run_1d_single(
+		int num_runs, 
+		int num_queries, 
+		int k, 
+		int num_items, 
+		double min, 
+		double max, 
+		unsigned int Delta, 
+		double gamma, 
+		double alpha
+	) {
+		std::vector<std::vector<Point>> points = {};
+		for (int i = 0; i < num_runs; i++) {
+			points.push_back(generate_sequence(min, max, num_items, Delta, gamma, alpha));
+		}
+
+		run_1d_single(num_queries, k, &points);
+	}
+
 	static void run_1d_generated() {
 		int num_runs = 10;
 		int Q = 10000;
@@ -282,16 +330,45 @@ namespace Test {
 			for (int k = 0; k < (scenarios[i][0] > 1000 ? 3 : 2); k++) {
 				run_1d_single(
 					num_runs, 
-					(int)scenarios[i][0], 
 					Q, 
+					ks[k], 
+					(int)scenarios[i][0], 
 					-50000, 
 					50000, 
 					(unsigned int)scenarios[i][1], 
-					ks[k], 
 					scenarios[i][2], 
 					scenarios[i][3]
 				);
 			}
+		}
+	}
+
+	static void run_1d_real() {
+		int Q = 10000;
+
+		std::vector<std::string> files = {
+			"temperature-02-06-2024.points",
+			"temperature-03-06-2024.points",
+			"temperature-04-06-2024.points",
+			"temperature-05-06-2024.points",
+			"temperature-06-06-2024.points",
+			"temperature-07-06-2024.points",
+			"temperature-08-06-2024.points",
+			"temperature-09-06-2024.points",
+			"temperature-10-06-2024.points",
+			"temperature-11-06-2024.points",
+		};
+
+		double ks[] = { 10, 100, 1000 };
+		std::cout << "gen & build & tree range & naive range & fast mode & naive mode \\\\" << std::endl;
+
+		for (int k = 0; k < 3; k++) {
+			std::vector<std::vector<Point>> points = {};
+			for (int i = 0; i < files.size(); i++) {
+				points.push_back(read_file("..\\data\\" + files[i], 0));
+			}
+
+			run_1d_single(Q, ks[k], &points);
 		}
 	}
 }

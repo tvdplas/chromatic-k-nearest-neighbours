@@ -1,7 +1,7 @@
 const fs = require("fs")
 const path = require("path")
 
-const DATE = "02-06-2024"
+const DATE = "04-06-2024"
 const DATE_FORMATTED = DATE.replaceAll("-", "%2F")  
 
 const bins = [

@@ -2,7 +2,7 @@ const {Image} = require('imagescript');
 const fs = require('fs')
 const path = require('path')
 
-const NAME = "temperature-02-06-2024"
+const NAME = "temperature-05-06-2024"
 const WIDTH = 3600
 const HEIGHT = 1800
 const MIN_X_VAL = -180
