@@ -5,6 +5,7 @@
 #include <chrono> 
 #include <numeric>
 #include <string>
+#include <sstream>
 #include <fstream> 
 #include "../datastructures/tree.cpp";
 #include "../datastructures/1d_mode.cpp";
@@ -14,18 +15,18 @@ typedef struct { unsigned int begin; unsigned int end; } IndexRange;
 typedef struct { double pos; Color color; } Point;
 
 namespace Test {
-	static std::vector<std::string> split(std::string s, std::string seperator = ";") {
-		std::vector<std::string> res;
+	static std::vector<std::string> split(std::string str) {
+		std::vector<std::string> substrings = {};
+		std::string token;
+		std::istringstream tokenStream(str);
 
-		int pos = 0;
-		while (pos != -1 && s.size() > 0) {
-			pos = s.find(seperator);
-			res.push_back(s.substr(0, pos));
-			s.erase(0, pos + seperator.size());
+		while (std::getline(tokenStream, token, ';')) {
+			substrings.push_back(token);
 		}
 
-		return res;
+		return substrings;
 	}
+
 
 	static std::vector<Point> read_file(std::string filename, int dim) {
 		std::string text;
@@ -365,7 +366,7 @@ namespace Test {
 		for (int k = 0; k < 3; k++) {
 			std::vector<std::vector<Point>> points = {};
 			for (int i = 0; i < files.size(); i++) {
-				points.push_back(read_file("..\\data\\" + files[i], 0));
+				points.push_back(read_file("..\\data\\" + files[i], 1));
 			}
 
 			run_1d_single(Q, ks[k], &points);
