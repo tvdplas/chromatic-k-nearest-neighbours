@@ -70,12 +70,13 @@ namespace DS {
 	// Generates new tree. Input must already be a sorted list
 	template <class T> Tree<T>* generate_tree(std::vector<T> items) { return generate_tree(items, 0, (int)items.size() - 1); }
 	template <class T> Tree<T>* generate_tree(std::vector<T> items, int begin, int end) {
-		Tree<T>* node = casted_malloc(Tree<T>*);
-		node = new Tree<T>;
 		if (begin > end) {
 			return nullptr; // leaf
 		}
-		else if (begin == end) {
+
+		Tree<T>* node = casted_malloc(Tree<T>*);
+		node = new Tree<T>;
+		if (begin == end) {
 			node->value = items[begin];
 			node->index = begin;
 		}
@@ -85,11 +86,10 @@ namespace DS {
 			node->index = middle;
 			node->left = generate_tree(items, begin, middle - 1);
 			node->right = generate_tree(items, middle + 1, end);
-			node->unsplit_count = 1 + 
+			node->unsplit_count = 1 +
 				(node->left == nullptr ? 0 : node->left->unsplit_count)
-			  + (node->right == nullptr ? 0 : node->right->unsplit_count);
+				+ (node->right == nullptr ? 0 : node->right->unsplit_count);
 		}
-
 		return node;
 	}
 
@@ -220,10 +220,11 @@ namespace DS {
 
 	// Get the k nearest neighbour in a single tree, measured from the smallest side of the tree
 	template <class T> Tree<T>* get_k_nearest_single(Tree<T>* tree, int k, Side split_side) {
-#ifdef DEBUG_PRINT
 		if (k > get_side_count(tree, split_side))
 			std::cout << "ERROR: attempting to get k=" << k << " neighbour in tree of size " << get_side_count(tree, split_side);
-#endif // DEBUG_PRINT
+
+		if (!tree)
+			std::cout << "huh hoe dan";
 
 
 		while (tree->left != nullptr || tree->right != nullptr) {
@@ -267,15 +268,6 @@ namespace DS {
 			int red_le_count = get_side_count(red, LessThan, flip(blue_side));
 			int l = blue_le_count + red_le_count + 1; // +1 is back >:)
 
-#ifdef DEBUG_PRINT
-			std::cout << "R/B status after correction: " << std::endl;
-			std::cout << "Red " << (blue_side == Left ? "(right): " : "(left): ") << "value: " << red->value << " count: " << get_side_count(red, flip(blue_side)) << std::endl;
-			std::cout << "Blue " << (blue_side == Right ? "(right): " : "(left): ") << "value: " << blue->value << " count: " << get_side_count(blue, blue_side) << std::endl;
-			std::cout << "red_leq: " << red_le_count << std::endl;
-			std::cout << "blue_leq: " << blue_le_count << std::endl;
-			std::cout << "l: " << l << std::endl;
-			std::cout << "k: " << k << std::endl;
-#endif // DEBUG_PRINT
 			if (l == k) {
 				// then our target must be in b or B< or R<
 				red = get_side(red, LessThan, flip(blue_side));
@@ -297,9 +289,10 @@ namespace DS {
 		}
 
 		// Now get kth in remaining tree
-		auto rt = red == nullptr ? blue : red;
-		auto rt_side = red == nullptr ? blue_side : flip(blue_side);
-		return QueryRes<T>{ get_k_nearest_single(rt, k, rt_side), restore_nodes };
+		auto rt = (!red) ? blue : red;
+		auto rt_side = (!red) ? blue_side : flip(blue_side);
+		auto res = get_k_nearest_single(rt, k, rt_side);
+		return QueryRes<T>{ res, restore_nodes };
 	}
 
 	template <class T> void restore_tree(std::vector<RestoreNode<T>> split_restores, std::vector<RestoreNode<T>> search_restores) {

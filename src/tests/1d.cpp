@@ -7,6 +7,7 @@
 #include <string>
 #include <sstream>
 #include <fstream> 
+#include <iomanip>
 #include "../datastructures/tree.cpp";
 #include "../datastructures/1d_mode.cpp";
 #include "./read_data.cpp";
@@ -95,7 +96,7 @@ namespace Test {
 	// Get range from the returned
 	static IndexRange get_range(std::vector<double>* input, double q, int k, unsigned int index) {
 		if ((*input)[index] > q)
-			return { index - k + 1, index + 1 };
+			return { index + 1 - k, index + 1 };
 		else
 			return { index, index + k };
 	}
@@ -202,12 +203,12 @@ namespace Test {
 			auto query_points = generate_positions(min, max, num_queries);
 			auto mode_preprocessed = DS::preprocess(A);
 			auto gen_end = std::chrono::high_resolution_clock::now();
-			generation_times.push_back(std::chrono::duration_cast<std::chrono::milliseconds>(gen_end - run_start).count());
+			generation_times.push_back(std::chrono::duration_cast<std::chrono::microseconds>(gen_end - run_start).count());
 
 			// tree build
 			auto tree = DS::generate_tree<double>(positions);
 			auto tree_build_end = std::chrono::high_resolution_clock::now();
-			tree_build_times.push_back(std::chrono::duration_cast<std::chrono::milliseconds>(tree_build_end - gen_end).count());
+			tree_build_times.push_back(std::chrono::duration_cast<std::chrono::microseconds>(tree_build_end - gen_end).count());
 
 			// tree query
 			auto leq = [](double a, double b) -> bool { return a <= b; };
@@ -216,14 +217,14 @@ namespace Test {
 				indexes_tree[i] = DS::query_k_nearest<double>(tree, k, query_points[i], leq, distance);
 			}
 			auto tree_query_end = std::chrono::high_resolution_clock::now();
-			tree_query_times.push_back(std::chrono::duration_cast<std::chrono::milliseconds>(tree_query_end - tree_build_end).count());
+			tree_query_times.push_back(std::chrono::duration_cast<std::chrono::microseconds>(tree_query_end - tree_build_end).count());
 
 			// naive queries
 			for (int i = 0; i < query_points.size(); i++) {
 				indexes_naive[i] = sort_k(&positions, k, query_points[i]);
 			}
 			auto less_naive_end = std::chrono::high_resolution_clock::now();
-			less_naive_query_times.push_back(std::chrono::duration_cast<std::chrono::milliseconds>(less_naive_end - tree_query_end).count());
+			less_naive_query_times.push_back(std::chrono::duration_cast<std::chrono::microseconds>(less_naive_end - tree_query_end).count());
 
 			// Now, do mode queries
 			for (int i = 0; i < indexes_tree.size(); i++) {
@@ -231,7 +232,7 @@ namespace Test {
 				DS::get_mode(mode_preprocessed, range.begin, range.end);
 			}
 			auto fast_mode_end = std::chrono::high_resolution_clock::now();
-			fast_mode_times.push_back(std::chrono::duration_cast<std::chrono::milliseconds>(fast_mode_end - less_naive_end).count());
+			fast_mode_times.push_back(std::chrono::duration_cast<std::chrono::microseconds>(fast_mode_end - less_naive_end).count());
 
 
 
@@ -241,17 +242,18 @@ namespace Test {
 				DS::get_mode_naive(&A, range.begin, range.end);
 			}
 			auto naive_mode_end = std::chrono::high_resolution_clock::now();
-			naive_mode_times.push_back(std::chrono::duration_cast<std::chrono::milliseconds>(naive_mode_end - fast_mode_end).count());
+			naive_mode_times.push_back(std::chrono::duration_cast<std::chrono::microseconds>(naive_mode_end - fast_mode_end).count());
 
 			DS::free_tree(tree);
 		}
-		auto avg_gen = std::accumulate(generation_times.begin(), generation_times.end(), 0) / num_runs;
-		auto avg_build = std::accumulate(tree_build_times.begin(), tree_build_times.end(), 0) / num_runs;
-		auto avg_tree_query = std::accumulate(tree_query_times.begin(), tree_query_times.end(), 0) / num_runs;
-		auto avg_less_naive = std::accumulate(less_naive_query_times.begin(), less_naive_query_times.end(), 0) / num_runs;
-		auto avg_fast_mode = std::accumulate(fast_mode_times.begin(), fast_mode_times.end(), 0) / num_runs;
-		auto avg_naive_mode = std::accumulate(naive_mode_times.begin(), naive_mode_times.end(), 0) / num_runs;
+		auto avg_gen = ((long)(std::accumulate(generation_times.begin(), generation_times.end(), 0) / num_runs / 100.0)) / 10.0;
+		auto avg_build = ((long)(std::accumulate(tree_build_times.begin(), tree_build_times.end(), 0) / num_runs / 100.0)) / 10.0;
+		auto avg_tree_query = ((long)(std::accumulate(tree_query_times.begin(), tree_query_times.end(), 0) / num_runs / 100.0)) / 10.0;
+		auto avg_less_naive = ((long)(std::accumulate(less_naive_query_times.begin(), less_naive_query_times.end(), 0) / num_runs / 100.0)) / 10.0;
+		auto avg_fast_mode = ((long)(std::accumulate(fast_mode_times.begin(), fast_mode_times.end(), 0) / num_runs / 100.0)) / 10.0;
+		auto avg_naive_mode = ((long)(std::accumulate(naive_mode_times.begin(), naive_mode_times.end(), 0) / num_runs / 100.0)) / 10.0;
 
+		//std::cout << std::setprecision(1);
 		std::cout << avg_gen << " & " << avg_build << " & " << avg_tree_query << " & " << avg_less_naive << " & " << avg_fast_mode << " & " << avg_naive_mode << "\\\\" << std::endl;
 
 		std::ofstream gen_raw("..\\results\\gen.txt", std::ios_base::app);
@@ -304,10 +306,12 @@ namespace Test {
 		run_1d_single(num_queries, k, &points);
 	}
 
-	static void run_1d_generated() {
+	static void run_1d_generated(int start = 0, int end = 12, std::string name = "A") {
 		int num_runs = 10;
-		int Q = 10000;
+		int Q = 1000;
 		// n, Delta, gamma, alpha
+
+		// A1-A12
 		double scenarios[12][4] = {
 			{ 1000, 20, 0, 0 },
 			{ 10000, 20, 0, 0 },
@@ -322,15 +326,25 @@ namespace Test {
 			{ 10000, 100, 150, 0.95 },
 			{ 100000, 100, 150, 0.95 },
 		};
+		/*double scenarios[2][4] = {
+			{ 10000, 100, 0, 0 },
+			{ 10000, 100, 150, 0.95 },
+		};*/
 
-		double ks[] = { 10, 100, 1000 };
+		// A1-A12
+		double ks[] = { 10, 25, 50, 75, 100, 250, 500, 750, 1000 };
+		// B1, B2
+		//double ks[] = { 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000 };
 
-		std::cout << "gen & build & tree range & naive range & fast mode & naive mode \\\\" << std::endl;
+		std::cout << "Scenario & gen & build & tree range & naive range & fast mode & naive mode \\\\" << std::endl;
 		
-		for (int i = 0; i < 12; i++) {
-			for (int k = 0; k < (scenarios[i][0] > 1000 ? 3 : 2); k++) {
+		for (int i = start; i < end; i++) {
+			for (int k = 0; k < (scenarios[i][0] > 1000 ? 9 : 8); k++) {
+		/*for (int i = 0; i < 2; i++) {
+			for (int k = 0; k < 9; k++) {*/
+				std::cout << name << i + 1 << ", k=" << ks[k] << " & ";
 				run_1d_single(
-					num_runs, 
+					scenarios[i][0] > 10000 ? num_runs : 5,
 					Q, 
 					ks[k], 
 					(int)scenarios[i][0], 
@@ -341,6 +355,7 @@ namespace Test {
 					scenarios[i][3]
 				);
 			}
+			std::cout << "\\hline" << std::endl;
 		}
 	}
 
@@ -360,10 +375,10 @@ namespace Test {
 			"temperature-11-06-2024.points",
 		};
 
-		double ks[] = { 10, 100, 1000 };
+		double ks[] = { 10, 25, 50, 75, 100, 250, 500, 750, 1000 };
 		std::cout << "gen & build & tree range & naive range & fast mode & naive mode \\\\" << std::endl;
 
-		for (int k = 0; k < 3; k++) {
+		for (int k = 0; k < 9; k++) {
 			std::vector<std::vector<Point>> points = {};
 			for (int i = 0; i < files.size(); i++) {
 				points.push_back(read_file("..\\data\\" + files[i], 1));
