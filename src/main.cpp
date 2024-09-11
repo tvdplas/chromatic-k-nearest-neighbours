@@ -1,19 +1,29 @@
 #include <iostream>
 #include <random>
 #include <vector>
-#include "tests/1d.cpp"
-#include "datastructures/tree.cpp";
+#include "2D/rangetree.h"
+#include <CGAL/Cartesian_d.h>
+#include <CGAL/Kernel_d/Point_d.h>
 
+typedef CGAL::Cartesian_d<double>::Point_d Point_d;
 
-int main()
-{
-    int start = 0, end = 12;
-    std::cin >> start;
-    std::cin >> end;
-    Test::run_1d_generated(start, end);
-    //Test::run_1d_real();
-    //auto points = Test::generate_sequence(-50, 50, 100, 10, 5, 0.8);
-    //Test::run_1d(10, 10000, 1000, -50000, 50000, 100, 1000);
+namespace RT = RangeTree;
+int main() {
+    std::vector<Point_d> locations = { Point_d({ 1.0, 1.0 }), Point_d({ 2.0, 2.0}), };
+    std::vector<int> colors = { 0, 1 };
+    int count = locations.size();
+
+    std::vector<RT::RTPoint<int>> points = { };
+    for (int i = 0; i < count; i++) {
+        points.push_back(RT::RTPoint<int>(locations[i], colors[i]));
+    }
+
+    Point_d lower({ 0.0, 0.0 }), upper({ 3.0, 3.0 });
+
+    RT::RangeTree<int> rtree(points);
+    auto res = rtree.countInRange(lower, upper);
+    std::cout << res;
+
 #pragma region cleanup
     std::string str;
     std::cin >> str;

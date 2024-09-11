@@ -4,11 +4,13 @@ project( chromatic_k_nearest_neighbours )
 find_package(CGAL REQUIRED)
 
 set(EXECUTABLE_OUTPUT_PATH "bin")
+set(CMAKE_CXX_STANDARD 11)
 
 add_executable(chromatic_k_nearest_neighbours
     src/tests/1d.cpp
     src/datastructures/tree.cpp
     src/datastructures/1d_mode.cpp
+    src/2D/rangetree.h
     src/main.cpp
 )
 

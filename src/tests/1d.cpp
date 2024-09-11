@@ -326,25 +326,28 @@ namespace Test {
 			{ 10000, 100, 150, 0.95 },
 			{ 100000, 100, 150, 0.95 },
 		};
+		//B1-B2
 		/*double scenarios[2][4] = {
 			{ 10000, 100, 0, 0 },
 			{ 10000, 100, 150, 0.95 },
-		};*/
+		}*/;
 
 		// A1-A12
 		double ks[] = { 10, 25, 50, 75, 100, 250, 500, 750, 1000 };
+		//double ks[] = { 1500, 2000 };
 		// B1, B2
 		//double ks[] = { 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000 };
 
 		std::cout << "Scenario & gen & build & tree range & naive range & fast mode & naive mode \\\\" << std::endl;
 		
 		for (int i = start; i < end; i++) {
+			if (scenarios[i][0] != 10000) continue;
 			for (int k = 0; k < (scenarios[i][0] > 1000 ? 9 : 8); k++) {
 		/*for (int i = 0; i < 2; i++) {
 			for (int k = 0; k < 9; k++) {*/
 				std::cout << name << i + 1 << ", k=" << ks[k] << " & ";
 				run_1d_single(
-					scenarios[i][0] > 10000 ? num_runs : 5,
+					num_runs,
 					Q, 
 					ks[k], 
 					(int)scenarios[i][0], 
@@ -360,7 +363,8 @@ namespace Test {
 	}
 
 	static void run_1d_real() {
-		int Q = 10000;
+		int Q = 1000;
+		int dim = 1;
 
 		std::vector<std::string> files = {
 			"temperature-02-06-2024.points",
@@ -375,13 +379,14 @@ namespace Test {
 			"temperature-11-06-2024.points",
 		};
 
-		double ks[] = { 10, 25, 50, 75, 100, 250, 500, 750, 1000 };
-		std::cout << "gen & build & tree range & naive range & fast mode & naive mode \\\\" << std::endl;
+		double ks[] = { 1500, 2000 };
+		std::cout << "Scenario & gen & build & tree range & naive range & fast mode & naive mode \\\\" << std::endl;
 
 		for (int k = 0; k < 9; k++) {
+			std::cout << "C" << dim + 1 << ", k=" << ks[k] << " & ";
 			std::vector<std::vector<Point>> points = {};
 			for (int i = 0; i < files.size(); i++) {
-				points.push_back(read_file("..\\data\\" + files[i], 1));
+				points.push_back(read_file("..\\data\\" + files[i], 0));
 			}
 
 			run_1d_single(Q, ks[k], &points);

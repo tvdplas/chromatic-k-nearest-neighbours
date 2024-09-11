@@ -13,14 +13,19 @@
     <ClCompile Include="C:\Users\thoma\Desktop\chromatic-k-nearest-neighbours\src\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\tests\read_data.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="C:\Users\thoma\Desktop\chromatic-k-nearest-neighbours\src\2D\rangetree.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="C:\Users\thoma\Desktop\chromatic-k-nearest-neighbours\CMakeLists.txt" />
   </ItemGroup>
   <ItemGroup>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{98DCD142-8105-3246-BCA2-415A92A4AFD4}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source Files">
       <UniqueIdentifier>{A8A5EEFB-3F46-3898-94FF-5F4BA3CF594B}</UniqueIdentifier>
     </Filter>
