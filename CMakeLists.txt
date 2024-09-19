@@ -8,9 +8,11 @@ set(CMAKE_CXX_STANDARD 11)
 
 add_executable(chromatic_k_nearest_neighbours
     src/tests/1d.cpp
-    src/datastructures/tree.cpp
-    src/datastructures/1d_mode.cpp
+    src/tests/2d.cpp
+    src/1D/range_query.cpp
+    src/1D/mode_query.cpp
     src/2D/rangetree.h
+    src/2D/range_query.cpp
     src/main.cpp
 )
 

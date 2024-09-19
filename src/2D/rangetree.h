@@ -51,7 +51,7 @@
 typedef double NumTy;
 static_assert(std::is_arithmetic<NumTy>::value, "Type T must be numeric");
 
-typedef CGAL::Cartesian_d<double>::Point_d Point_d;
+typedef CGAL::Cartesian_d<NumTy>::Point_d Point_d;
 
 namespace RangeTree {
 
@@ -1115,7 +1115,7 @@ namespace RangeTree {
             Point_d newUpper = upper;
             for (int i = 0; i < upper.size(); i++) {
                 if (!withUpper[i]) {
-                    newUpper[i] = std::nextafter(newUpper[i], std::numeric_limits<T>::lowest());
+                    newUpper[i] = std::nextafter(newUpper[i], std::numeric_limits<NumTy>::lowest());
                 }
             }
             return newUpper;

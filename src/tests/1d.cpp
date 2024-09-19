@@ -8,9 +8,8 @@
 #include <sstream>
 #include <fstream> 
 #include <iomanip>
-#include "../datastructures/tree.cpp";
-#include "../datastructures/1d_mode.cpp";
-#include "./read_data.cpp";
+#include "../1D/range_query.cpp";
+#include "../1D/mode_query.cpp";
 
 typedef struct { unsigned int begin; unsigned int end; } IndexRange;
 typedef struct { double pos; Color color; } Point;

@@ -4,10 +4,16 @@
     <ClCompile Include="C:\Users\thoma\Desktop\chromatic-k-nearest-neighbours\src\tests\1d.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\thoma\Desktop\chromatic-k-nearest-neighbours\src\datastructures\tree.cpp">
+    <ClCompile Include="C:\Users\thoma\Desktop\chromatic-k-nearest-neighbours\src\tests\2d.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\thoma\Desktop\chromatic-k-nearest-neighbours\src\datastructures\1d_mode.cpp">
+    <ClCompile Include="C:\Users\thoma\Desktop\chromatic-k-nearest-neighbours\src\1D\range_query.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\thoma\Desktop\chromatic-k-nearest-neighbours\src\1D\mode_query.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\thoma\Desktop\chromatic-k-nearest-neighbours\src\2D\range_query.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="C:\Users\thoma\Desktop\chromatic-k-nearest-neighbours\src\main.cpp">
