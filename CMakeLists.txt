@@ -1,10 +1,9 @@
 cmake_minimum_required(VERSION 3.1)
 project( chromatic_k_nearest_neighbours )
 
-find_package(CGAL REQUIRED)
-
 set(EXECUTABLE_OUTPUT_PATH "bin")
 set(CMAKE_CXX_STANDARD 11)
+find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt5)
 
 add_executable(chromatic_k_nearest_neighbours
     src/tests/1d.cpp
@@ -21,4 +20,8 @@ target_include_directories(chromatic_k_nearest_neighbours
         ${PROJECT_SOURCE_DIR}/src/datastructures
         ${PROJECT_SOURCE_DIR}/src/tests)
 
-target_link_libraries(chromatic_k_nearest_neighbours CGAL::CGAL)
+if(CGAL_Qt5_FOUND)
+  target_link_libraries(chromatic_k_nearest_neighbours PUBLIC CGAL::CGAL_Basic_viewer)
+else()
+  message(STATUS "NOTICE: Several examples require Qt5 and will not be compiled.")
+endif()

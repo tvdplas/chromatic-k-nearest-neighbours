@@ -2,10 +2,20 @@
 #include <iostream>
 #include <random>
 #include <vector>
-#include "tests/2d.cpp"
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Polyhedron_3.h>
+#include <CGAL/IO/Polyhedron_iostream.h>
+#include <CGAL/draw_polyhedron.h>
+#include <fstream>
+
+typedef CGAL::Exact_predicates_inexact_constructions_kernel  Kernel;
+typedef CGAL::Polyhedron_3<Kernel>                       Polyhedron;
 
 int main() {
-    N2D::run_2d_generated();
+    Polyhedron P;
+    std::ifstream in1("../data/meshes/cross_quad.off");
+    in1 >> P;
+    CGAL::draw(P);
 
 #pragma region cleanup
     std::string str;
