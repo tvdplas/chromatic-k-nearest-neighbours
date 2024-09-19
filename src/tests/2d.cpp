@@ -89,7 +89,7 @@ namespace N2D {
 			{ 1e5, -5e4, 5e4, 1e3},
 		};
 
-		std::vector<int> ks = { 10, 25, 50, 75, 100, 250, 500, 750, 1000 }; // k = 1000 only for N > 1000;
+		std::vector<int> ks = { 10, 25, 50, 75, 100, 250, 500, 750, 1000, 1500, 2000 }; // k = 1000 only for N > 1000;
 		
 		for (int sIndex = 0; sIndex < scenarios.size(); sIndex++) {
 			auto scenario = scenarios[sIndex];
@@ -99,6 +99,7 @@ namespace N2D {
 				
 				run_2d_single(num_runs, (int)scenario[0], ks[kIndex], (int)scenario[1], (int)scenario[2], (int)scenario[3]);
 			}
+			std::cout << "\\hline" << std::endl;
 		}
 	}
 }
