@@ -2,26 +2,25 @@
 #include <iostream>
 #include <random>
 #include <vector>
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Polyhedron_3.h>
-#include <CGAL/IO/Polyhedron_iostream.h>
-#include <CGAL/draw_polyhedron.h>
 #include <fstream>
-
-typedef CGAL::Exact_predicates_inexact_constructions_kernel  Kernel;
-typedef CGAL::Polyhedron_3<Kernel>                       Polyhedron;
+#include "tests/2d.cpp"
+#include "2D/mode_query.cpp"
 
 int main() {
-    Polyhedron P;
-    std::ifstream in1("../data/meshes/cross_quad.off");
-    in1 >> P;
-    CGAL::draw(P);
+    vec<Point_2> points = N2D::generate_locations_mode(-100, 100, 20);
+    auto lines = get_dual_lines(&points);
+    auto segments = get_segments(&lines, Point_2(-1, -1), Point_2(1, 1), true);
+    auto arr = create_arrangement(&segments);
+    cout << "Number of faces: " << arr.number_of_faces() << endl;
+    arr = triangulate_arrangement(arr);
+    show_arrangement(&arr);
 
-#pragma region cleanup
-    std::string str;
-    std::cin >> str;
-    return 0;
-#pragma endregion
+    
+//#pragma region cleanup
+//    std::string str;
+//    std::cin >> str;
+//    return 0;
+//#pragma endregion
 }
 
 

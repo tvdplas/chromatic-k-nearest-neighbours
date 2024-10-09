@@ -16,6 +16,9 @@
     <ClCompile Include="C:\Users\thoma\Desktop\chromatic-k-nearest-neighbours\src\2D\range_query.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="C:\Users\thoma\Desktop\chromatic-k-nearest-neighbours\src\2D\mode_query.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="C:\Users\thoma\Desktop\chromatic-k-nearest-neighbours\src\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

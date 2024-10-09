@@ -254,7 +254,29 @@ namespace RangeTree {
         }
 
         bool less(const RTPoint<S>& p1, const RTPoint<S>& p2) const {
-            return p1.asLocation() < p2.asLocation();
+            if (p1.dim() != p2.dim()) {
+                throw std::logic_error("Points are incomparable (differing dims).");
+            }
+            if (compareStartIndex >= p1.dim()) {
+                throw std::logic_error("Cannot compare points, compare start index >= point dimension.");
+            }
+            for (int i = compareStartIndex; i < p1.dim(); i++) {
+                if (p1[i] < p2[i]) {
+                    return true;
+                }
+                else if (p1[i] > p2[i]) {
+                    return false;
+                }
+            }
+            for (int i = 0; i < compareStartIndex; i++) {
+                if (p1[i] < p2[i]) {
+                    return true;
+                }
+                else if (p1[i] > p2[i]) {
+                    return false;
+                }
+            }
+            return false;
         }
 
         bool lessOrEq(const RTPoint<S>& p1, const RTPoint<S>& p2) const {
@@ -693,16 +715,16 @@ namespace RangeTree {
         *
         * @param lower see the pointInRange(...) function.
         * @param upper
-        * @return the count.
+        * @return the count, amount of searches to get there.
         */
-        int countInRange(const Point_d& lower,
+        std::pair<int, int> countInRange(const Point_d& lower,
             const Point_d& upper) const {
             if (isLeaf) {
                 if (pointInRange(*point, lower, upper)) {
-                    return totalPoints();
+                    return std::pair<int, int>(totalPoints(), 0);
                 }
                 else {
-                    return 0;
+                    return std::pair<int, int>(0, 0);
                 }
             }
             int compareInd = pointOrdering.getCompareStartIndex();
@@ -721,7 +743,7 @@ namespace RangeTree {
                 int leqInd = binarySearchFirstLeq(upper[upper.dimension() - 1], 0, n - 1);
 
                 if (geqInd > leqInd) {
-                    return 0;
+                    return std::pair<int, int>(0, 0);
                 }
                 std::vector<RangeTreeNode<S>* > nodes;
                 std::vector<std::pair<int, int> > inds;
@@ -745,7 +767,7 @@ namespace RangeTree {
                             nodes[i]->cumuCountPoints[inds[i].first];
                     }
                 }
-                return sum;
+                return std::pair<int, int>(sum, 2);
             }
             else {
                 std::vector<std::shared_ptr<RangeTreeNode<S> > > canonicalNodes;
@@ -765,6 +787,7 @@ namespace RangeTree {
                 }
 
                 int numPointsInRange = 0;
+                int numBinSearches = 0;
                 for (int i = 0; i < canonicalNodes.size(); i++) {
                     std::shared_ptr<RangeTreeNode<S> > node = canonicalNodes[i];
                     if (node->isLeaf) {
@@ -776,10 +799,12 @@ namespace RangeTree {
                         numPointsInRange += node->totalPoints();
                     }
                     else {
-                        numPointsInRange += node->treeOnNextDim->countInRange(lower, upper);
+                        auto res = node->treeOnNextDim->countInRange(lower, upper);
+                        numPointsInRange += res.first;
+                        numBinSearches += res.second;
                     }
                 }
-                return numPointsInRange;
+                return std::pair<int, int>(numPointsInRange, 1);
             }
         }
 
@@ -1101,24 +1126,26 @@ namespace RangeTree {
 
         Point_d getModifiedLower(const Point_d& lower,
             const std::vector<bool>& withLower) const {
-            Point_d newLower = lower;
-            for (int i = 0; i < lower.size(); i++) {
+            std::vector<NumTy> newLower(lower.dimension());
+            for (int i = 0; i < lower.dimension(); i++) {
+                newLower[i] = lower[i];
                 if (!withLower[i]) {
                     newLower[i] = std::nextafter(newLower[i], std::numeric_limits<NumTy>::max());
                 }
             }
-            return newLower;
+            return Point_d(newLower);
         }
 
         Point_d getModifiedUpper(const Point_d& upper,
             const std::vector<bool>& withUpper) const {
-            Point_d newUpper = upper;
-            for (int i = 0; i < upper.size(); i++) {
+            std::vector<NumTy> newUpper(upper.dimension());
+            for (int i = 0; i < upper.dimension(); i++) {
+                newUpper[i] = upper[i];
                 if (!withUpper[i]) {
                     newUpper[i] = std::nextafter(newUpper[i], std::numeric_limits<NumTy>::lowest());
                 }
             }
-            return newUpper;
+            return Point_d(newUpper);
         }
 
     public:
@@ -1159,11 +1186,11 @@ namespace RangeTree {
             const Point_d& upper,
             const std::vector<bool>& withLower,
             const std::vector<bool>& withUpper) const {
-            if (lower.size() != upper.size() || lower.size() != withLower.size() ||
-                lower.size() != withUpper.size()) {
+            if (lower.dimension() != upper.dimension() || lower.dimension() != withLower.size() ||
+                lower.dimension() != withUpper.size()) {
                 throw std::logic_error("All vectors inputted to countInRange must have the same length.");
             }
-            for (int i = 0; i < lower.size(); i++) {
+            for (int i = 0; i < lower.dimension(); i++) {
                 if (((!withUpper[i] || !withLower[i]) && lower[i] >= upper[i]) ||
                     lower[i] > upper[i]) {
                     return 0;
@@ -1184,9 +1211,9 @@ namespace RangeTree {
         * @param lower the lower bounds of the rectangle.
         * @param upper the upper bounds of the rectangle.
 
-        * @return the number of points in the rectangle.
+        * @return the number of points in the rectangle, number of binary searches to get there.
         */
-        int countInRange(const Point_d& lower,
+        std::pair<int, int> countInRange(const Point_d& lower,
             const Point_d& upper) const {
             if (lower.dimension() != upper.dimension()) {
                 throw std::logic_error("upper and lower in countInRange must have the same length.");

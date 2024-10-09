@@ -3,7 +3,7 @@ project( chromatic_k_nearest_neighbours )
 
 set(EXECUTABLE_OUTPUT_PATH "bin")
 set(CMAKE_CXX_STANDARD 11)
-find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt5)
+find_package(CGAL REQUIRED QUIET OPTIONAL_COMPONENTS Qt5)
 
 add_executable(chromatic_k_nearest_neighbours
     src/tests/1d.cpp
@@ -12,8 +12,11 @@ add_executable(chromatic_k_nearest_neighbours
     src/1D/mode_query.cpp
     src/2D/rangetree.h
     src/2D/range_query.cpp
+    src/2D/mode_query.cpp
     src/main.cpp
 )
+
+
 
 target_include_directories(chromatic_k_nearest_neighbours
     PRIVATE
@@ -23,5 +26,5 @@ target_include_directories(chromatic_k_nearest_neighbours
 if(CGAL_Qt5_FOUND)
   target_link_libraries(chromatic_k_nearest_neighbours PUBLIC CGAL::CGAL_Basic_viewer)
 else()
-  message(STATUS "NOTICE: Several examples require Qt5 and will not be compiled.")
+  message(STATUS "NOTICE: The Qt5 library was not found. The example 'draw_voronoi_diagram_2' will not be compiled.")
 endif()

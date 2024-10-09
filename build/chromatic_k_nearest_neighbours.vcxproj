@@ -391,10 +391,15 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClCompile Include="C:\Users\thoma\Desktop\chromatic-k-nearest-neighbours\src\1D\range_query.cpp">
       <ObjectFileName>$(IntDir)/src/1D/range_query.cpp.obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="C:\Users\thoma\Desktop\chromatic-k-nearest-neighbours\src\1D\mode_query.cpp" />
+    <ClCompile Include="C:\Users\thoma\Desktop\chromatic-k-nearest-neighbours\src\1D\mode_query.cpp">
+      <ObjectFileName>$(IntDir)/src/1D/mode_query.cpp.obj</ObjectFileName>
+    </ClCompile>
     <ClInclude Include="C:\Users\thoma\Desktop\chromatic-k-nearest-neighbours\src\2D\rangetree.h" />
     <ClCompile Include="C:\Users\thoma\Desktop\chromatic-k-nearest-neighbours\src\2D\range_query.cpp">
       <ObjectFileName>$(IntDir)/src/2D/range_query.cpp.obj</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="C:\Users\thoma\Desktop\chromatic-k-nearest-neighbours\src\2D\mode_query.cpp">
+      <ObjectFileName>$(IntDir)/src/2D/mode_query.cpp.obj</ObjectFileName>
     </ClCompile>
     <ClCompile Include="C:\Users\thoma\Desktop\chromatic-k-nearest-neighbours\src\main.cpp" />
   </ItemGroup>
