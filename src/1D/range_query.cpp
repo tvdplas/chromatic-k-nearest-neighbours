@@ -68,7 +68,6 @@ namespace DS {
 	};
 	
 	// Generates new tree. Input must already be a sorted list
-	template <class T> Tree<T>* generate_tree(std::vector<T> items) { return generate_tree(items, 0, (int)items.size() - 1); }
 	template <class T> Tree<T>* generate_tree(std::vector<T> items, int begin, int end) {
 		if (begin > end) {
 			return nullptr; // leaf
@@ -92,6 +91,7 @@ namespace DS {
 		}
 		return node;
 	}
+	template <class T> Tree<T>* generate_tree(std::vector<T> items) { return generate_tree(items, 0, (int)(items.size() - 1)); }
 
 	// Gets a search path for a given query point, along with the direction that was taken during the search
 	template <class T> std::vector<SearchedNode<T>> get_search_path(Tree<T>* tree, T query_point, std::function<bool(T, T)> leq) {

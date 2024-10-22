@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'ImageInterface.ui'
 **
-** Created by: Qt User Interface Compiler version 5.15.13
+** Created by: Qt User Interface Compiler version 6.7.3
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -51,45 +51,45 @@ public:
     void setupUi(QDialog *ImageInterface)
     {
         if (ImageInterface->objectName().isEmpty())
-            ImageInterface->setObjectName(QString::fromUtf8("ImageInterface"));
+            ImageInterface->setObjectName("ImageInterface");
         ImageInterface->resize(484, 447);
         vboxLayout = new QVBoxLayout(ImageInterface);
         vboxLayout->setSpacing(6);
-        vboxLayout->setObjectName(QString::fromUtf8("vboxLayout"));
+        vboxLayout->setObjectName("vboxLayout");
         vboxLayout->setContentsMargins(9, 9, 9, 9);
         gridLayout = new QGridLayout();
-        gridLayout->setObjectName(QString::fromUtf8("gridLayout"));
+        gridLayout->setObjectName("gridLayout");
         gridLayout->setContentsMargins(0, 0, 0, 0);
         imgHeight = new QSpinBox(ImageInterface);
-        imgHeight->setObjectName(QString::fromUtf8("imgHeight"));
+        imgHeight->setObjectName("imgHeight");
         imgHeight->setMinimum(1);
         imgHeight->setMaximum(32000);
 
         gridLayout->addWidget(imgHeight, 0, 4, 1, 1);
 
         imgWidth = new QSpinBox(ImageInterface);
-        imgWidth->setObjectName(QString::fromUtf8("imgWidth"));
+        imgWidth->setObjectName("imgWidth");
         imgWidth->setMinimum(1);
         imgWidth->setMaximum(32000);
 
         gridLayout->addWidget(imgWidth, 0, 1, 1, 1);
 
         label_2 = new QLabel(ImageInterface);
-        label_2->setObjectName(QString::fromUtf8("label_2"));
+        label_2->setObjectName("label_2");
 
         gridLayout->addWidget(label_2, 0, 0, 1, 1);
 
-        spacerItem = new QSpacerItem(20, 22, QSizePolicy::Expanding, QSizePolicy::Minimum);
+        spacerItem = new QSpacerItem(20, 22, QSizePolicy::Policy::Expanding, QSizePolicy::Policy::Minimum);
 
         gridLayout->addItem(spacerItem, 0, 2, 1, 1);
 
         label_3 = new QLabel(ImageInterface);
-        label_3->setObjectName(QString::fromUtf8("label_3"));
+        label_3->setObjectName("label_3");
 
         gridLayout->addWidget(label_3, 0, 3, 1, 1);
 
         ratioCheckBox = new QCheckBox(ImageInterface);
-        ratioCheckBox->setObjectName(QString::fromUtf8("ratioCheckBox"));
+        ratioCheckBox->setObjectName("ratioCheckBox");
         ratioCheckBox->setChecked(true);
 
         gridLayout->addWidget(ratioCheckBox, 1, 4, 1, 1);
@@ -99,15 +99,15 @@ public:
 
         hboxLayout = new QHBoxLayout();
         hboxLayout->setSpacing(6);
-        hboxLayout->setObjectName(QString::fromUtf8("hboxLayout"));
+        hboxLayout->setObjectName("hboxLayout");
         hboxLayout->setContentsMargins(0, 0, 0, 0);
         label = new QLabel(ImageInterface);
-        label->setObjectName(QString::fromUtf8("label"));
+        label->setObjectName("label");
 
         hboxLayout->addWidget(label);
 
         oversampling = new QDoubleSpinBox(ImageInterface);
-        oversampling->setObjectName(QString::fromUtf8("oversampling"));
+        oversampling->setObjectName("oversampling");
         oversampling->setDecimals(1);
         oversampling->setMinimum(0.100000000000000);
         oversampling->setMaximum(64.000000000000000);
@@ -116,7 +116,7 @@ public:
 
         hboxLayout->addWidget(oversampling);
 
-        spacerItem1 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+        spacerItem1 = new QSpacerItem(40, 20, QSizePolicy::Policy::Expanding, QSizePolicy::Policy::Minimum);
 
         hboxLayout->addItem(spacerItem1);
 
@@ -127,34 +127,34 @@ public:
         color_comboBox->addItem(QString());
         color_comboBox->addItem(QString());
         color_comboBox->addItem(QString());
-        color_comboBox->setObjectName(QString::fromUtf8("color_comboBox"));
+        color_comboBox->setObjectName("color_comboBox");
 
         vboxLayout->addWidget(color_comboBox);
 
         expandFrustum = new QCheckBox(ImageInterface);
-        expandFrustum->setObjectName(QString::fromUtf8("expandFrustum"));
+        expandFrustum->setObjectName("expandFrustum");
 
         vboxLayout->addWidget(expandFrustum);
 
-        spacerItem2 = new QSpacerItem(20, 16, QSizePolicy::Minimum, QSizePolicy::Expanding);
+        spacerItem2 = new QSpacerItem(20, 16, QSizePolicy::Policy::Minimum, QSizePolicy::Policy::Expanding);
 
         vboxLayout->addItem(spacerItem2);
 
         hboxLayout1 = new QHBoxLayout();
         hboxLayout1->setSpacing(6);
-        hboxLayout1->setObjectName(QString::fromUtf8("hboxLayout1"));
+        hboxLayout1->setObjectName("hboxLayout1");
         hboxLayout1->setContentsMargins(0, 0, 0, 0);
-        spacerItem3 = new QSpacerItem(131, 31, QSizePolicy::Expanding, QSizePolicy::Minimum);
+        spacerItem3 = new QSpacerItem(131, 31, QSizePolicy::Policy::Expanding, QSizePolicy::Policy::Minimum);
 
         hboxLayout1->addItem(spacerItem3);
 
         okButton = new QPushButton(ImageInterface);
-        okButton->setObjectName(QString::fromUtf8("okButton"));
+        okButton->setObjectName("okButton");
 
         hboxLayout1->addWidget(okButton);
 
         cancelButton = new QPushButton(ImageInterface);
-        cancelButton->setObjectName(QString::fromUtf8("cancelButton"));
+        cancelButton->setObjectName("cancelButton");
 
         hboxLayout1->addWidget(cancelButton);
 
@@ -163,8 +163,8 @@ public:
 
 
         retranslateUi(ImageInterface);
-        QObject::connect(okButton, SIGNAL(clicked()), ImageInterface, SLOT(accept()));
-        QObject::connect(cancelButton, SIGNAL(clicked()), ImageInterface, SLOT(reject()));
+        QObject::connect(okButton, &QPushButton::clicked, ImageInterface, qOverload<>(&QDialog::accept));
+        QObject::connect(cancelButton, &QPushButton::clicked, ImageInterface, qOverload<>(&QDialog::reject));
 
         QMetaObject::connectSlotsByName(ImageInterface);
     } // setupUi

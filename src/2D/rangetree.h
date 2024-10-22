@@ -836,8 +836,8 @@ namespace RangeTree {
             int dim = point->dim();
             if (compareInd + 2 == dim) {
                 int n = pointsLastDimSorted.size();
-                int geqInd = binarySearchFirstGeq(lower.back(), 0, n - 1);
-                int leqInd = binarySearchFirstLeq(upper.back(), 0, n - 1);
+                int geqInd = binarySearchFirstGeq(lower[lower.dimension() - 1], 0, n - 1);
+                int leqInd = binarySearchFirstLeq(upper[upper.dimension() - 1], 0, n - 1);
 
                 if (geqInd > leqInd) {
                     return pointsToReturn;
@@ -1244,11 +1244,11 @@ namespace RangeTree {
             const Point_d& upper,
             const std::vector<bool>& withLower,
             const std::vector<bool>& withUpper) const {
-            if (lower.size() != upper.size() || lower.size() != withLower.size() ||
-                lower.size() != withUpper.size()) {
+            if (lower.dimension() != upper.dimension() || lower.dimension() != withLower.size() ||
+                lower.dimension() != withUpper.size()) {
                 throw std::logic_error("All vectors inputted to pointsInRange must have the same length.");
             }
-            for (int i = 0; i < lower.size(); i++) {
+            for (int i = 0; i < lower.dimension(); i++) {
                 if (((!withUpper[i] || !withLower[i]) && lower[i] >= upper[i]) ||
                     lower[i] > upper[i]) {
                     return std::vector<RTPoint<S> >();

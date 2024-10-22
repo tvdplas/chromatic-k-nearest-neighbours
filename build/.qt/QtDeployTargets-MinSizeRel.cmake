@@ -1,0 +1,5 @@
+set(__QT_DEPLOY_TARGET_CGAL_Qt6_moc_and_resources_FILE C:/Users/thoma/Desktop/chromatic-k-nearest-neighbours/build/MinSizeRel/CGAL_Qt6_moc_and_resources.lib)
+set(__QT_DEPLOY_TARGET_CGAL_Qt6_moc_and_resources_TYPE STATIC_LIBRARY)
+set(__QT_DEPLOY_TARGET_chromatic_k_nearest_neighbours_FILE C:/Users/thoma/Desktop/chromatic-k-nearest-neighbours/build/bin/MinSizeRel/chromatic_k_nearest_neighbours.exe)
+set(__QT_DEPLOY_TARGET_chromatic_k_nearest_neighbours_TYPE EXECUTABLE)
+set(__QT_DEPLOY_TARGET_chromatic_k_nearest_neighbours_RUNTIME_DLLS C:/tools/vcpkg/installed/x64-windows/bin/Qt6Svg.dll;C:/tools/vcpkg/installed/x64-windows/bin/Qt6OpenGLWidgets.dll;C:/tools/vcpkg/installed/x64-windows/bin/Qt6Widgets.dll;C:/tools/vcpkg/installed/x64-windows/bin/Qt6OpenGL.dll;C:/tools/vcpkg/installed/x64-windows/bin/Qt6Gui.dll;C:/tools/vcpkg/installed/x64-windows/bin/Qt6Core.dll)
