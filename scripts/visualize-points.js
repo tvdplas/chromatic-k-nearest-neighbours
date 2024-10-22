@@ -2,16 +2,13 @@ const {Image} = require('imagescript');
 const fs = require('fs')
 const path = require('path')
 
-const NAME = "temperature-05-06-2024"
-const WIDTH = 3600
-const HEIGHT = 1800
-const MIN_X_VAL = -180
-const MAX_X_VAL = 180
-const MIN_Y_VAL = -90
-const MAX_Y_VAL = 90
+const RELATIVE_DATA_DIR = '../data/osm'
+const NAME = "bbg"
+const OUTPUT_WIDTH = 3600
+const OUTPUT_HEIGHT = 1800
 
 const run = async () => {
-    const pointsCsv = fs.readFileSync(path.resolve(`../data/${NAME}.points`)).toString()
+    const pointsCsv = fs.readFileSync(path.resolve(`${RELATIVE_DATA_DIR}/${NAME}.points`)).toString()
     const points = pointsCsv.split("\n").map(line => {
       const items = line.split(";")
       return { 
@@ -27,13 +24,18 @@ const run = async () => {
       return color << 8 + 0xFF;
     })
 
-    const image = new Image(WIDTH, HEIGHT);
-    image.drawBox(0, 0, WIDTH, HEIGHT, 0xFFFFFFFF);
+    const image = new Image(OUTPUT_WIDTH, OUTPUT_HEIGHT);
+    image.drawBox(0, 0, OUTPUT_WIDTH, OUTPUT_HEIGHT, 0xFFFFFFFF);
+
+    const MIN_X_VAL = Math.min(...points.map(({x}) => x))
+    const MAX_X_VAL = Math.max(...points.map(({x}) => x))
+    const MIN_Y_VAL = Math.min(...points.map(({y}) => y))
+    const MAX_Y_VAL = Math.max(...points.map(({y}) => y))
 
     points.forEach( point => 
       image.drawBox(
-        Math.round((point.x - MIN_X_VAL) / (MAX_X_VAL - MIN_X_VAL) * WIDTH),
-        HEIGHT - Math.round((point.y - MIN_Y_VAL) / (MAX_Y_VAL - MIN_Y_VAL) * HEIGHT),
+        Math.round((point.x - MIN_X_VAL) / (MAX_X_VAL - MIN_X_VAL) * OUTPUT_WIDTH),
+        OUTPUT_HEIGHT - Math.round((point.y - MIN_Y_VAL) / (MAX_Y_VAL - MIN_Y_VAL) * OUTPUT_HEIGHT),
         4, 4, colors[point.c]
       )
     )
