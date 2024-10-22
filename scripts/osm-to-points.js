@@ -3,7 +3,7 @@ const fs = require('fs')
 const path = require('path')
 
 const RELATIVE_DATA_DIR = '../data/osm'
-const FILENAME = 'bbg'
+const FILENAME = 'bieleveld'
 const FILE_EXTENSION = '.png'
 
 const SAMPLING_RATE = 3 // sample every xth pixel horizontally / vertically

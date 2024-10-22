@@ -3,7 +3,7 @@ const fs = require('fs')
 const path = require('path')
 
 const RELATIVE_DATA_DIR = '../data/osm'
-const NAME = "bbg"
+const NAME = "bieleveld"
 const OUTPUT_WIDTH = 3600
 const OUTPUT_HEIGHT = 1800
 
