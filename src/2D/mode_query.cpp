@@ -38,6 +38,13 @@ typedef CGAL::Line_2<Kernel> Line_2;
 typedef CGAL::Segment_2<Kernel> Segment_2;
 using Point_location_result = CGAL::Arr_point_location_result<Arrangement>;
 using Query_result = std::pair<Point_2, Point_location_result::Type>;
+typedef struct {
+	vec<Segment_2> segments;
+	Arrangement arr;
+	ConflictList cl;
+	Point_2 lower;
+	Point_2 upper;
+} ModeData;
 
 
 template<class T>
@@ -138,7 +145,7 @@ static ConflictList get_conflict_list(Arrangement* arr, vec<Segment_2>* rest_seg
 	int F = arr->number_of_faces();
 	ConflictList conflict_list(F);
 
-	int face_index= 0;
+	int face_index = 0;
 	for (Face_handle face = arr->faces_begin(); face != arr->faces_end(); face++, face_index++) {
 		if (face->is_unbounded()) continue;
 
@@ -187,6 +194,8 @@ static void annotate_arrangement(Arrangement* arr, ConflictList* cl, vec<Segment
 	// for each face, annotate with the color that passes through it most
 	// along with the frequency of colors below it that also pass through the face
 	for (Face_handle face = arr->faces_begin(); face != arr->faces_end(); face++) {
+		if (face->is_unbounded()) continue;
+
 		int face_index = face->data().index;
 		vec<set<int>> lines_under_vertices = vec<set<int>>(3);
 		for (int i = 0; i < 3; i++) lines_under_vertices[i] = set<int>();
@@ -256,31 +265,38 @@ static void annotate_arrangement(Arrangement* arr, ConflictList* cl, vec<Segment
 			under_color_counts,
 		};
 		face->set_data(fd);
+		if (face_index == cl->size() - 1) {
+			break; // premature end as there are no more faces to be checked
+		}
 	}
 }
 
 // Returns the mode color for a certain query point
-static pair<int, int> query_arrangement(Arrangement* arr, ConflictList* cl, vec<Segment_2>* lines, vec<int>* colors, Point_2 lower, Point_2 q, double r) {
+static pair<int, int> query_arrangement(ModeData* md, vec<int>* colors, Point_2 q) {
 	// first, find the face that the query point is in.
 	vec<Point_2> query_point = { q };
 	vec<Query_result> face_result = {};
-	CGAL::locate(*arr, query_point.begin(), query_point.end(), back_inserter(face_result));
+	CGAL::locate(md->arr, query_point.begin(), query_point.end(), back_inserter(face_result));
 	if (const Face_const_handle* face_ptr = get_if<Face_const_handle>(&face_result[0].second)) {
 		Face_const_handle face = *face_ptr;
 		// then, for this face, find which of the lines in the conflict list are below the query point
 		
 		map<int, int> candidate_modes(face->data().under_frequencies);
 		int face_index = face->data().index;
-		for (auto line_index : (*cl)[face_index]) {
+		for (auto line_index : (md->cl)[face_index]) {
 			// add count if the line is below q
-			Segment_2 ray_down(q, Point_2(q.x(), lower.y()));
-			auto result = CGAL::intersection(ray_down, (*lines)[line_index]);
+			Segment_2 ray_down(q, Point_2(q.x(), md->lower.y()));
+			auto result = CGAL::intersection(ray_down, (md->segments)[line_index]);
 			if (result && get_if<Point_2>(&*result)) {
 				// Add 1 to the line
 				int color = (*colors)[line_index];
 				if (candidate_modes.count(color)) candidate_modes[color]++;
 				else candidate_modes[color] = 1;
 			}
+		}
+
+		if (candidate_modes.size() == 0) {
+			return pair<int, int>(-1, 0);
 		}
 
 		// Get the maximum candidate mode and returnpair<int, int> mode = *max_element(
@@ -297,7 +313,46 @@ static pair<int, int> query_arrangement(Arrangement* arr, ConflictList* cl, vec<
 	}
 }
 
-static void show_arrangement(Arrangement* arr) {
-	
-	CGAL::draw(*arr);
+static ModeData preprocess_mode(vec<Point_2>* points, vec<int>* colors, int r) {
+	// convert all points to duals
+	auto lines = get_dual_lines(points);
+	// bounding box for arrangement
+	Point_2 lower(-1, -1), upper(1, 1);
+
+	// Variables are set in loop
+	Arrangement arr;
+	ConflictList cl;
+	vec<Segment_2> segments;
+
+	// TODO: replace with while true as we always have a fixed chance of generating a valid cutting
+	int MAX_RETRY = 1, retry = 0;
+	while (retry < MAX_RETRY) {
+		// split dual lines into two parts: ones used for arrangement, and rest.
+		auto split_lines = random_split(&lines, r * log(r) / log(2));
+		auto arrangement_segments = get_segments(&split_lines.first, lower, upper, true);
+		segments = get_segments(&lines, lower, upper, false);
+
+		// create arrangement using only the randomly selected dual lines
+		arr = create_arrangement(&arrangement_segments);
+		triangulate_arrangement(&arr);
+		cl = get_conflict_list(&arr, &segments);
+
+		// if it is a valid conflict list, we have our final arrangement
+		if (is_valid_r_cutting(&cl, points->size(), r)) break;
+
+		retry++;
+	}
+
+	// Add query preprocessing data to arrangement
+	annotate_arrangement(&arr, &cl, &segments, lower, colors);
+
+	// return the precomputed datastructure
+	ModeData md = {
+		segments,
+		arr,
+		cl,
+		lower,
+		upper,
+	};
+	return md;
 }

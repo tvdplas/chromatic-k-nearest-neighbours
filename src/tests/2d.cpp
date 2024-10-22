@@ -6,7 +6,7 @@
 #include <numeric>
 #include <set>
 #include "../2D/range_query.cpp"
-#include "../2D/mode_query.cpp"
+#include "../2D/mode_query.cpp";
 
 namespace N2D {
 	static vec<Point_d> generate_locations(NumTy min, NumTy max, int count) {
@@ -31,6 +31,15 @@ namespace N2D {
 			mode_locations[i] = Point_2(locations[i].x(), locations[i].y());
 		}
 		return mode_locations;
+	}
+
+	static vec<Point_2> convert_point_d_to_point_2(vec<Point_d>* points) {
+		vec<Point_2> output(points->size());
+		for (int i = 0; i < points->size(); i++) {
+			auto p = (*points)[i];
+			output[i] = Point_2(p.x(), p.y());
+		}
+		return output;
 	}
 
 	static vec<Color> generate_colors(int count) {
@@ -144,9 +153,9 @@ namespace N2D {
 			range_tree_build_times = {},
 			range_tree_query_times = {},
 			range_naive_query_times = {},
-			mode_fast_mode_times = {},
+			mode_gen_times = {},
+			mode_fast_times = {},
 			mode_naive_times = {};
-		vec<double> num_bin_searches = {};
 
 		for (int run_num = 1; run_num <= num_runs; run_num++) {
 			auto run_start = chrono::high_resolution_clock::now();
@@ -156,7 +165,7 @@ namespace N2D {
 			auto colors = generate_colors(N);
 			auto query_points = generate_locations(min, max, Q);
 			auto gen_end = chrono::high_resolution_clock::now();
-			vec<int> num_bin_searches_run = {};
+			vec<NumTy> radii = {};
 
 			// generate tree
 			auto tree = generate_tree(&locations, &colors);
@@ -166,26 +175,47 @@ namespace N2D {
 			auto sorted_y_values = get_sorted_dim_values(&sorted_y_pairs);
 			auto gen_tree_end = chrono::high_resolution_clock::now();
 
-			// perform queries using range tree
+			// perform range queries using quick method
 			for (int i = 0; i < Q; i++) {
 				auto res = N2D::query_k_nearest(&tree, &sorted_x_values, &sorted_y_values, query_points[i], k); // distance not used for now
-				num_bin_searches_run.push_back(res.second);
 			}
 			auto range_tree_end = chrono::high_resolution_clock::now();
 
+			// perform range queries using naive method
 			for (int i = 0; i < Q; i++) {
-				naive_range(&sorted_x_pairs, &sorted_y_pairs, query_points[i], k);
+				radii.push_back(naive_range(&sorted_x_pairs, &sorted_y_pairs, query_points[i], k));
 			}
 			auto range_naive_end = chrono::high_resolution_clock::now();
+
+			vec<Point_2> mode_points = convert_point_d_to_point_2(&locations);
+			ModeData md = preprocess_mode(&mode_points, &colors, 5);
+			uniform_real_distribution<NumTy> rnd_pos(md.lower.x(), md.upper.x());
+			default_random_engine re(chrono::system_clock::now().time_since_epoch().count());
+			auto gen_mode_end = chrono::high_resolution_clock::now();
+
+			// perform mode queries using quick method
+			for (int i = 0; i < Q; i++) {
+				// TODO: replace with actual dual
+				Point_2 query(rnd_pos(re), rnd_pos(re));
+				query_arrangement(&md, &colors, query);
+			}
+			auto fast_mode_end = chrono::high_resolution_clock::now();
+
+			// perform mode queries using naive method
+			for (int i = 0; i < Q; i++) {
+				naive_mode(&sorted_x_pairs, &sorted_y_pairs, &colors, query_points[i], radii[i]);
+			}
+			auto naive_mode_end = chrono::high_resolution_clock::now();
+
 
 			// push times to array
 			generation_times.push_back(chrono::duration_cast<chrono::microseconds>(gen_end - run_start).count());
 			range_tree_build_times.push_back(chrono::duration_cast<chrono::microseconds>(gen_tree_end - gen_end).count());
 			range_tree_query_times.push_back(chrono::duration_cast<chrono::microseconds>(range_tree_end - gen_tree_end).count());
 			range_naive_query_times.push_back(chrono::duration_cast<chrono::microseconds>(range_naive_end - range_tree_end).count());
-
-			// push avg num of bin searches
-			num_bin_searches.push_back((double)(accumulate(num_bin_searches_run.begin(), num_bin_searches_run.end(), 0.0)) / (double)Q);
+			mode_gen_times.push_back(chrono::duration_cast<chrono::microseconds>(gen_mode_end - range_naive_end).count());
+			mode_fast_times.push_back(chrono::duration_cast<chrono::microseconds>(fast_mode_end - gen_mode_end).count());
+			mode_naive_times.push_back(chrono::duration_cast<chrono::microseconds>(naive_mode_end - fast_mode_end).count());
 		}
 
 		// finalize times
@@ -193,10 +223,21 @@ namespace N2D {
 		auto avg_range_tree_build = ((long)(accumulate(range_tree_build_times.begin(), range_tree_build_times.end(), 0) / num_runs / 100.0)) / 10.0;
 		auto avg_range_tree_query = ((long)(accumulate(range_tree_query_times.begin(), range_tree_query_times.end(), 0) / num_runs / 100.0)) / 10.0;
 		auto avg_range_naive_query = ((long)(accumulate(range_naive_query_times.begin(), range_naive_query_times.end(), 0) / num_runs / 100.0)) / 10.0;
-		auto avg_bin_searches = ((double)accumulate(num_bin_searches.begin(), num_bin_searches.end(), 0.0) / (double)num_runs);
+		auto avg_mode_gen = ((long)(accumulate(mode_gen_times.begin(), mode_gen_times.end(), 0) / num_runs / 100.0)) / 10.0;
+		auto avg_mode_fast = ((long)(accumulate(mode_fast_times.begin(), mode_fast_times.end(), 0) / num_runs / 100.0)) / 10.0;
+		auto avg_mode_naive = ((long)(accumulate(mode_naive_times.begin(), mode_naive_times.end(), 0) / num_runs / 100.0)) / 10.0;
 
 		// print to console
-		cout << avg_gen << " & " << avg_range_tree_build << " & " << avg_range_tree_query << " & " << avg_range_naive_query << "\\\\" << endl;
+		std::cout << fixed << setprecision(1);
+		std::cout 
+			<< avg_gen << " & " 
+			<< avg_range_tree_build << " & " 
+			<< avg_range_tree_query << " & " 
+			<< avg_range_naive_query << " & "
+			<< avg_mode_gen << " & "
+			<< avg_mode_fast << " & "
+			<< avg_mode_naive << " & "
+			<< "\\\\" << endl;
 	}
 
 	static void run_2d_generated() {
@@ -214,11 +255,12 @@ namespace N2D {
 			auto scenario = scenarios[sIndex];
 			for (int kIndex = 0; kIndex < ks.size(); kIndex++) {
 				if (ks[kIndex] >= scenario[0]) continue; // skip due to k >= n
-				cout << "2D-" << scenario[0] << "-" << ks[kIndex] << " & ";
+				std::cout << defaultfloat;
+				std::cout << "2D-" << (int)scenario[0] << "-" << ks[kIndex] << " & ";
 				
 				run_2d_single(num_runs, (int)scenario[0], ks[kIndex], (int)scenario[1], (int)scenario[2], (int)scenario[3]);
 			}
-			cout << "\\hline" << endl;
+			std::cout << "\\hline" << endl;
 		}
 	}
 }

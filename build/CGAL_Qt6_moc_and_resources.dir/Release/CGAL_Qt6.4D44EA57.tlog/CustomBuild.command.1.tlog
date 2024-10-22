@@ -1,0 +1,60 @@
+^C:\TOOLS\VCPKG\INSTALLED\X64-WINDOWS\INCLUDE\CGAL\QT\IMAGEINTERFACE.UI
+setlocal
+C:\tools\vcpkg\installed\x64-windows\tools\Qt6\bin\uic.exe -o C:/Users/thoma/Desktop/chromatic-k-nearest-neighbours/build/ui_ImageInterface.h C:/tools/vcpkg/installed/x64-windows/include/CGAL/Qt/ImageInterface.ui
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^C:\USERS\THOMA\DESKTOP\CHROMATIC-K-NEAREST-NEIGHBOURS\BUILD\RESOURCES\CGAL.QRC
+setlocal
+C:\tools\vcpkg\installed\x64-windows\tools\Qt6\bin\rcc.exe --name CGAL --output C:/Users/thoma/Desktop/chromatic-k-nearest-neighbours/build/qrc_CGAL.cpp C:/Users/thoma/Desktop/chromatic-k-nearest-neighbours/build/resources/CGAL.qrc
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^C:\USERS\THOMA\DESKTOP\CHROMATIC-K-NEAREST-NEIGHBOURS\BUILD\ICONS\INPUT.QRC
+setlocal
+C:\tools\vcpkg\installed\x64-windows\tools\Qt6\bin\rcc.exe --name Input --output C:/Users/thoma/Desktop/chromatic-k-nearest-neighbours/build/qrc_Input.cpp C:/Users/thoma/Desktop/chromatic-k-nearest-neighbours/build/icons/Input.qrc
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^C:\USERS\THOMA\DESKTOP\CHROMATIC-K-NEAREST-NEIGHBOURS\BUILD\ICONS\FILE.QRC
+setlocal
+C:\tools\vcpkg\installed\x64-windows\tools\Qt6\bin\rcc.exe --name File --output C:/Users/thoma/Desktop/chromatic-k-nearest-neighbours/build/qrc_File.cpp C:/Users/thoma/Desktop/chromatic-k-nearest-neighbours/build/icons/File.qrc
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^C:\USERS\THOMA\DESKTOP\CHROMATIC-K-NEAREST-NEIGHBOURS\BUILD\ICONS\TRIANGULATION_2.QRC
+setlocal
+C:\tools\vcpkg\installed\x64-windows\tools\Qt6\bin\rcc.exe --name Triangulation_2 --output C:/Users/thoma/Desktop/chromatic-k-nearest-neighbours/build/qrc_Triangulation_2.cpp C:/Users/thoma/Desktop/chromatic-k-nearest-neighbours/build/icons/Triangulation_2.qrc
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^C:\USERS\THOMA\DESKTOP\CHROMATIC-K-NEAREST-NEIGHBOURS\CMAKELISTS.TXT
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/thoma/Desktop/chromatic-k-nearest-neighbours -BC:/Users/thoma/Desktop/chromatic-k-nearest-neighbours/build --check-stamp-file C:/Users/thoma/Desktop/chromatic-k-nearest-neighbours/build/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

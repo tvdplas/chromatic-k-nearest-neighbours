@@ -8,7 +8,7 @@
 
 namespace N2D {
 	typedef unsigned int uint;
-	typedef uint Color;
+	typedef int Color;
 	typedef RangeTree::RangeTree<Color>* Tree;
 	typedef std::pair<NumTy, int> pair_ni;
 
