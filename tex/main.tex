@@ -1,0 +1,257 @@
+\documentclass{article}
+\usepackage{graphicx} % Required for inserting images
+\usepackage[
+    backend=biber,
+    style=alphabetic,
+    sorting=ynt
+]{biblatex}
+\addbibresource{lib.bib}
+\usepackage{subfig}
+\usepackage[export]{adjustbox}
+\usepackage{url}
+\usepackage{pgfplots}
+\usepackage{gensymb}
+\pgfplotsset{width=10cm,compat=1.9}
+
+\title{A Computational Analysis of a Novel Chromatic k-Nearest Neighbours Algorithm}
+\author{Thomas van der Plas}
+\date{May 2024}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}{Corollary}[theorem]
+\newtheorem{observation}{Observation}[theorem]
+
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+Hele coole probleemomschrijving; komt in de uiteindelijke versie van het verslag.
+
+\section{Methods}
+Here, we provide an overview of the computational complexities and outlines of the algorithms implemented in this paper. Only brief summaries of the vital parts of algorithms are provided; for more details, we refer the reader to the original work or to the source code in which the algorithms are implemented.
+\begin{table}[h]
+    \centering
+    \begin{tabular}{|l|ccc|}
+       \hline
+       Algorithm & Preprocessing time & Space & Query time \\
+       \hline
+       \hline
+       \multicolumn{4}{|c|}{1D} \\
+       \hline
+        Naive range & $O(n \log n)$ & $O(n)$ & $O(\log n + k)$ \\
+        Fast range & $O(n \log n)$ & $O(n)$ & $O(\log n)$ \\
+        Naive mode & - & - & $O(k)$ \\
+        Fast mode & $O(n^{3/2})$ & $O(n)$ & $O(\sqrt{n})$ \\
+        \hline
+       \multicolumn{4}{|c|}{2D - $L_\infty$} \\
+       \hline
+        Naive range & $O(n \log n)$ & $O(n)$ & $O(\log n + k)$ \\
+        Fast range & $O(n \log n)$ & $O(n \log n)$ & $O(\log^2 n)$ \\
+        Naive mode &  & $O(n)$ & $O(k)$ \\
+        Fast mode & $O(n^2)*$ & $O(nr)$ & $O(n/r \textit{polylog} n)$ \\
+        \hline
+       \hline
+    \end{tabular}
+    \caption{Computational complexities of the implemented algorithms. * indicates a deviation from the reference material.}
+    \label{tab:runtimes}
+\end{table}
+\subsection{1D}
+\subsubsection{Naive range finding}
+\textit{Precomputation}: Sort the pointset $P$, save this sorted list. \\\\
+\textit{Query}: Binary search to find the index of the point closest to the query point $q$ within the pointset $P$. Using this index $q_i$, then find the $k$th nearest point by stepping either left or right from $q_i$ in the index range $[q_i-k, q_i+k]$. 
+\subsubsection{Fast range finding}
+Based on the algorithm described in section 2.1 of the paper by Van der Horst et al. \cite{Chan2014}. \\\\
+\textit{Precomputation}: Sort the points, then save points in a node-valued binary search tree $T$ that contains size annotations. \\\\
+\textit{Query}: Based on the query point $q$, split $T$ into two trees $T_{P^<}$ and $T_{P^{\geq}}$ that contain the points $< q$ and $\geq q$ respectively. Note that both these trees have their points ordered on distance from $q$, however orderings are flipped between the two trees. \\
+Now, let $R$ be the tree whose root is farther from $q$, and let $B$ be the other tree. For $R$, let $r$ be its root, $R^<$ be the subtree containing elements closer to $q$ and $R^>$ be the other tree. Let $B$ have identical definitions for $b$, $B^<$ and $B^>$. Lastly, let $\ell = |B^<| + |R^<| + 1$. \\
+Based on this $\ell$, we now have three distinct cases: \\ 
+$\ell \geq k$: target element is not $r$ or in $R^>$; let $R \leftarrow R^<$\\
+$\ell < k$: target element is not $b$ or in $B^<$; let $B \leftarrow B^>$, and let $k \leftarrow k - (|B^<| + 1)$. \\
+After the modification of the trees has taken place, ensure that $r$ is still farther from $q$ than $b$; if not, flip the assignments of $R$ and $B$ to ensure this holds. Continue the process until one of the trees is a leaf, after which the $k$th element can be found trivially using the size annotations.
+\subsubsection{Naive mode finding}
+\textit{Precomputation}: None. \\\\
+\textit{Query}: Count each color in the provided range. Return the color with the highest frequency.
+\subsubsection{Fast mode finding}
+Based on the algorithm described in section 3 of the paper by Chan et al. \cite{Chan2014}. \\\\
+\textit{Precomputation}: Transform an array $\bar{A}$ in which each entry contains a color in the range $[0, \Delta)$ into a set of arrays $Q_a$ for $a \in [0, \Delta)$ such that $Q_a$ contains an ordered list of indexes into $\bar{A}$ where $\bar{A}[i] = a$. Additionally, create an array $\bar{A}'$ such that $\bar{A}'[i]$ is equal to the rank or index of $i$ in $Q_{\bar{A}[i]}$. \\
+Lastly, precompute the modes of spans of elements with length $t = \sqrt{n}$. Do this by storing two tables $S$ and $S'$ each of size $t \times t$ such that for any $0\leq b_i \leq b_j < t$, $S[b_i, b_j]$ contains the mode color of $\bar{A}[b_it : (b_j + 1)t)$, and $S'[b_i, b_j]$ contains the corresponding frequency. These precomputed spans can be determined using a naive counting implementation. \\\\
+\textit{Query}: Given a query range $[i, j)$, calculate $b_i=\lceil i/t \rceil$ and $b_j=\lfloor j/t \rfloor - 1$, representing the indices of the first and last precomputed spans fully within the query range. Let the range $[i : \min{b_it, j})$ (in range elements before the first precomputed span) be known as the prefix, and let the suffix be defined similarly as $[\max{(b_j + 1)t, i} : j)$. \\
+The mode of $\bar{A}[i, j)$ must either be an element in the precomputed range defined by $b_i$ and $b_j$, or an element in the prefix or suffix. Let $c$ be the mode and $f_c$ the corresponding frequency of the precomputed range. Now sequentially scan the elements the prefix and suffix to see whether these candidates $c$ and $f_c$ need to be updated in order to represent the mode of the whole range $[i, j)$. \\
+Starting from the first element in the prefix, if the color has not yet been considered, determine whether its frequency is at least $f_c$ by testing if $Q_{\bar{A}[x]}[\bar{A}'[x] + f_c - 1] < j$, where $x$ represents the index of the current element. If this is the case, determine the frequency $f_x$ of $\bar{A}[x]$ in $[i, j)$ by doing a linear scan of $Q_{\bar{A}[x]}$. Our candidate $c$ and $f_c$ can then be updated to be $c \leftarrow \bar{A}[x]$ and $f_c \leftarrow f_x$. 
+\subsection{2D - $L_\infty$}
+\subsubsection{Naive range finding}
+\textit{Precomputation} Sort $P$ into two arrays $A_x$ and $A_y$, where $A_x$ contains all points sorted on $x$ coordinates and $A_y$ contains all points sorted on $y$. \\\\
+\textit{Query} A generalized version of the stepping performed in the 1D case. Binary search in $x$ and $y$ in order to find the index of point $q$ in $A_x$ and $A_y$. From this index $q_i$, expand the bounding square around $q_i$ $k$ times by stepping towards the closest point in any cardinal direction, taking care not to double count points that might have been already seen when stepping in a different dimension. Return the radius of the bounding square once done.
+\subsubsection{Fast range finding}
+Based on the algorithm provided in Section 3.1 of the paper by Van der Horst et al. \cite{vanderhorst_et_al:LIPIcs.ESA.2022.67}.\\\\
+\textit{Precomputation} Create a rangetree $R$ on our pointset $P$. Additionally, sort $P$ into two arrays $A_x$ and $A_y$, where $A_x$ contains all points sorted on $x$ coordinates and $A_y$ contains all points sorted on $y$. \\\\
+\textit{Query} Let $x_0, ..., x_\ell$ be the x-coordinates that are at most $q_x$. Let $x_i$ be one of these coordinates; let $r = q_x - x_i$. We can now find the amount of points in the bounding square around $q$ defined by $x_i$ by doing a counting query using $R$ with the range $[q_x - r, q_x + r] \times [q_y - r, q_y + r]$. Using this count, binary search over $x_0, ..., x_\ell$ in order to find the bounding box with smallest $r$ that contains at least $k$ points. Repeat for the $x$ coordinates greater than $q_x$ as well as the smaller and larger $y$ coordinates, then return the smallest $r$.
+\subsubsection{Naive mode finding}
+\subsubsection{Fast mode finding}
+\textit{Precomputation} None. \\\\
+\textit{Query} 
+\section{Implementation details}
+\subsection{1D}
+Large parts of the work of Van der Horst et al. \cite{vanderhorst_et_al:LIPIcs.ESA.2022.67} were directly implemented, however two elements of note were adapted from the original source material in order to make computation easier and feasible. These were 1) the tree splitting that is required for the range finding operation, and 2) certain details of the fast mode finding algorithm described by Chan et al. \cite{Chan2014}.
+\begin{figure}%
+    \centering
+    \subfloat[\centering Initial tree with search path and split highlighted]{{\includegraphics[width=4cm]{figs/fig1.eps} }}%
+    \qquad
+    \subfloat[\centering Trees after split]{{\includegraphics[width=6cm]{figs/fig2.eps} }}%
+    \caption{Splitting process on part of balanced binary search tree for $q=68$. Subtrees unaffected by the split are represented as triangles.}%
+    \label{fig:example}%
+\end{figure}
+\subsubsection{Tree splitting}
+Van der Horst et al. requires that the initial ordered tree of points is split into two halves \cite{vanderhorst_et_al:LIPIcs.ESA.2022.67}: one containing all points $\geq q$, and one containing all points $< q$. This operation must be performed in $O(\log n)$ in order to maintain the given time complexity of the algorithm. A red-black tree is offered as one possible solution to do this in $O(\log n)$ time, however in practice this is complicated to implement and a computationally heavy operation.\\\\
+As a sidenote in the original paper, it is mentioned that with some care the same operation could also be performed using a balanced binary search tree. Implementation details for this split operation are however not described. As this still seemed like the better of the two options, we decided to go with this route, and have provided both a methodology for this split as well as a proof of its functionality and time complexity. An illustration of this splitting operation has been provided in Figure \ref{fig:example}. \\\\
+Let $T$ be a node-valued balanced binary search tree containing the points $P$ (where $n = |P|$), and let $q$ be the query point. Additionally, let $S = [(t_1, d_1), ..., (t_s, d_s)]$  be the search path that is traversed when searching for $q$ in $T$, where $t$ represents a node that is visited, and $d$ represents the direction in which the search is continued from $t$ (either left or right). As the search stops at $t_s$, let $d_s$ be the direction in which the search would have continued if $t_s$ had child nodes. Our goal is to create two binary search trees $L$ and $R$ such that $L$ contains all points $<q$, and $R$ contains all points $\geq q$. Furthermore, the height of both $L$ and $R$ must be at most $O(\log n)$. \\\\
+Using our search path $S$, we can split T. Let $l$ and $r$ be references to the largest node in $L$ and smallest node in $R$ respectively, and let them both be initialized as a leaf. Furthermore, during out process if $l$ or $r$ are not leaves, let $l.right$ and $r.left$ respectively be a leaf. Now, starting from $(t_1, d_1)$, first determine on which side of the tree the node $t_1$ will be appended. In general, if a $d_i$ is right, its corresponding $t_i$ must be part of the $L$ and vice versa. Without loss of generality, we will assume that $d_i$ is right in our discussion of how to append $t_i$ to its split tree. \\\\
+In order to add $t_i$ to $L$ whilst constructing a tree that is still valid binary search tree, we wish to maintain that \\
+1) $L$ only contains points $< q$ \\
+2) $L$ is sorted \\
+3) $l$ is the largest node currently present in $L$ \\
+4) $l.right$ is a leaf if $l$ is not a leaf \\
+In order achieve this, we consider two distinct cases: \\\\
+\textit{If $l$ is still a leaf}, we can maintain the desired properties by setting $t_i.right \leftarrow leaf$, $l \leftarrow t_i$; all four properties follow trivially from our operation, as $t_i.left$ by definition of a binary search tree could only contain values smaller than $t_i$ and no further reordering is done. \\
+\textit{Otherwise}, $l$ must by our previous definition already be a node with $l.right = leaf$, and by definition of $L$ we must have gone right in our search path after visiting $l$. We therefore know that $t_i$ must be larger than $l$. Additionally, as $t_i$ is part of the same search path as $l$, all elements in $t_i.left$ must be larger than $l$ while being smaller than $t_i$. If we therefore set $t.right \leftarrow leaf$, $l.right \leftarrow t$, followed by updating our reference to $l$ by setting $l \leftarrow t$ we know that once again all properties hold. This same process can be applied when $d$ is left by flipping all directions and references to $l$ and $L$ with $r$ and $R$ respectively. \\\\ 
+By doing this, we create two trees $L$ and $R$ which maintain their sorted property. We also know that no nodes are lost in this process, as the child that is set to be a leaf during our iterations also is the next node considered for appending to either tree, thereby including it. Furthermore, by definition of a balanced binary search tree, we know that the $i$th node in the search path in $T$ can have a height of at least $\log n - i$ and at most $\log n - i + 1$. Any additions of nodes are always done on an empty side of a node which came previously in the search path; the height of the non-empty side was therefore at least $\log n - i$. Using this we can conclude that over a maximum of $\log n$ additions, the overall height of the tree remains $O(\log n)$.\\
+Lastly, in this process only the children of the nodes in the search path are modified. Saving the original nodes in a seperate datastructure such as an array thus allows us to revert the process in $O(\log n)$ time by replacing the nodes in the search path. With this, the following lemma follows: \\
+\begin{lemma}
+    In $O(\log n)$ time, we can split a balanced binary search tree $T$ with $n$ nodes along a query point $q$ into two binary search trees $L$ and $R$, where $L$ contains all points $<q$ and $R$ contains the points $\geq$ q. Furthermore, both $L$ and $R$ have a height at most $O(\log n)$, and the splitting operation can be reverted in $O(\log n)$ time.
+\end{lemma}
+The implementation of the algorithm described by Van der Horst et al. also requires size annotations in each of the tree nodes. In this, we note the following observation: 
+\begin{observation}
+When splitting $T$ into $L$ and $R$, the size of a node only changes if that node is part of a search path.
+\end{observation}
+This follows from the fact that only nodes in the search path have their children modified during the splitting process; As the size of one child does not influence the size of its sibling, we can also conclude that this effect remains limited to the nodes among the search path. \\\\
+It is therefore possible to both set and revert the new sizes of the nodes in the split trees $L$ and $R$ in $O(\log n)$ time, allowing us to extend our previous Lemma:
+\begin{lemma}
+In $O(\log n)$ time, we can split a balanced binary search tree $T$ with $n$ nodes and size annotations along a query point $q$ into two binary search trees $L$ and $R$, where $L$ contains all points $<q$ and $R$ contains the points $\geq$ q. Furthermore, both $L$ and $R$ have a height at most $O(\log n)$, and the splitting operation can be reverted in $O(\log n)$ time.
+\end{lemma}
+Using this Lemma, we can conclude that it is indeed possible to replace the recommended red-black tree with an in place modified balanced binary search tree.
+
+\subsubsection{Fast mode finding}
+The algorithm described by Chan et al. \cite{Chan2014} was used by Van der Horst et al. in order to achieve a $O(\sqrt{n})$ mode query time with $O(n)$ storage. For this, the first algorithm described in section 3 of Chan et al. their publication suffices. During implementation of this, a few things of note were changed.\\\\
+Firstly, the array $A$ (and its derivatives) containing all colors were changed from being 1-indexed to being 0-indexed. While this does not have any effect on the functionality or runtime of the algorithm itself, it is noted that some details might differ between the reference description and the eventual implementation as a result. The summary of the algorithm that was provided in Section 2 has already been updated to reflect this change in indexing.\\\\
+Secondly, in section 3.2 of Chan et al.'s publication, two indices are calculated: these indices, called $b_i$ and $b_j$, represent the index of the first and last precomputed mode span respectively in the datastructure $S$. These are subsequently used in order to determine the mode color of the precomputed part of the query span. We note however that if a query is fully contained within a single precomputed span, these indexes either represent an empty range, or are invalid. \\
+In these cases, a fallback to the naive counting implementation was added instead. We note that this does not change the time complexity of the overall algorithm, as the size of a precomputed span is at most $\sqrt{n}$, therefore any fallback will still run in $O(\sqrt{n})$ time. We additionally note that this implementation also prevents $b_j$ from becoming a negative index in the event that the end of the query span is in the first precomputed span.
+\subsection{2D}
+\subsubsection{Fast range finding}
+range tree: \cite{Lucaweihs} (modified for cgal use). CGAL use: (v6.0) \cite{cgal:numbertypes} \cite{cgal:dDkernel} \cite{cgal:foundations}
+\subsubsection{Fast mode finding}
+\cite{cgal:numbertypes} \cite{cgal:arrangement} \cite{cgal:foundations}
+Alternate implementation
+\section{Computational results}
+\subsection{1D}
+For 1D, both artificial and real life data were used in order to perform computational experiments. The use of artificial data for this section was largely due to the fact that real life data often has more than a single dimension, thus making the acquisition of a comprehensive dataset difficult. Some real life data was included in order to validate the results that were achieved in the artificial counterpart, however this was based on an originally 2D dataset which was projected in order to match our requirements.
+\subsubsection*{Artificial data}
+Both the naive and tree-based range finding approaches are not dependent on the spatial distribution of sample points, as both methods work in rank space. Therefore, a simple uniform distribution in the arbitrarily chosen range [-50000, 50000] was used in order to generate the location of both the sample as well as the query points.  \\\\
+The color of the points does have influence on the runtime of the mode determination; The naive case is unaffected, however the faster implementation mentioned in Chan et al. requires less steps when a color appears multiple times in the prefix and suffix of the mode interval \cite{Chan2014}. Therefore, two different generation methods were employed:
+\begin{itemize}
+    \item Uniformly sampled colors in the integer range [0, $\Delta$). This represents a situation in which the position of the point has no correlation its color. 
+    \item $\gamma \leq n$ random points are selected and given a color uniformly sampled from [0, $\Delta$). Then, for all other points, their color is the same as the closest point with a chance $\alpha$, or randomly sampled from [0, $\Delta$) otherwise. This models a situation in which clusters of colors are present, however a certain degree of variability is still included. Note that the previous case can also be modeled this way by setting $\gamma=\alpha=0$.
+\end{itemize}
+Using these methods, the following test scenarios were generated. \\
+
+\hskip-2.3cm
+\begin{tabular}{|l||c|c|c|c|c|}
+ \hline
+ \multicolumn{5}{|c|}{Uniform color scenarios} \\
+ \hline
+ Scenario & $n$ & $\Delta$ & $\gamma$ & $\alpha$\\
+ \hline
+ 1D-1-20-0-0 & 1,000 & 20 & 0 & 0 \\
+ 1D-10-20-0-0 & 10,000 & 20 & 0 & 0 \\
+ 1D-100-20-0-0 & 100,000 & 20 & 0 & 0 \\
+ 1D-1-100-0-0 & 1,000 & 100 & 0 & 0 \\
+ 1D-10-100-0-0 & 10,000 & 100 & 0 & 0 \\
+ 1D-100-100-0-0 & 100,000 & 100 & 0 & 0 \\
+ \hline
+\end{tabular}
+\:\:
+\begin{tabular}{|l||c|c|c|c|c|}
+ \hline
+ \multicolumn{5}{|c|}{Clustered color scenarios} \\
+ \hline
+ Scenario & $n$ & $\Delta$ & $\gamma$ & $\alpha$\\
+ \hline
+ 1D-1-20-30-95 & 1,000 & 20 & 30 & 0.95 \\
+ 1D-10-20-30-95 & 10,000 & 20 & 30 & 0.95 \\
+ 1D-100-20-30-95 & 100,000 & 20 & 30 & 0.95 \\
+ 1D-1-100-150-95 & 1,000 & 100 & 150 & 0.95 \\
+ 1D-10-100-150-95 & 10,000 & 100 & 150 & 0.95 \\
+ 1D-100-100-150-95 & 100,000 & 100 & 150 & 0.95 \\
+ \hline
+\end{tabular}\\\\
+For each of these scenarios 10 unique data sets were generated. On these, testing was done using $k=\{10, 25, 50, 75, 100, 520, 500, 750, 1000, 1500, 2000\}$ (with $k\geq1000$ only on scenarios with $n > 1000$) and $Q=1000$ uniformly sampled query points. Results across the data sets of each scenario were averaged in order to produce computation times in milliseconds for each of the operations. \\\\
+In addition to these scenarios, a seperate test was run in which the effects of $k$ as a fraction of $n$ were determined. This was done by doing an performing additional computations on 1D-10-100-0-0 and 1D-10-100-150-95, in which $k$ was taken to be $0.1n, 0.2n, ..., 0.9n$. The number of runs was also reduced from $10$ to $5$, in order to reduce the computational load for this set of tests. We note that this might increase the variability of the results, however as we are only looking for a rough trend this was deemed acceptable.\\ Other than that, parameters for the scenarios were kept the same. 1D-10-100-0-0 and 1D-10-100-150-95 were arbitrarily selected for this process, however we note that they both have a reasonable instance size ($n=10,000$) and did not show any major deviation from the performance of the other scenarios. We therefore felt that these would be suitable in order to run this additional experiment. \\
+In order to maintain a clear separation within the results overview, these tests are labeled 1D-10-100-0-0-FRAC and 1D-10-100-150-95-FRAC for the runs concerning 1D-10-100-0-0 and 1D-10-100-150-95 respectively.
+
+\subsubsection*{Real life data}
+For the real life points, low dimensional data was gathered and projected to 1D. The primary source used is community gathered temperature data provided by the UK MetOffice's WOW project \cite{Met}, which is distributed under the open government licence. \\\\
+Geolocated temperature data for a total of 10 days was used, spanning from 02-06-2024 to 12-06-2024, where each day consisted of a approximately $6200$ data points. For each of these points, a color was determined by binning temperature values in $5\degree$C intervals. This resulted in a map such as the one displayed in Figure \ref{fig:temp-data}. Note that for the sake of visual clarity, this view of the collected data is cropped to only include Europe. Large amounts of sample points are also present in the continental United States and Oceania, and are sparse elsewhere. \\\\
+Data was then projected along the longitude (y-axis) or latitude (x-axis) in order to get a 1D dataset; We shall call these datasets RL-LON and RL-LAT respectively. Afterwards, testing was once again done using $k=\{10, 25, 50, 75, 100, 520, 500, 750, 1000, 1500, 2000\}$ and $Q=1000$ uniformly sampled query points, and results were averaged over the 10 days. 
+\begin{figure}
+    \centering
+    \includegraphics[width=10cm]{figs/temperature-02-06-2024-cropped.png}
+    \caption{Temperature data from 2024-06-02, cropped to Europe}
+    \label{fig:temp-data}
+\end{figure}
+\subsubsection*{Results}
+Computation time was measured for all scenarios mentioned above. Implementation was done in C++11, and run on a Intel i7-10750H using 40GB of RAM. For each scenario, the average time in milliseconds over the 10 runs is given for 6 distinct operations: 
+\begin{itemize}
+    \item Generation of the test data for the scenario. This includes the time spent selecting randomized points and colors, as well as the sorting of points. Note that these times are not present for the temperature data, as this is not generated at runtime. 
+    \item The building of the tree datastructure for range queries. We note that at time of writing, this could still be significantly improved by better memory allocation procedures. 
+    \item Executing $Q (= 1000)$ random range queries using the tree approach. 
+    \item Executing $Q$ random range queries using the naive approach. 
+    \item Executing the corresponding $Q$ mode queries using the fast approach. 
+    \item Executing the corresponding $Q$ mode queries using the naive approach. 
+\end{itemize}
+The results for range and mode queries have been compiled into graphs. Additionally, the raw tables can be found in the Appendix.\\
+\input{figs/tex/1drange}
+\input{figs/tex/1dmode}
+
+\subsubsection*{Discusssion}
+For range queries, the results we see are largely expected. In 1D-1-20-0-0 through 1D-100-100-150-95 we see that the naive implementation follows a roughly linear relation between $k$ and the query time, mathcing our expectation of it being $O(\log n + k)$. In 1D-10-100-0-0-FRAC and 1D-10-100-150-95-FRAC, we do see that computation time of the naive approach seems to taper off for larger $k$ values. This is most likely due to the fact that a large part of the window size for sorting is outside of array bounds as $2k > n$, thus reducing the amount of computation required. \\ 
+When looking at the queries as described by Van der Horst et al., expectations are again met. Query time stays roughly the same over all values of $k$, and on average we see a slight increase in query time for scenarios with a larger $n$. We note that it appears that the overhead associated with the tree query is rather high, as can be seen due to the minor query time differences between $n=1000$ and $n=100,000$. \\\\
+For mode, results are also mostly in line with expectation. We do note that we seem to see a decrease in computation time for larger $k$ values, but this is most likely due to the fact that relatively more of the window is precomputed, reducing the need to use the naive approach. 
+
+\subsection{2D}
+A mix of artificial and real life data was once again used in order to validate results. As 2D datasets are generally more widely available, a larger selection is included here as opposed to the 1D instances. 
+\subsubsection*{Artificial data}
+The same method of generating data that was used in 1D was generalized for 2D. We refer back to the 1D section for more details, however a couple of small changes are highlighted.
+\begin{itemize}
+    \item Points were once again sampled in an arbitrarily selected range. Seeing as we are now in 2D, this range has been expanded to $[-50000, 50000] \times [-50000, 50000]$.
+    \item For the clustered color scenarios, the distance measure used for determining which color a point gets is $L_\infty$. This was chosen due to the fact that this is also the metric used in the algorithms themselves.
+    \item We now have an additional parameter in $r$ for our mode operation. This was arbitrarily set to $r=5$ for testing of generated sets, however a more comprehensive analysis of the effect of $r$ on the computation times is provided in the analysis of the real life data.
+\end{itemize}
+\subsubsection*{Real life data}
+As we already had a usable dataset in the form of the weather based one generated for 1D testing, this was reused when testing the 2D implementation. Additional data was however also added, as 2D datasets are widely available. \\\\
+We chose to use annotated map data as our secondary source of test data. OpenStreetMap \cite{OpenStreetMap} was used in order to download map data from various places around Utrecht, and QGIS \cite{QGIS_software} was used in order to render a simplified version of the map. See \ref{fig:uithof} for an example. \\
+This image was then sampled in order to produce colored points. The location of the point was simply taken to be the pixel coordinate in the map view image, along with a small randomized offset. This offset was uniformly sampled within a distance of 0.05 from the pixel coordinate, and was included in order to discourage exact $x$ and $y$ coordinate matches for different points. Sampling rate was set such that the total instance size was around $50,000$ points for each of the included maps. \\\\
+A total of 10 of these datasets were generated.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=10cm]{figs/usp.png}
+    \caption{Simplified map view of Utrecht Science Park, centered on the Buys Ballot Building.}
+    \label{fig:uithof}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=10cm]{figs/usp_points.png}
+    \caption{Point sampling taking from the simplified map view.}
+    \label{fig:uithof-points}
+\end{figure}
+
+\subsubsection*{Results}
+\input{figs/tex/2drange}
+\input{figs/tex/2dmode}
+\input{figs/tex/2dpre}
+
+\printbibliography
+\end{document}

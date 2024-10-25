@@ -3,7 +3,7 @@ const fs = require('fs')
 const path = require('path')
 
 const RELATIVE_DATA_DIR = '../data/osm'
-const NAME = "bieleveld"
+const NAME = "bbg"
 const OUTPUT_WIDTH = 3600
 const OUTPUT_HEIGHT = 1800
 
@@ -20,9 +20,10 @@ const run = async () => {
 
     const colorsCount = Math.max(...points.map(p => p.c)) + 1
     const colors = Array.from({length: colorsCount + 1}).map(_ => {
-      const color = Math.random() * Math.pow(2, 24)
-      return color << 8 + 0xFF;
+      return Image.rgbToColor(Math.floor(Math.random() * 256), Math.floor(Math.random() * 256), Math.floor(Math.random() * 256))
     })
+    
+    for (const c of colors) console.log(c.toString(16))
 
     const image = new Image(OUTPUT_WIDTH, OUTPUT_HEIGHT);
     image.drawBox(0, 0, OUTPUT_WIDTH, OUTPUT_HEIGHT, 0xFFFFFFFF);
@@ -36,7 +37,7 @@ const run = async () => {
       image.drawBox(
         Math.round((point.x - MIN_X_VAL) / (MAX_X_VAL - MIN_X_VAL) * OUTPUT_WIDTH),
         OUTPUT_HEIGHT - Math.round((point.y - MIN_Y_VAL) / (MAX_Y_VAL - MIN_Y_VAL) * OUTPUT_HEIGHT),
-        4, 4, colors[point.c]
+        5, 5, colors[point.c]
       )
     )
     

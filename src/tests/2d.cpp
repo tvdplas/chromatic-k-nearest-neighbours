@@ -24,15 +24,6 @@ namespace N2D {
 		return positions;
 	}
 
-	static vec<Point_2> generate_locations_mode(NumTy min, NumTy max, int count) {
-		auto locations = generate_locations(min, max, count);
-		vec<Point_2> mode_locations(locations.size());
-		for (int i = 0; i < locations.size(); i++) {
-			mode_locations[i] = Point_2(locations[i].x(), locations[i].y());
-		}
-		return mode_locations;
-	}
-
 	static vec<Point_2> convert_point_d_to_point_2(vec<Point_d>* points) {
 		vec<Point_2> output(points->size());
 		for (int i = 0; i < points->size(); i++) {
@@ -42,15 +33,48 @@ namespace N2D {
 		return output;
 	}
 
-	static vec<Color> generate_colors(int count) {
-		// TODO: implement 
+	static pair<vec<Point_d>, vec<Color>> generate_sequence(NumTy min, NumTy max, int count, int delta, double gamma, double alpha) {
+		vec<Point_d> locations = generate_locations(min, max, count);
 		vec<Color> colors(count);
+		vec<Color> gamma_colors(count);
+
+		std::default_random_engine re(chrono::system_clock::now().time_since_epoch().count());
+		std::uniform_real_distribution<double> rnd(0, 1);
 		
 		for (int i = 0; i < count; i++) {
-			colors[i] = 0;
+			gamma_colors[i] = (Color)delta;
+			colors[i] = (Color)delta;
+		}
+		for (int i = 0; i < gamma; i++) {
+			Color c = (Color)(rnd(re) * delta);
+			int index = rnd(re) * count;
+			gamma_colors[index] = c;
 		}
 
-		return colors;
+		for (int i = 0; i < count; i++) {
+			if (rnd(re) >= alpha) {
+				// use uniform sample
+				Color c = (Color)(rnd(re) * delta);
+				colors[i] = c;
+			}
+			else {
+				// find closest in gamma list, otherwise fall back to uniform
+				// O(n^2) implementation, but since this is setup doesn't really matter
+				Color closest = (Color)delta;
+				double distance = max - min + 1;
+				for (int j = 0; j < count; j++) {
+					NumTy d = std::max(abs(locations[i].x() - locations[j].x()), abs(locations[i].y() - locations[j].y()));
+					if (gamma_colors[j] != (Color)delta && d < distance) {
+						distance = d;
+						closest = (Color)gamma_colors[j];
+					}
+				}
+				colors[i] = closest;
+			}
+		}
+
+
+		return pair<vec<Point_d>, vec<Color>>(locations, colors);
 	}
 
 	// returns radius of D_k(q)
@@ -147,7 +171,7 @@ namespace N2D {
 	}
 
 
-	static void run_2d_single(int num_runs, int N, int k, NumTy min, NumTy max, int Q) {
+	static void run_2d_single(int num_runs, int N, int k, NumTy min, NumTy max, int Q, int delta, double gamma, double alpha) {
 		vec<long>
 			generation_times = {},
 			range_tree_build_times = {},
@@ -161,8 +185,9 @@ namespace N2D {
 			auto run_start = chrono::high_resolution_clock::now();
 
 			// generate dataset
-			auto locations = generate_locations(min, max, N);
-			auto colors = generate_colors(N);
+			auto dataset = generate_sequence(min, max, N, delta, gamma, alpha);
+			auto locations = dataset.first;
+			auto colors = dataset.second;
 			auto query_points = generate_locations(min, max, Q);
 			auto gen_end = chrono::high_resolution_clock::now();
 			vec<NumTy> radii = {};
@@ -189,6 +214,7 @@ namespace N2D {
 
 			vec<Point_2> mode_points = convert_point_d_to_point_2(&locations);
 			ModeData md = preprocess_mode(&mode_points, &colors, 5);
+			Trapezoid_pl tpl(md.arr);
 			uniform_real_distribution<NumTy> rnd_pos(md.lower.x(), md.upper.x());
 			default_random_engine re(chrono::system_clock::now().time_since_epoch().count());
 			auto gen_mode_end = chrono::high_resolution_clock::now();
@@ -197,7 +223,7 @@ namespace N2D {
 			for (int i = 0; i < Q; i++) {
 				// TODO: replace with actual dual
 				Point_2 query(rnd_pos(re), rnd_pos(re));
-				query_arrangement(&md, &colors, query);
+				query_arrangement(&md, &tpl, &colors, query);
 			}
 			auto fast_mode_end = chrono::high_resolution_clock::now();
 
@@ -243,10 +269,19 @@ namespace N2D {
 	static void run_2d_generated() {
 		int num_runs = 10;
 		vec<vec<NumTy>> scenarios = {
-			// N, min, max, Q  ... TODO
-			{ 1e3, -5e4, 5e4, 1e3},
-			{ 1e4, -5e4, 5e4, 1e3},
-			{ 1e5, -5e4, 5e4, 1e3},
+			// N, min, max, Q, Delta, color type, gamma, alpha, 
+			{ 1e3, -5e4, 5e4, 1e3, 20, 0, 0},
+			{ 1e4, -5e4, 5e4, 1e3, 20, 0, 0},
+			{ 1e5, -5e4, 5e4, 1e3, 20, 0, 0},
+			{ 1e3, -5e4, 5e4, 1e3, 100, 0, 0},
+			{ 1e4, -5e4, 5e4, 1e3, 100, 0, 0},
+			{ 1e5, -5e4, 5e4, 1e3, 100, 0, 0},
+			{ 1e3, -5e4, 5e4, 1e3, 20, 30, 0.95},
+			{ 1e4, -5e4, 5e4, 1e3, 20, 30, 0.95},
+			{ 1e5, -5e4, 5e4, 1e3, 20, 30, 0.95},
+			{ 1e3, -5e4, 5e4, 1e3, 100, 150, 0.95},
+			{ 1e4, -5e4, 5e4, 1e3, 100, 150, 0.95},
+			{ 1e5, -5e4, 5e4, 1e3, 100, 150, 0.95},
 		};
 
 		vec<int> ks = { 25, 50, 75, 100, 250, 500, 750, 1000, 1500, 2000 }; // k = 1000 only for N > 1000;
@@ -256,9 +291,25 @@ namespace N2D {
 			for (int kIndex = 0; kIndex < ks.size(); kIndex++) {
 				if (ks[kIndex] >= scenario[0]) continue; // skip due to k >= n
 				std::cout << defaultfloat;
-				std::cout << "2D-" << (int)scenario[0] << "-" << ks[kIndex] << " & ";
+				std::cout 
+					<< "2D-" << (int)scenario[0] 
+					<< "-" << ks[kIndex] 
+					<< "-" << (int)scenario[4]
+					<< "-" << scenario[5]
+					<< "-" << scenario[6]
+					<< " & ";
 				
-				run_2d_single(num_runs, (int)scenario[0], ks[kIndex], (int)scenario[1], (int)scenario[2], (int)scenario[3]);
+				run_2d_single(
+					num_runs, 
+					(int)scenario[0], 
+					ks[kIndex], 
+					(int)scenario[1], 
+					(int)scenario[2], 
+					(int)scenario[3],
+					(int)scenario[4],
+					scenario[5],
+					scenario[6]
+				);
 			}
 			std::cout << "\\hline" << endl;
 		}

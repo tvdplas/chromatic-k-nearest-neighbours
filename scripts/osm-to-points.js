@@ -3,7 +3,7 @@ const fs = require('fs')
 const path = require('path')
 
 const RELATIVE_DATA_DIR = '../data/osm'
-const FILENAME = 'bieleveld'
+const FILENAME = 'bbg'
 const FILE_EXTENSION = '.png'
 
 const SAMPLING_RATE = 3 // sample every xth pixel horizontally / vertically
@@ -26,7 +26,7 @@ const COLORS = [
   "#F6F9BE", // parking lot?
 ]
 
-function argbToRGB(color) {
+function rgbaToRGB(color) {
   return '#'+ (color >> 8 & 0xFFFFFF).toString(16).toUpperCase();
 }
 
@@ -39,12 +39,12 @@ const run = async() => {
   for (let y = 1; y < input.height; y += SAMPLING_RATE) {
     for (let x = 1; x < input.width; x += SAMPLING_RATE) {
       // Get pixel value at coordinate
-      const val = argbToRGB(input.getPixelAt(x, y));
+      const val = rgbaToRGB(input.getPixelAt(x, y));
       const c = COLORS.indexOf(val)
       if (c != -1) {
         const xOffset = -MAX_OFFSET + Math.random() * 2 * MAX_OFFSET 
         const yOffset = -MAX_OFFSET + Math.random() * 2 * MAX_OFFSET 
-        points.push({ x: x + xOffset, y: y + yOffset, c })
+        points.push({ x: x + xOffset, y: input.height - y + yOffset, c })
       }
     }
   }

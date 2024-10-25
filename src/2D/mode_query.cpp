@@ -14,6 +14,7 @@
 #include <CGAL/Line_2.h>
 #include <CGAL/Segment_2.h>
 #include <CGAL/draw_arrangement_2.h>
+#include <CGAL/Arr_trapezoid_ric_point_location.h>
 
 using namespace std;
 
@@ -29,6 +30,7 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef CGAL::Arr_non_caching_segment_traits_2<Kernel> Traits;
 using Dcel = CGAL::Arr_extended_dcel<Traits, bool, bool, FaceData>;
 typedef CGAL::Arrangement_2<Traits, Dcel> Arrangement;
+using Trapezoid_pl = CGAL::Arr_trapezoid_ric_point_location<Arrangement>;
 typedef Arrangement::Face_handle Face_handle;
 typedef Arrangement::Face_const_handle Face_const_handle;
 typedef Arrangement::Halfedge_handle Halfedge_handle;
@@ -272,12 +274,11 @@ static void annotate_arrangement(Arrangement* arr, ConflictList* cl, vec<Segment
 }
 
 // Returns the mode color for a certain query point
-static pair<int, int> query_arrangement(ModeData* md, vec<int>* colors, Point_2 q) {
+static pair<int, int> query_arrangement(ModeData* md, Trapezoid_pl* tpl, vec<int>* colors, Point_2 q) {
 	// first, find the face that the query point is in.
-	vec<Point_2> query_point = { q };
-	vec<Query_result> face_result = {};
-	CGAL::locate(md->arr, query_point.begin(), query_point.end(), back_inserter(face_result));
-	if (const Face_const_handle* face_ptr = get_if<Face_const_handle>(&face_result[0].second)) {
+	auto result = tpl->locate(q);
+
+	if (const Face_const_handle* face_ptr = get_if<Face_const_handle>(&result)) {
 		Face_const_handle face = *face_ptr;
 		// then, for this face, find which of the lines in the conflict list are below the query point
 		

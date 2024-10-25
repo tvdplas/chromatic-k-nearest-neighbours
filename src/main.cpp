@@ -7,12 +7,6 @@
 
 int main() {
     N2D::run_2d_generated();
-    
-//#pragma region cleanup
-//    std::string str;
-//    std::cin >> str;
-//    return 0;
-//#pragma endregion
 }
 
 
