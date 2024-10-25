@@ -36,6 +36,7 @@ namespace N2D {
 	static pair<vec<Point_d>, vec<Color>> generate_sequence(NumTy min, NumTy max, int count, int delta, double gamma, double alpha) {
 		vec<Point_d> locations = generate_locations(min, max, count);
 		vec<Color> colors(count);
+		vec<Point_d> gamma_locations(gamma);
 		vec<Color> gamma_colors(count);
 
 		std::default_random_engine re(chrono::system_clock::now().time_since_epoch().count());
@@ -49,7 +50,11 @@ namespace N2D {
 			Color c = (Color)(rnd(re) * delta);
 			int index = rnd(re) * count;
 			gamma_colors[index] = c;
+			gamma_locations[i] = locations[index];
 		}
+
+		auto gamma_sorted_x_pairs = generate_sorted_dim_pairs(&gamma_locations, 0);
+		auto gamma_sorted_y_pairs = generate_sorted_dim_pairs(&gamma_locations, 1);
 
 		for (int i = 0; i < count; i++) {
 			if (rnd(re) >= alpha) {
@@ -58,18 +63,28 @@ namespace N2D {
 				colors[i] = c;
 			}
 			else {
-				// find closest in gamma list, otherwise fall back to uniform
-				// O(n^2) implementation, but since this is setup doesn't really matter
+				// find closest in gamma list
 				Color closest = (Color)delta;
-				double distance = max - min + 1;
-				for (int j = 0; j < count; j++) {
-					NumTy d = std::max(abs(locations[i].x() - locations[j].x()), abs(locations[i].y() - locations[j].y()));
-					if (gamma_colors[j] != (Color)delta && d < distance) {
-						distance = d;
-						closest = (Color)gamma_colors[j];
-					}
+				auto f = [](pair_ni a, pair_ni b) { return a.first - b.first;  };
+				auto x_index = upper_bound(gamma_sorted_x_pairs.begin(), gamma_sorted_x_pairs.end(), pair_ni(locations[i].x(), -1), f) - gamma_sorted_x_pairs.begin();
+				auto y_index = upper_bound(gamma_sorted_y_pairs.begin(), gamma_sorted_y_pairs.end(), pair_ni(locations[i].y(), -1), f) - gamma_sorted_y_pairs.begin();
+
+				NumTy min_distance = x_index - 1 < gamma_sorted_x_pairs.size() ? abs(gamma_sorted_x_pairs[x_index - 1].first - locations[i].x()) : numeric_limits<NumTy>::max();
+				Color gamma_index = x_index - 1< gamma_sorted_x_pairs.size() ? gamma_sorted_x_pairs[x_index - 1].second : delta;
+				if (x_index < gamma_sorted_x_pairs.size() && abs(gamma_sorted_x_pairs[x_index].first - locations[i].x()) < min_distance) {
+					min_distance = abs(gamma_sorted_x_pairs[x_index].first - locations[i].x());
+					gamma_index = gamma_sorted_x_pairs[x_index].second;
 				}
-				colors[i] = closest;
+				if (y_index - 1 < gamma_sorted_y_pairs.size() && abs(gamma_sorted_y_pairs[y_index - 1].first - locations[i].y()) < min_distance) {
+					min_distance = abs(gamma_sorted_y_pairs[y_index - 1].first - locations[i].y());
+					gamma_index = gamma_sorted_y_pairs[y_index - 1].second;
+				}
+				if (y_index < gamma_sorted_y_pairs.size() && abs(gamma_sorted_y_pairs[y_index].first - locations[i].y()) < min_distance) {
+					min_distance = abs(gamma_sorted_y_pairs[y_index].first - locations[i].y());
+					gamma_index = gamma_sorted_y_pairs[y_index].second;
+				}
+
+				colors[i] = gamma_colors[gamma_index];
 			}
 		}
 
@@ -171,7 +186,7 @@ namespace N2D {
 	}
 
 
-	static void run_2d_single(int num_runs, int N, int k, NumTy min, NumTy max, int Q, int delta, double gamma, double alpha) {
+	static void run_2d_single(int num_runs, int N, int k, int r, NumTy min, NumTy max, int Q, int delta, double gamma, double alpha) {
 		vec<long>
 			generation_times = {},
 			range_tree_build_times = {},
@@ -213,7 +228,7 @@ namespace N2D {
 			auto range_naive_end = chrono::high_resolution_clock::now();
 
 			vec<Point_2> mode_points = convert_point_d_to_point_2(&locations);
-			ModeData md = preprocess_mode(&mode_points, &colors, 5);
+			ModeData md = preprocess_mode(&mode_points, &colors, r);
 			Trapezoid_pl tpl(md.arr);
 			uniform_real_distribution<NumTy> rnd_pos(md.lower.x(), md.upper.x());
 			default_random_engine re(chrono::system_clock::now().time_since_epoch().count());
@@ -270,9 +285,9 @@ namespace N2D {
 		int num_runs = 10;
 		vec<vec<NumTy>> scenarios = {
 			// N, min, max, Q, Delta, color type, gamma, alpha, 
-			{ 1e3, -5e4, 5e4, 1e3, 20, 0, 0},
+			//{ 1e3, -5e4, 5e4, 1e3, 20, 0, 0},
 			{ 1e4, -5e4, 5e4, 1e3, 20, 0, 0},
-			{ 1e5, -5e4, 5e4, 1e3, 20, 0, 0},
+			/*{ 1e5, -5e4, 5e4, 1e3, 20, 0, 0},
 			{ 1e3, -5e4, 5e4, 1e3, 100, 0, 0},
 			{ 1e4, -5e4, 5e4, 1e3, 100, 0, 0},
 			{ 1e5, -5e4, 5e4, 1e3, 100, 0, 0},
@@ -281,37 +296,43 @@ namespace N2D {
 			{ 1e5, -5e4, 5e4, 1e3, 20, 30, 0.95},
 			{ 1e3, -5e4, 5e4, 1e3, 100, 150, 0.95},
 			{ 1e4, -5e4, 5e4, 1e3, 100, 150, 0.95},
-			{ 1e5, -5e4, 5e4, 1e3, 100, 150, 0.95},
+			{ 1e5, -5e4, 5e4, 1e3, 100, 150, 0.95},*/
 		};
+
+		vec<int> rs = { 5, 10, 25, 100, 250, 500, 750, 1000 };
 
 		vec<int> ks = { 25, 50, 75, 100, 250, 500, 750, 1000, 1500, 2000 }; // k = 1000 only for N > 1000;
 		
 		for (int sIndex = 0; sIndex < scenarios.size(); sIndex++) {
 			auto scenario = scenarios[sIndex];
-			for (int kIndex = 0; kIndex < ks.size(); kIndex++) {
-				if (ks[kIndex] >= scenario[0]) continue; // skip due to k >= n
-				std::cout << defaultfloat;
-				std::cout 
-					<< "2D-" << (int)scenario[0] 
-					<< "-" << ks[kIndex] 
-					<< "-" << (int)scenario[4]
-					<< "-" << scenario[5]
-					<< "-" << scenario[6]
-					<< " & ";
+			for (int r_index = 0; r_index < rs.size(); r_index++) {
+				for (int k_index = 0; k_index < ks.size(); k_index++) {
+					if (ks[k_index] >= scenario[0]) continue; // skip due to k >= n
+					std::cout << defaultfloat;
+					std::cout 
+						<< "2D-" << (int)scenario[0] 
+						<< "-" << rs[r_index]
+						<< "-" << ks[k_index] 
+						<< "-" << (int)scenario[4]
+						<< "-" << scenario[5]
+						<< "-" << scenario[6]
+						<< " & ";
 				
-				run_2d_single(
-					num_runs, 
-					(int)scenario[0], 
-					ks[kIndex], 
-					(int)scenario[1], 
-					(int)scenario[2], 
-					(int)scenario[3],
-					(int)scenario[4],
-					scenario[5],
-					scenario[6]
-				);
+					run_2d_single(
+						num_runs, 
+						(int)scenario[0], 
+						ks[k_index], 
+						rs[r_index],
+						(int)scenario[1], 
+						(int)scenario[2], 
+						(int)scenario[3],
+						(int)scenario[4],
+						scenario[5],
+						scenario[6]
+					);
+				}
+				std::cout << "\\hline" << endl;
 			}
-			std::cout << "\\hline" << endl;
 		}
 	}
 }
