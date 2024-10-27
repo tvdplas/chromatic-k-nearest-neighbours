@@ -1,11 +1,11 @@
 # Fdb version 4
-["biber appendix-1d"] 1729874919.76912 "appendix-1d.bcf" "appendix-1d.bbl" "appendix-1d" 1729875953.91453 0
-  "appendix-1d.bcf" 1729875953 107902 ef1852cb21b63ab8aeee140673aedbd4 "pdflatex"
+["biber appendix-1d"] 1729874919.76912 "appendix-1d.bcf" "appendix-1d.bbl" "appendix-1d" 1729888129.23947 0
+  "appendix-1d.bcf" 1729888129 107902 ef1852cb21b63ab8aeee140673aedbd4 "pdflatex"
   (generated)
   "appendix-1d.bbl"
   "appendix-1d.blg"
   (rewritten before read)
-["pdflatex"] 1729875952.61414 "c:/Users/thoma/Desktop/chromatic-k-nearest-neighbours/tex/appendix-1d.tex" "appendix-1d.pdf" "appendix-1d" 1729875953.91533 0
+["pdflatex"] 1729888127.80899 "c:/Users/thoma/Desktop/chromatic-k-nearest-neighbours/tex/appendix-1d.tex" "appendix-1d.pdf" "appendix-1d" 1729888129.2404 0
   "C:/Users/thoma/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map" 1729874315 80909 eab91d9745dd2edfd62a31d53cd5fe15 ""
   "C:/Users/thoma/AppData/Local/MiKTeX/miktex/data/le/pdftex/pdflatex.fmt" 1729848265 11948238 79ef6cd15da600518e845d2084c67592 ""
   "C:/Users/thoma/AppData/Local/Programs/MiKTeX/fonts/tfm/public/cm/cmmi12.tfm" 1136765053 1524 4414a8315f39513458b80dfc63bff03a ""
@@ -73,11 +73,11 @@
   "C:/Users/thoma/AppData/Local/Programs/MiKTeX/tex/latex/url/url.sty" 1388490452 12796 8edb7d69a20b857904dd0ea757c14ec9 ""
   "C:/Users/thoma/AppData/Local/Programs/MiKTeX/tex/latex/varwidth/varwidth.sty" 1238469540 10894 d359a13923460b2a73d4312d613554c8 ""
   "C:/Users/thoma/AppData/Local/Programs/MiKTeX/tex/latex/xkeyval/xkeyval.sty" 1656236919 4937 4ce600ce9bd4ec84d0250eb6892fcf4f ""
-  "appendix-1d.aux" 1729875953 1040 2e9021b554f61b005f7b69461416d490 "pdflatex"
+  "appendix-1d.aux" 1729888128 1040 2e9021b554f61b005f7b69461416d490 "pdflatex"
   "appendix-1d.bbl" 1729874922 0 d41d8cd98f00b204e9800998ecf8427e "biber appendix-1d"
-  "appendix-1d.run.xml" 1729875953 2279 27cc814872deb67150a3458d9b958ee1 "pdflatex"
-  "appendix-1d.tex" 1729875951 22494 b836bc6316f02a4b2287973be1b80a2c ""
-  "c:/Users/thoma/Desktop/chromatic-k-nearest-neighbours/tex/appendix-1d.tex" 1729875951 22494 b836bc6316f02a4b2287973be1b80a2c ""
+  "appendix-1d.run.xml" 1729888129 2279 27cc814872deb67150a3458d9b958ee1 "pdflatex"
+  "appendix-1d.tex" 1729875980 22474 4825ffb3d796e94d787a34ae1a11c21a ""
+  "c:/Users/thoma/Desktop/chromatic-k-nearest-neighbours/tex/appendix-1d.tex" 1729875980 22474 4825ffb3d796e94d787a34ae1a11c21a ""
   (generated)
   "appendix-1d.aux"
   "appendix-1d.bcf"

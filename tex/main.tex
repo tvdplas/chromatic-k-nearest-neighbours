@@ -30,16 +30,12 @@
 \maketitle
 
 \begin{abstract}
-    \noindent TODO: daadwerkelijke cijfers, betere text; dit is nog niet heel denderend \\
+    \noindent TODO: daadwerkelijke cijfers, iets betere text; ben hier nog niet helemaal blij mee \\\\
     Chromatic $k$-Nearest Neighbour Classification is used to determine the color of a query point based on the mode color of its $k$ closest neighbours. Classical approaches to solving this problem have a runtime which is dependent on $k$, causing large neighbourhood searches to become expensive. We investigate the computational performance of an alternative solution method in which runtime is independent of $k$. We consider both range and mode finding in 1D and 2D contexts with a $L_\infty$ distance metric, comparing to a naive $k$ dependent implementation. We found that significant performance gains can be achieved from $k \gtrsim ...$ in 1D and $k \gtrsim ...$ in 2D, validated against both artificial and real life data points.
 \end{abstract}
 
 \section{Introduction}
-TODO: Ik was eerlijk gezegd vergeten dat ik deze nog moest doen, dus deze zal
-in de uiteindelijke versie komen. Main talking points: What is Chromatic
-k-Nearest Neighbour and what is it used for, what are known fast methods (based
-on table in Thijs' report), what will we be implementing, why is that
-important.
+TODO: Main talking points: What is Chromatic k-Nearest Neighbour and what is it used for, what are known fast methods (largely based on discussion in Thijs' paper), what will we be implementing, why is that interesting (large k / large |color| when compared to n).
 
 \section{Methods}
 Here, we provide an overview of the computational complexities and outlines of
@@ -67,7 +63,7 @@ Table \ref{tab:runtimes}.
         Naive range & $O(n \log n)$      & $O(n)$        & $O(\log n + k)$              \\
         Fast range  & $O(n \log n)$      & $O(n \log n)$ & $O(\log^2 n)$                \\
         Naive mode  & -                  & -             & $O(k)$                       \\
-        Fast mode   & $O(n^2)^*$         & $O(nr)^*$     & $O(n/r \textit{polylog}\:n)$ \\
+        Fast mode   & $O(n^2 TODO: dep. r)^*$         & $O(nr)^*$     & $O(n/r \textit{polylog}\:n)$ \\
         \hline
     \end{tabular}
     \caption{Computational complexities of the implemented algorithms. * indicates a deviation from the reference material.}
@@ -435,6 +431,7 @@ Computation time was measured for all scenarios mentioned above. Implementation 
     \item Executing the corresponding $Q$ mode queries using the naive approach.
 \end{itemize}
 The results for range and mode queries have been compiled into graphs. Additionally, the raw tables can be found in the Appendix.\\
+TODO: formatting, renaming of instances to correspond to new naming scheme.
 \input{figs/tex/1drange}
 \input{figs/tex/1dmode}
 
@@ -458,11 +455,8 @@ small changes are highlighted.
           which color a point gets is $L_\infty$. This was chosen due to the fact that
           this is also the metric used in the algorithms themselves.
     \item $\gamma=200$ colors are now seeded in the clustered cases instead of 150 for the large instances.
-    \item We now have an additional parameter in $r$ for our mode operation. This was
-          arbitrarily set to $r=5$ for testing of generated sets, however a more
-          comprehensive analysis of the effect of $r$ on the computation times is
-          provided in the analysis of the real life data.
 \end{itemize}
+We now also have an additional parameter in $r$ for our mode operation. In order to determine a suitable $r$ value for large scale testing, the scenario 2D-10-25-$r$-20-0-0 was selected and run with $r$ values of $\{ 5, 10, 25, 50 \}$. Larger values than this were not tested, as precomputation times would exceed 1 hour. A balance between precomputation and query time was then selected by using $r=10$, which required $~6$ seconds of precomputation time for a single run. This $r$ was then used as a constant for the rest of the artificial instances. We refer to the raw results in the appendix for more details on this experiment. Experiments including variable $r$ will be discussed in more detail for the real life instances. \\\\
 An overview of the tested artificial scenarios is as follows: \\
 
 \hskip-2.4cm
@@ -496,10 +490,11 @@ An overview of the tested artificial scenarios is as follows: \\
     \hline
 \end{tabular}\\\\
 \subsubsection*{Real life data}
-As we already had a usable dataset in the form of the weather based one generated for 1D testing, this was reused when testing the 2D implementation. Additional data was however also added, as 2D datasets are widely available. \\\\
-We chose to use annotated map data as our secondary source of test data. OpenStreetMap \cite{OpenStreetMap} was used in order to download map data from various places around Utrecht, and QGIS \cite{QGIS_software} was used in order to render a simplified version of the map. See \ref{fig:uithof} for an example. \\
-This image was then sampled in order to produce colored points. The location of the point was simply taken to be the pixel coordinate in the map view image, along with a small randomized offset. This offset was uniformly sampled within a distance of 0.05 from the pixel coordinate, and was included in order to discourage exact $x$ and $y$ coordinate matches for different points. Sampling rate was set such that the total instance size was around $50,000$ points for each of the included maps. \\\\
-A total of 10 of these datasets were generated.
+As we already had a usable dataset in the form of the weather based one generated for 1D testing, this was reused when testing the 2D implementation. We will refer to this instance as 2D-TMP-$k$-$r$. Additional data was however also added, as 2D datasets are widely available. \\\\
+We chose to use annotated map data as our secondary source of test data. OpenStreetMap \cite{OpenStreetMap} was used in order to download map data from 10 places in the Utrecht region, and QGIS \cite{QGIS_software} was used in order to render a simplified version of the map. See Figure \ref{fig:uithof} for an example. In selecting test data, attempts were made in order to include regions that showcased a large amount of different colors. A single test instance was also included which was mostly farmland, allowing for validation when the variation in colors is low. For more details on the exact test cases, we refer to the renderings of the selected maps. \\
+The map renderings were then sampled in order to produce colored points. The location of the point was taken to be the pixel coordinate in the map view image, along with a small randomized offset. This offset was uniformly sampled within a distance of 0.05 from the pixel coordinate, and was included in order to discourage exact $x$ and $y$ coordinate matches for different points. Sampling rate was set such that the total instance size was around $50,000$ points for each of the included maps. \\\\
+As the amount of sample points is relatively high, we chose to include random subsets of the full point sets as additional instances. We will refer to the instances as 2D-MAP-$k$-$r$-$p$, where $0 < p \leq 100$ represents the percentage of total map points used in the instance. \\\\
+Results over all maps were once again averaged in order to produce the mean computation times for each instance.
 
 \begin{figure}
     \centering
@@ -519,6 +514,12 @@ A total of 10 of these datasets were generated.
 \input{figs/tex/2drange}
 \input{figs/tex/2dmode}
 \input{figs/tex/2dpre}
+
+\subsubsection*{Discussion}
+TODO: once results are all in. 
+
+\section{Conclusion}
+TODO: general conclusion showing that all algorithms seem to succesfully be independent from k. Recommendations for when to use this approach (aka k at which naive > fast). Reflection on flaws in the implementation (mostly focused on the 2d mode). Recommendation to expand the study with more rigorous testing (such as grid x/y, larger instances), expand with different cgal point types than double, try to expand to 2D $L_2$. 
 
 \printbibliography
 \end{document}

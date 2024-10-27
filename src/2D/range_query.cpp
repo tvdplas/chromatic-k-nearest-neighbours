@@ -37,10 +37,6 @@ namespace N2D {
 	static std::vector<pair_ni> generate_sorted_dim_pairs(std::vector<Point_d>* locations, uint dim) {
 		if (dim > 1)
 			throw std::logic_error("Queries with |dims| > 2 are not tested; proceed with caution.");
-		if (!locations->size())
-			throw std::logic_error("Location list does not contain any entries.");
-		if (dim >= (*locations)[0].dimension())
-			throw std::logic_error("Tried to create sorted set of points on dimension higher than pointset dim");
 
 		std::vector<pair_ni> sorted_dim_pairs(locations->size() + 2);
 		sorted_dim_pairs[0] = pair_ni(std::numeric_limits<NumTy>::lowest(), -1);

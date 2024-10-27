@@ -282,12 +282,12 @@ namespace N2D {
 	}
 
 	static void run_2d_generated() {
-		int num_runs = 10;
+		int num_runs = 5;
 		vec<vec<NumTy>> scenarios = {
-			// N, min, max, Q, Delta, color type, gamma, alpha, 
-			//{ 1e3, -5e4, 5e4, 1e3, 20, 0, 0},
+			// N, min, max, Q, Delta, gamma, alpha, 
+			{ 1e3, -5e4, 5e4, 1e3, 20, 0, 0},
 			{ 1e4, -5e4, 5e4, 1e3, 20, 0, 0},
-			/*{ 1e5, -5e4, 5e4, 1e3, 20, 0, 0},
+			{ 1e5, -5e4, 5e4, 1e3, 20, 0, 0},
 			{ 1e3, -5e4, 5e4, 1e3, 100, 0, 0},
 			{ 1e4, -5e4, 5e4, 1e3, 100, 0, 0},
 			{ 1e5, -5e4, 5e4, 1e3, 100, 0, 0},
@@ -296,12 +296,12 @@ namespace N2D {
 			{ 1e5, -5e4, 5e4, 1e3, 20, 30, 0.95},
 			{ 1e3, -5e4, 5e4, 1e3, 100, 150, 0.95},
 			{ 1e4, -5e4, 5e4, 1e3, 100, 150, 0.95},
-			{ 1e5, -5e4, 5e4, 1e3, 100, 150, 0.95},*/
+			{ 1e5, -5e4, 5e4, 1e3, 100, 150, 0.95},
 		};
 
-		vec<int> rs = { 5, 10, 25, 100, 250, 500, 750, 1000 };
+		vec<int> rs = { 10 };
 
-		vec<int> ks = { 25, 50, 75, 100, 250, 500, 750, 1000, 1500, 2000 }; // k = 1000 only for N > 1000;
+		vec<int> ks = { 25 , 50, 75, 100, 250, 500, 750, 1000, 1500, 2000 }; // k = 1000 only for N > 1000;
 		
 		for (int sIndex = 0; sIndex < scenarios.size(); sIndex++) {
 			auto scenario = scenarios[sIndex];

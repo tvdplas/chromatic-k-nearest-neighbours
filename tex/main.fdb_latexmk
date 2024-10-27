@@ -1,12 +1,12 @@
 # Fdb version 4
-["biber main"] 0 "main.bcf" "main.bbl" "main" 1729881361.40731 -1
+["biber main"] 0 "main.bcf" "main.bbl" "main" 1729888947.3545 -1
   "lib.bib" 1729864271 5278 1b0ac954434c4a24a820eefb9a305614 ""
-  "main.bcf" 1729881360 109977 46532c2258a9e0b63f457455d5db09b8 "pdflatex"
+  "main.bcf" 1729888946 109977 46532c2258a9e0b63f457455d5db09b8 "pdflatex"
   (generated)
   "main.bbl"
   "main.blg"
   (rewritten before read)
-["pdflatex"] 1729881348.93181 "c:/Users/thoma/Desktop/chromatic-k-nearest-neighbours/tex/main.tex" "main.pdf" "main" 1729881361.40839 0
+["pdflatex"] 1729888939.70252 "c:/Users/thoma/Desktop/chromatic-k-nearest-neighbours/tex/main.tex" "main.pdf" "main" 1729888947.35556 0
   "C:/Users/thoma/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map" 1729874315 80909 eab91d9745dd2edfd62a31d53cd5fe15 ""
   "C:/Users/thoma/AppData/Local/MiKTeX/fonts/pk/ljfour/jknappen/ec/dpi600/tcrm1000.pk" 1729848325 11548 25a0dc78235e5f88491fc275cbd9de73 ""
   "C:/Users/thoma/AppData/Local/MiKTeX/miktex/data/le/pdftex/pdflatex.fmt" 1729848265 11948238 79ef6cd15da600518e845d2084c67592 ""
@@ -232,7 +232,7 @@
   "C:/Users/thoma/AppData/Local/Programs/MiKTeX/tex/latex/varwidth/varwidth.sty" 1238469540 10894 d359a13923460b2a73d4312d613554c8 ""
   "C:/Users/thoma/AppData/Local/Programs/MiKTeX/tex/latex/xcolor/xcolor.sty" 1729265222 55384 b454dec21c2d9f45ec0b793f0995b992 ""
   "C:/Users/thoma/AppData/Local/Programs/MiKTeX/tex/latex/xkeyval/xkeyval.sty" 1656236919 4937 4ce600ce9bd4ec84d0250eb6892fcf4f ""
-  "c:/Users/thoma/Desktop/chromatic-k-nearest-neighbours/tex/main.tex" 1729881346 39755 a1e3ad2a5c92ae34ea1edb079ef31808 ""
+  "c:/Users/thoma/Desktop/chromatic-k-nearest-neighbours/tex/main.tex" 1729888938 41501 3de27866e75ffc0bfe729b96e48d0358 ""
   "figs/fig1.eps" 1729847217 20208 993592be36f436ed8eb93a5109d60f29 ""
   "figs/fig2.eps" 1729847219 20017 b256c5a9533b09af0864956b7165ce27 ""
   "figs/temperature-02-06-2024-cropped.png" 1729847216 16299 93af38ae5651986f4a35a7d8a3de9bac ""
@@ -243,10 +243,10 @@
   "figs/tex/2drange.tex" 1729847224 8688 d4125202c28ee25a82c8510e4ee7ddb5 ""
   "figs/usp.png" 1729847221 347187 46ed87ff3d55e63c1964dbcf1d47e370 ""
   "figs/usp_points.png" 1729847223 852764 48eeedfb0e1f42f215ac9bd52042f9cc ""
-  "main.aux" 1729881360 6590 a68b03f5b978728ae4284ac662bb7c29 "pdflatex"
+  "main.aux" 1729888946 6689 b95dcd44e66c27cbadb416263952e87e "pdflatex"
   "main.bbl" 1729870509 21715 5bb5af12c07a55a3f2ad54f3551586f5 "biber main"
-  "main.run.xml" 1729881360 2304 bed573be658f4b0d42ab12425a2918b5 "pdflatex"
-  "main.tex" 1729881346 39755 a1e3ad2a5c92ae34ea1edb079ef31808 ""
+  "main.run.xml" 1729888946 2304 bed573be658f4b0d42ab12425a2918b5 "pdflatex"
+  "main.tex" 1729888938 41501 3de27866e75ffc0bfe729b96e48d0358 ""
   (generated)
   "main.aux"
   "main.bcf"

@@ -183,8 +183,8 @@ static ConflictList get_conflict_list(Arrangement* arr, vec<Segment_2>* rest_seg
 	return conflict_list;
 }
 
-static bool is_valid_r_cutting(ConflictList* cl, int N, int r) {
-	int max = (int)round((double)N / (double)r);
+static bool is_valid_r_cutting(ConflictList* cl, int N, int r, double smudge_factor = 1) {
+	int max = (int)round((double)N / (double)r * smudge_factor);
 	// Check if any face has more than r intersecting lines
 	for (auto s = cl->begin(); s < cl->end(); s++) {
 		if (s->size() > max) return false;
@@ -326,7 +326,7 @@ static ModeData preprocess_mode(vec<Point_2>* points, vec<int>* colors, int r) {
 	vec<Segment_2> segments;
 
 	// TODO: replace with while true as we always have a fixed chance of generating a valid cutting
-	int MAX_RETRY = 1, retry = 0;
+	int MAX_RETRY = 10, retry = 0;
 	while (retry < MAX_RETRY) {
 		// split dual lines into two parts: ones used for arrangement, and rest.
 		auto split_lines = random_split(&lines, r * log(r) / log(2));
@@ -339,7 +339,7 @@ static ModeData preprocess_mode(vec<Point_2>* points, vec<int>* colors, int r) {
 		cl = get_conflict_list(&arr, &segments);
 
 		// if it is a valid conflict list, we have our final arrangement
-		if (is_valid_r_cutting(&cl, points->size(), r)) break;
+		if (is_valid_r_cutting(&cl, points->size(), r), 1.2) break;
 
 		retry++;
 	}
