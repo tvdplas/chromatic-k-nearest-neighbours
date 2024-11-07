@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.26 (MiKTeX 24.4) (preloaded format=pdflatex 2024.10.25)  7 NOV 2024 14:13
+This is pdfTeX, Version 3.141592653-2.6-1.40.26 (MiKTeX 24.4) (preloaded format=pdflatex 2024.10.25)  7 NOV 2024 20:07
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -700,59 +700,85 @@ Package: booktabs 2020/01/12 v1.61803398 Publication quality tables
 \@thisruleclass=\count450
 \@lastruleclass=\count451
 \@thisrulewidth=\dimen308
-) (C:\Users\thoma\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geometry.sty
+) (C:\Users\thoma\AppData\Local\Programs\MiKTeX\tex/generic/soul\soul.sty
+Package: soul 2023-06-14 v3.1 Permit use of UTF-8 characters in soul (HO)
+ (C:\Users\thoma\AppData\Local\Programs\MiKTeX\tex/generic/soul\soul-ori.sty
+Package: soul-ori 2023-06-14 v3.1 letterspacing/underlining (mf)
+\SOUL@word=\toks45
+\SOUL@lasttoken=\toks46
+\SOUL@syllable=\toks47
+\SOUL@cmds=\toks48
+\SOUL@buffer=\toks49
+\SOUL@token=\toks50
+\SOUL@syllgoal=\dimen309
+\SOUL@syllwidth=\dimen310
+\SOUL@charkern=\dimen311
+\SOUL@hyphkern=\dimen312
+\SOUL@dimen=\dimen313
+\SOUL@dimeni=\dimen314
+\SOUL@minus=\count452
+\SOUL@comma=\count453
+\SOUL@apo=\count454
+\SOUL@grave=\count455
+\SOUL@spaceskip=\skip81
+\SOUL@ttwidth=\dimen315
+\SOUL@uldp=\dimen316
+\SOUL@ulht=\dimen317
+) (C:\Users\thoma\AppData\Local\Programs\MiKTeX\tex/generic/etexcmds\etexcmds.sty
+Package: etexcmds 2019/12/15 v1.7 Avoid name clashes with e-TeX commands (HO)
+)) (C:\Users\thoma\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geometry.sty
 Package: geometry 2020/01/02 v5.9 Page Geometry
  (C:\Users\thoma\AppData\Local\Programs\MiKTeX\tex/generic/iftex\ifvtex.sty
 Package: ifvtex 2019/10/25 v1.7 ifvtex legacy package. Use iftex instead.
 )
-\Gm@cnth=\count452
-\Gm@cntv=\count453
-\c@Gm@tempcnt=\count454
-\Gm@bindingoffset=\dimen309
-\Gm@wd@mp=\dimen310
-\Gm@odd@mp=\dimen311
-\Gm@even@mp=\dimen312
-\Gm@layoutwidth=\dimen313
-\Gm@layoutheight=\dimen314
-\Gm@layouthoffset=\dimen315
-\Gm@layoutvoffset=\dimen316
-\Gm@dimlist=\toks45
+\Gm@cnth=\count456
+\Gm@cntv=\count457
+\c@Gm@tempcnt=\count458
+\Gm@bindingoffset=\dimen318
+\Gm@wd@mp=\dimen319
+\Gm@odd@mp=\dimen320
+\Gm@even@mp=\dimen321
+\Gm@layoutwidth=\dimen322
+\Gm@layoutheight=\dimen323
+\Gm@layouthoffset=\dimen324
+\Gm@layoutvoffset=\dimen325
+\Gm@dimlist=\toks51
  (C:\Users\thoma\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geometry.cfg))
-\c@theorem=\count455
-\c@corollary=\count456
-\c@observation=\count457
-\@quotelevel=\count458
-\@quotereset=\count459
+\c@theorem=\count459
+\c@corollary=\count460
+\c@observation=\count461
+\@quotelevel=\count462
+\@quotereset=\count463
  (c:\Users\thoma\Desktop\chromatic-k-nearest-neighbours\tex\build\main.aux)
 \openout1 = `main.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 38.
-LaTeX Font Info:    ... okay on input line 38.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 38.
-LaTeX Font Info:    ... okay on input line 38.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 38.
-LaTeX Font Info:    ... okay on input line 38.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 38.
-LaTeX Font Info:    ... okay on input line 38.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 38.
-LaTeX Font Info:    ... okay on input line 38.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 38.
-LaTeX Font Info:    ... okay on input line 38.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 38.
-LaTeX Font Info:    ... okay on input line 38.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 40.
+LaTeX Font Info:    ... okay on input line 40.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 40.
+LaTeX Font Info:    ... okay on input line 40.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 40.
+LaTeX Font Info:    ... okay on input line 40.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 40.
+LaTeX Font Info:    ... okay on input line 40.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 40.
+LaTeX Font Info:    ... okay on input line 40.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 40.
+LaTeX Font Info:    ... okay on input line 40.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 40.
+LaTeX Font Info:    ... okay on input line 40.
  (C:\Users\thoma\AppData\Local\Programs\MiKTeX\tex/context/base/mkii\supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count460
-\scratchdimen=\dimen317
+\scratchcounter=\count464
+\scratchdimen=\dimen326
 \scratchbox=\box69
-\nofMPsegments=\count461
-\nofMParguments=\count462
-\everyMPshowfont=\toks46
-\MPscratchCnt=\count463
-\MPscratchDim=\dimen318
-\MPnumerator=\count464
-\makeMPintoPDFobject=\count465
-\everyMPtoPDFconversion=\toks47
+\nofMPsegments=\count465
+\nofMParguments=\count466
+\everyMPshowfont=\toks52
+\MPscratchCnt=\count467
+\MPscratchDim=\dimen327
+\MPnumerator=\count468
+\makeMPintoPDFobject=\count469
+\everyMPtoPDFconversion=\toks53
 ) (C:\Users\thoma\AppData\Local\Programs\MiKTeX\tex/latex/epstopdf-pkg\epstopdf-base.sty
 Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
 Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 485.
@@ -772,21 +798,21 @@ Package biblatex Info: Automatic encoding selection.
 Package biblatex Info: Trying to load bibliographic data...
 Package biblatex Info: ... file 'main.bbl' found.
  (c:\Users\thoma\Desktop\chromatic-k-nearest-neighbours\tex\build\main.bbl)
-Package biblatex Info: Reference section=0 on input line 38.
-Package biblatex Info: Reference segment=0 on input line 38.
+Package biblatex Info: Reference section=0 on input line 40.
+Package biblatex Info: Reference segment=0 on input line 40.
 Package caption Info: Begin \AtBeginDocument code.
 Package caption Info: subfig package v1.3 is loaded.
 Package caption Info: End \AtBeginDocument code.
 
 Package pgfplots notification 'compat/show suggested version=true': you might benefit from \pgfplotsset{compat=1.18} (current compat level: 1.9).
 
-LaTeX Info: Redefining \celsius on input line 38.
-Package gensymb Info: Faking symbols for \degree and \celsius on input line 38.
+LaTeX Info: Redefining \celsius on input line 40.
+Package gensymb Info: Faking symbols for \degree and \celsius on input line 40.
 
 Package gensymb Warning: Not defining \perthousand.
 
-LaTeX Info: Redefining \ohm on input line 38.
-Package gensymb Info: Using \Omega for \ohm on input line 38.
+LaTeX Info: Redefining \ohm on input line 40.
+Package gensymb Info: Using \Omega for \ohm on input line 40.
 
 Package gensymb Warning: Not defining \micro.
 
@@ -824,28 +850,40 @@ Package gensymb Warning: Not defining \micro.
 * \@reversemarginfalse
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
-LaTeX Font Info:    Trying to load font information for U+msa on input line 40.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 42.
 (C:\Users\thoma\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 40.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 42.
  (C:\Users\thoma\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
-Underfull \hbox (badness 10000) in paragraph at lines 43--46
+Underfull \hbox (badness 10000) in paragraph at lines 45--48
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 60--92
+Underfull \hbox (badness 10000) in paragraph at lines 75--76
 
  []
 
 
-LaTeX Warning: `h' float specifier changed to `ht'.
+Underfull \hbox (badness 10000) in paragraph at lines 75--76
+
+ []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 94--96
+Underfull \hbox (badness 10000) in paragraph at lines 75--76
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 75--76
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 75--76
 
  []
 
@@ -854,70 +892,84 @@ Underfull \hbox (badness 10000) in paragraph at lines 94--96
 [1
 
 {C:/Users/thoma/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}]
-<figs/opt_rank.pdf, id=19, 389.17867pt x 78.84456pt>
-File: figs/opt_rank.pdf Graphic file (type pdf)
-<use figs/opt_rank.pdf>
-Package pdftex.def Info: figs/opt_rank.pdf  used on input line 119.
-(pdftex.def)             Requested size: 341.43306pt x 69.17528pt.
-
-Underfull \hbox (badness 10000) in paragraph at lines 97--123
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 97--123
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 124--126
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 127--156
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 127--156
+Underfull \hbox (badness 10000) in paragraph at lines 77--109
 
  []
 
 
 
 [2]
-Underfull \hbox (badness 10000) in paragraph at lines 158--160
+Underfull \hbox (badness 10000) in paragraph at lines 111--113
+
+ []
+
+<figs/opt_rank.pdf, id=25, 389.17867pt x 78.84456pt>
+File: figs/opt_rank.pdf Graphic file (type pdf)
+<use figs/opt_rank.pdf>
+Package pdftex.def Info: figs/opt_rank.pdf  used on input line 136.
+(pdftex.def)             Requested size: 341.43306pt x 69.17528pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 114--140
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 161--174
+Underfull \hbox (badness 10000) in paragraph at lines 114--140
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 161--174
+Underfull \hbox (badness 10000) in paragraph at lines 141--143
 
  []
 
 
 
-[3 <./figs/opt_rank.pdf>]
+[3]
+Underfull \hbox (badness 10000) in paragraph at lines 144--173
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 144--173
+
+ []
+
+
 Underfull \hbox (badness 10000) in paragraph at lines 175--177
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 178--183
+
+[4 <./figs/opt_rank.pdf>]
+Underfull \hbox (badness 10000) in paragraph at lines 178--191
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 178--183
+Underfull \hbox (badness 10000) in paragraph at lines 178--191
 
  []
 
+
+Underfull \hbox (badness 10000) in paragraph at lines 192--194
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 195--201
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 195--201
+
+ []
+
+
+
+[5]
 Package epstopdf Info: Source file: <figs/fig1.eps>
 (epstopdf)                    date: 2024-10-25 11:06:57
 (epstopdf)                    size: 20208 bytes
@@ -925,12 +977,12 @@ Package epstopdf Info: Source file: <figs/fig1.eps>
 (epstopdf)                    date: 2024-10-27 20:26:33
 (epstopdf)                    size: 4668 bytes
 (epstopdf)             Command: <miktex-epstopdf --outfile=figs/fig1-eps-converted-to.pdf figs/fig1.eps>
-(epstopdf)             \includegraphics on input line 199.
+(epstopdf)             \includegraphics on input line 217.
 Package epstopdf Info: Output file is already uptodate.
-<figs/fig1-eps-converted-to.pdf, id=80, 153.57375pt x 166.6225pt>
+<figs/fig1-eps-converted-to.pdf, id=86, 153.57375pt x 166.6225pt>
 File: figs/fig1-eps-converted-to.pdf Graphic file (type pdf)
 <use figs/fig1-eps-converted-to.pdf>
-Package pdftex.def Info: figs/fig1-eps-converted-to.pdf  used on input line 199.
+Package pdftex.def Info: figs/fig1-eps-converted-to.pdf  used on input line 217.
 (pdftex.def)             Requested size: 113.81102pt x 123.48177pt.
 Package epstopdf Info: Source file: <figs/fig2.eps>
 (epstopdf)                    date: 2024-10-25 11:06:59
@@ -939,252 +991,242 @@ Package epstopdf Info: Source file: <figs/fig2.eps>
 (epstopdf)                    date: 2024-10-27 20:26:35
 (epstopdf)                    size: 4614 bytes
 (epstopdf)             Command: <miktex-epstopdf --outfile=figs/fig2-eps-converted-to.pdf figs/fig2.eps>
-(epstopdf)             \includegraphics on input line 201.
+(epstopdf)             \includegraphics on input line 219.
 Package epstopdf Info: Output file is already uptodate.
-<figs/fig2-eps-converted-to.pdf, id=81, 217.81375pt x 87.32625pt>
+<figs/fig2-eps-converted-to.pdf, id=87, 217.81375pt x 87.32625pt>
 File: figs/fig2-eps-converted-to.pdf Graphic file (type pdf)
 <use figs/fig2-eps-converted-to.pdf>
-Package pdftex.def Info: figs/fig2-eps-converted-to.pdf  used on input line 201.
+Package pdftex.def Info: figs/fig2-eps-converted-to.pdf  used on input line 219.
 (pdftex.def)             Requested size: 170.71652pt x 68.44331pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 206--271
+Underfull \hbox (badness 10000) in paragraph at lines 224--289
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 206--271
+Underfull \hbox (badness 10000) in paragraph at lines 224--289
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 206--271
+Underfull \hbox (badness 10000) in paragraph at lines 224--289
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 206--271
+Underfull \hbox (badness 10000) in paragraph at lines 224--289
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 206--271
+Underfull \hbox (badness 10000) in paragraph at lines 224--289
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 206--271
+Underfull \hbox (badness 10000) in paragraph at lines 224--289
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 206--271
-
- []
-
-
-
-[4]
-
-[5 <./figs/fig1-eps-converted-to.pdf> <./figs/fig2-eps-converted-to.pdf>]
-Underfull \hbox (badness 10000) in paragraph at lines 277--280
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 285--308
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 285--308
+Underfull \hbox (badness 10000) in paragraph at lines 224--289
 
  []
 
 
 
-[6]
-Underfull \hbox (badness 10000) in paragraph at lines 314--335
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 314--335
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 336--352
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 354--381
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 354--381
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 354--381
+[6 <./figs/fig1-eps-converted-to.pdf> <./figs/fig2-eps-converted-to.pdf>]
+Underfull \hbox (badness 10000) in paragraph at lines 295--298
 
  []
 
 
 
 [7]
-Underfull \hbox (badness 10000) in paragraph at lines 382--389
+Underfull \hbox (badness 10000) in paragraph at lines 303--326
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 397--407
+Underfull \hbox (badness 10000) in paragraph at lines 303--326
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 332--354
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 332--354
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 355--371
 
  []
 
 
 
 [8]
-Underfull \hbox (badness 10000) in paragraph at lines 412--413
+Underfull \hbox (badness 10000) in paragraph at lines 373--399
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 414--447
+Underfull \hbox (badness 10000) in paragraph at lines 373--399
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 414--447
+Underfull \hbox (badness 10000) in paragraph at lines 373--399
 
  []
 
-<figs/temperature-02-06-2024-cropped.png, id=109, 733.99219pt x 440.39531pt>
+
+Underfull \hbox (badness 10000) in paragraph at lines 400--407
+
+ []
+
+
+
+[9]
+Underfull \hbox (badness 10000) in paragraph at lines 415--425
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 430--431
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 464--467
+
+ []
+
+
+
+[10]
+<figs/temperature-02-06-2024-cropped.png, id=115, 733.99219pt x 440.39531pt>
 File: figs/temperature-02-06-2024-cropped.png Graphic file (type png)
 <use figs/temperature-02-06-2024-cropped.png>
-Package pdftex.def Info: figs/temperature-02-06-2024-cropped.png  used on input line 454.
+Package pdftex.def Info: figs/temperature-02-06-2024-cropped.png  used on input line 474.
 (pdftex.def)             Requested size: 284.52756pt x 170.71861pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 449--458
+Underfull \hbox (badness 10000) in paragraph at lines 469--478
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 449--458
+Underfull \hbox (badness 10000) in paragraph at lines 469--478
 
  []
 
 
 
-[9] (figs/tex/1drange.tex
-Underfull \hbox (badness 10000) in paragraph at lines 473--1
+[11 <./figs/temperature-02-06-2024-cropped.png>] (figs/tex/1drange.tex
+Underfull \hbox (badness 10000) in paragraph at lines 493--1
 
  []
 
-LaTeX Font Info:    Trying to load font information for OMS+cmr on input line 124.
+LaTeX Font Info:    Trying to load font information for OMS+cmr on input line 125.
 (C:\Users\thoma\AppData\Local\Programs\MiKTeX\tex/latex/base\omscmr.fd
 File: omscmr.fd 2023/04/13 v2.5m Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 124.
-) (figs/tex/1dmode.tex
-
-[10 <./figs/temperature-02-06-2024-cropped.png>])
-Underfull \hbox (badness 10000) in paragraph at lines 478--481
-
- []
-
-
-
-[11]
-Underfull \hbox (badness 10000) in paragraph at lines 483--487
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 500--502
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 500--502
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 503--533
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 503--533
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 534--539
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 534--539
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 534--539
-
- []
-
-
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 125.
+) (figs/tex/1dmode.tex)
 
 [12]
-<figs/usp.png, id=124, 884.55469pt x 484.81125pt>
+Underfull \hbox (badness 10000) in paragraph at lines 498--501
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 503--507
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 520--523
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 520--523
+
+ []
+
+
+
+[13]
+Underfull \hbox (badness 10000) in paragraph at lines 556--561
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 556--561
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 556--561
+
+ []
+
+<figs/usp.png, id=128, 884.55469pt x 484.81125pt>
 File: figs/usp.png Graphic file (type png)
 <use figs/usp.png>
-Package pdftex.def Info: figs/usp.png  used on input line 542.
+Package pdftex.def Info: figs/usp.png  used on input line 564.
 (pdftex.def)             Requested size: 284.52756pt x 155.94171pt.
-<figs/usp_points.png, id=125, 3613.5pt x 1806.75pt>
+<figs/usp_points.png, id=129, 3613.5pt x 1806.75pt>
 File: figs/usp_points.png Graphic file (type png)
 <use figs/usp_points.png>
-Package pdftex.def Info: figs/usp_points.png  used on input line 549.
+Package pdftex.def Info: figs/usp_points.png  used on input line 571.
 (pdftex.def)             Requested size: 284.52756pt x 142.25475pt.
- (figs/tex/2drange.tex) (figs/tex/2dmode.tex
-
-[13 <./figs/usp.png> <./figs/usp_points.png>]) (figs/tex/2dpre.tex)
-Underfull \hbox (badness 10000) in paragraph at lines 560--566
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 560--566
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 560--566
-
- []
-
-
+(figs/tex/2drange.tex) (figs/tex/2dmode.tex
 
 [14]
-Overfull \hbox (0.78696pt too wide) in paragraph at lines 579--579
+
+[15 <./figs/usp.png> <./figs/usp_points.png>]) (figs/tex/2dpre.tex)
+Underfull \hbox (badness 10000) in paragraph at lines 582--587
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 582--587
+
+ []
+
+
+
+[16]
+Underfull \hbox (badness 10000) in paragraph at lines 604--605
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 604--605
+
+ []
+
+
+
+[17]
+Overfull \hbox (0.78696pt too wide) in paragraph at lines 607--607
 []\OT1/cmr/m/n/10 Thijs van der Horst, Maarten L^^?offler, and Frank Staals. ``Chro-matic k-Nearest Neigh-bor Queries''.
  []
 
 
-
-[15]
-Overfull \hbox (1.08583pt too wide) in paragraph at lines 579--579
+Overfull \hbox (1.08583pt too wide) in paragraph at lines 607--607
 []\OT1/cmr/m/n/10 T.D. van der Plas. \OT1/cmr/m/it/10 Chro-matic k Near-est Neigh-bours\OT1/cmr/m/n/10 . $\OT1/cmtt/m/n/10 https : / / github . com / tvdplas / chromatic -[]
  []
 
 
 
-[16] (c:\Users\thoma\Desktop\chromatic-k-nearest-neighbours\tex\build\main.aux)
+[18] (c:\Users\thoma\Desktop\chromatic-k-nearest-neighbours\tex\build\main.aux)
  ***********
 LaTeX2e <2024-06-01> patch level 2
 L3 programming layer <2024-09-10>
@@ -1194,17 +1236,17 @@ Package logreq Info: Writing requests to 'main.run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
- 35638 strings out of 473899
- 855553 string characters out of 5726499
- 1767767 words of memory out of 5000000
- 57986 multiletter control sequences out of 15000+600000
- 568935 words of font info for 78 fonts, out of 8000000 for 9000
+ 35916 strings out of 473899
+ 860477 string characters out of 5726499
+ 1786954 words of memory out of 5000000
+ 58252 multiletter control sequences out of 15000+600000
+ 569248 words of font info for 79 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  99i,19n,107p,1560b,2172s stack positions out of 10000i,1000n,20000p,200000b,200000s
  <C:\Users\thoma\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\tcrm1000.pk><C:/Users/thoma/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmbx10.pfb><C:/Users/thoma/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmbx12.pfb><C:/Users/thoma/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmbx9.pfb><C:/Users/thoma/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmcsc10.pfb><C:/Users/thoma/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi10.pfb><C:/Users/thoma/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi12.pfb><C:/Users/thoma/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi5.pfb><C:/Users/thoma/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi7.pfb><C:/Users/thoma/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi9.pfb><C:/Users/thoma/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Users/thoma/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Users/thoma/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr17.pfb><C:/Users/thoma/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr7.pfb><C:/Users/thoma/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr8.pfb><C:/Users/thoma/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr9.pfb><C:/Users/thoma/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Users/thoma/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy5.pfb><C:/Users/thoma/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy6.pfb><C:/Users/thoma/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy7.pfb><C:/Users/thoma/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy8.pfb><C:/Users/thoma/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmti10.pfb><C:/Users/thoma/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmtt10.pfb><C:/Users/thoma/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/symbols/msam10.pfb>
-Output written on c:\Users\thoma\Desktop\chromatic-k-nearest-neighbours\tex\build\main.pdf (16 pages, 961530 bytes).
+Output written on c:\Users\thoma\Desktop\chromatic-k-nearest-neighbours\tex\build\main.pdf (18 pages, 973247 bytes).
 PDF statistics:
- 241 PDF objects out of 1000 (max. 8388607)
+ 247 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
  43 words of extra memory for PDF output out of 10000 (max. 10000000)
 

@@ -1,17 +1,17 @@
 [0] Config.pm:308> INFO - This is Biber 2.20
-[1] Config.pm:311> INFO - Logfile is 'build/main.blg'
-[183] biber-MSWIN64:340> INFO - === 
-[241] Biber.pm:420> INFO - Reading 'build/main.bcf'
-[440] Biber.pm:994> INFO - Found 12 citekeys in bib section 0
-[471] Biber.pm:4463> INFO - Processing section 0
-[495] Biber.pm:4654> INFO - Looking for bibtex file 'lib.bib' for section 0
-[574] bibtex.pm:1713> INFO - LaTeX decoding ...
-[638] bibtex.pm:1519> INFO - Found BibTeX data source 'lib.bib'
-[851] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'normalization = NFD' with 'normalization = prenormalized'
-[851] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'variable = shifted' with 'variable = non-ignorable'
-[851] Biber.pm:4283> INFO - Sorting list 'ynt/global//global/global/global' of type 'entry' with template 'ynt' and locale 'en-US'
-[851] Biber.pm:4289> INFO - No sort tailoring available for locale 'en-US'
-[882] bbl.pm:676> INFO - Writing 'build/main.bbl' with encoding 'UTF-8'
-[896] bbl.pm:779> INFO - Output to build/main.bbl
-[896] Biber.pm:131> WARN - legacy month field 'Nov' in entry 'Chan2014' is not an integer - this will probably not sort properly.
-[896] Biber.pm:133> INFO - WARNINGS: 1
+[0] Config.pm:311> INFO - Logfile is 'build/main.blg'
+[142] biber-MSWIN64:340> INFO - === 
+[196] Biber.pm:420> INFO - Reading 'build/main.bcf'
+[350] Biber.pm:994> INFO - Found 14 citekeys in bib section 0
+[368] Biber.pm:4463> INFO - Processing section 0
+[384] Biber.pm:4654> INFO - Looking for bibtex file 'lib.bib' for section 0
+[447] bibtex.pm:1713> INFO - LaTeX decoding ...
+[492] bibtex.pm:1519> INFO - Found BibTeX data source 'lib.bib'
+[667] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'variable = shifted' with 'variable = non-ignorable'
+[667] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'normalization = NFD' with 'normalization = prenormalized'
+[667] Biber.pm:4283> INFO - Sorting list 'ynt/global//global/global/global' of type 'entry' with template 'ynt' and locale 'en-US'
+[667] Biber.pm:4289> INFO - No sort tailoring available for locale 'en-US'
+[691] bbl.pm:676> INFO - Writing 'build/main.bbl' with encoding 'UTF-8'
+[703] bbl.pm:779> INFO - Output to build/main.bbl
+[704] Biber.pm:131> WARN - legacy month field 'Nov' in entry 'Chan2014' is not an integer - this will probably not sort properly.
+[704] Biber.pm:133> INFO - WARNINGS: 1

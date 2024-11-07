@@ -282,6 +282,13 @@ INPUT C:\Users\thoma\AppData\Local\Programs\MiKTeX\tex\latex\amsmath\amsbsy.sty
 INPUT C:\Users\thoma\AppData\Local\Programs\MiKTeX\tex\latex\amsmath\amsopn.sty
 INPUT C:\Users\thoma\AppData\Local\Programs\MiKTeX\tex\latex\booktabs\booktabs.sty
 INPUT C:\Users\thoma\AppData\Local\Programs\MiKTeX\tex\latex\booktabs\booktabs.sty
+INPUT C:\Users\thoma\AppData\Local\Programs\MiKTeX\tex\generic\soul\soul.sty
+INPUT C:\Users\thoma\AppData\Local\Programs\MiKTeX\tex\generic\soul\soul.sty
+INPUT C:\Users\thoma\AppData\Local\Programs\MiKTeX\tex\generic\soul\soul-ori.sty
+INPUT C:\Users\thoma\AppData\Local\Programs\MiKTeX\tex\generic\soul\soul-ori.sty
+INPUT C:\Users\thoma\AppData\Local\Programs\MiKTeX\fonts\tfm\jknappen\ec\ectt1000.tfm
+INPUT C:\Users\thoma\AppData\Local\Programs\MiKTeX\tex\generic\etexcmds\etexcmds.sty
+INPUT C:\Users\thoma\AppData\Local\Programs\MiKTeX\tex\generic\etexcmds\etexcmds.sty
 INPUT C:\Users\thoma\AppData\Local\Programs\MiKTeX\tex\latex\geometry\geometry.sty
 INPUT C:\Users\thoma\AppData\Local\Programs\MiKTeX\tex\latex\geometry\geometry.sty
 INPUT C:\Users\thoma\AppData\Local\Programs\MiKTeX\tex\generic\iftex\ifvtex.sty
@@ -353,11 +360,11 @@ INPUT C:\Users\thoma\AppData\Local\Programs\MiKTeX\fonts\tfm\public\amsfonts\sym
 INPUT C:\Users\thoma\AppData\Local\Programs\MiKTeX\fonts\tfm\public\amsfonts\symbols\msam7.tfm
 INPUT C:\Users\thoma\AppData\Local\Programs\MiKTeX\fonts\tfm\public\amsfonts\symbols\msbm10.tfm
 INPUT C:\Users\thoma\AppData\Local\Programs\MiKTeX\fonts\tfm\public\amsfonts\symbols\msbm7.tfm
+OUTPUT c:\Users\thoma\Desktop\chromatic-k-nearest-neighbours\tex\build\main.pdf
+INPUT C:\Users\thoma\AppData\Local\MiKTeX\fonts\map\pdftex\pdftex.map
 INPUT C:\Users\thoma\AppData\Local\Programs\MiKTeX\fonts\tfm\public\cm\cmbx12.tfm
 INPUT C:\Users\thoma\AppData\Local\Programs\MiKTeX\fonts\tfm\public\cm\cmbx10.tfm
 INPUT C:\Users\thoma\AppData\Local\Programs\MiKTeX\fonts\tfm\public\cm\cmti10.tfm
-OUTPUT c:\Users\thoma\Desktop\chromatic-k-nearest-neighbours\tex\build\main.pdf
-INPUT C:\Users\thoma\AppData\Local\MiKTeX\fonts\map\pdftex\pdftex.map
 INPUT .\figs\opt_rank.pdf
 INPUT .\figs\opt_rank.pdf
 INPUT .\figs\opt_rank.pdf
