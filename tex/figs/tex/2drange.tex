@@ -4,7 +4,7 @@
 \resizebox{8cm}{!}{
     \begin{tikzpicture}
     \begin{axis}[
-        title={Range query times for 1-3},
+        title={Range query times for 2D-\{1,10,100\}-$k$-10-20-0-0},
         xmode=log,
         ymode=log,
         xlabel={k},
@@ -15,347 +15,112 @@
     ]
     \addplot[
         color=blue,
+        mark=square,
+        dashed, thick,
+        ]
+        coordinates {
+            (25, 5.2)
+(50, 14.0)
+(75, 20.1)
+(100, 26.2)
+(250, 68.6)
+(500, 137.1)
+(750, 211.0)
+        };
+    \addlegendentry{$n=1e3$ Naive}
+    \addplot[
+        color=blue,
+        mark=o,
+        ]
+        coordinates {
+            (25, 55.0)
+(50, 54.1)
+(75, 57.8)
+(100, 59.7)
+(250, 64.0)
+(500, 67.2)
+(750, 65.8)
+        };
+    \addlegendentry{$n=1e3$ Fast}
+    
+    \addplot[
+        color=red,
+        mark=square,
+        dashed, thick
+        ]
+        coordinates {
+            (25, 5.2)
+(50, 10.5)
+(75, 16.6)
+(100, 22.1)
+(250, 60.4)
+(500, 126.4)
+(750, 204.6)
+(1000, 275.9)
+(1500, 436.0)
+(2000, 616.6)
+        };
+    \addlegendentry{$n=1e4$ Naive}
+    \addplot[
+        color=red,
+        mark=o,
+        ]
+        coordinates {
+            (25, 105.2)
+(50, 97.7)
+(75, 99.3)
+(100, 100.1)
+(250, 103.8)
+(500, 109.6)
+(750, 123.8)
+(1000, 113.4)
+(1500, 122.7)
+(2000, 132.5)
+        };
+    \addlegendentry{$n=1e4$ Fast}
+    
+    \addplot[
+        color=green,
         mark=square,
         dashed, thick,
         ]
         coordinates {
             (25, 5.5)
-            (50, 13.2)
-            (75, 18.6)
-            (100, 24.7)
-            (250, 64.8)
-            (500, 133.4)
-            (750, 209.1)
+(50, 10.6)
+(75, 17.6)
+(100, 25.3)
+(250, 63.0)
+(500, 133.9)
+(750, 206.6)
+(1000, 279.0)
+(1500, 429.1)
+(2000, 593.1)
         };
-    \addlegendentry{1 Naive}
-    \addplot[
-        color=blue,
-        mark=o,
-        ]
-        coordinates {
-            (25, 57.5)
-            (50, 54.1)
-            (75, 57.4)
-            (100, 58.3)
-            (250, 62.5)
-            (500, 65.2)
-            (750, 65.4)
-        };
-    \addlegendentry{1 Fast}
-    
-    \addplot[
-        color=red,
-        mark=square,
-        dashed, thick
-        ]
-        coordinates {
-            (25, 5.2)
-            (50, 10.9)
-            (75, 17.0)
-            (100, 23.1)
-            (250, 62.1)
-            (500, 130.2)
-            (750, 208.7)
-            (1000, 284.3)
-            (1500, 445.3)
-            (2000, 612.0)
-        };
-    \addlegendentry{2 Naive}
-    \addplot[
-        color=red,
-        mark=o,
-        ]
-        coordinates {
-        (25, 89.6)
-        (50, 95.2)
-        (75, 99.7)
-        (100, 97.8)
-        (250, 107.2)
-        (500, 113.2)
-        (750, 113.7)
-        (1000, 118.5)
-        (1500, 122.5)
-        (2000, 122.2)
-        };
-    \addlegendentry{2 Fast}
-    
-    \addplot[
-        color=green,
-        mark=square,
-        dashed, thick,
-        ]
-        coordinates {
-            (25, 5.6)
-            (50, 12.7)
-            (75, 18.7)
-            (100, 24.9)
-            (250, 66.0)
-            (500, 144.7)
-            (750, 233.9)
-            (1000, 321.8)
-            (1500, 470.7)
-            (2000, 663.7)
-        };
-    \addlegendentry{3 Naive}
+    \addlegendentry{$n=1e5$ Naive}
     \addplot[
         color=green,
         mark=o,
         ]
         coordinates {
-            (25, 204.6)
-            (50, 230.0)
-            (75, 232.4)
-            (100, 238.5)
-            (250, 238.4)
-            (500, 257.0)
-            (750, 277.1)
-            (1000, 293.1)
-            (1500, 278.6)
-            (2000, 286.0)
+          (25, 211.0)
+(50, 194.2)
+(75, 211.8)
+(100, 230.2)
+(250, 218.6)
+(500, 225.7)
+(750, 223.5)
+(1000, 227.0)
+(1500, 236.0)
+(2000, 237.0)  
         };
-    \addlegendentry{3 Fast}
+    \addlegendentry{$n=1e5$ Fast}
     \end{axis}
     \end{tikzpicture}
 }
 \resizebox{8cm}{!}{
     \begin{tikzpicture}
     \begin{axis}[
-        title={Range query times for 4-6},
-        xmode=log,
-        ymode=log,
-        xlabel={k},
-        ylabel={Range query time (ms)},
-        legend pos=outer north east,
-        ymajorgrids=true,
-        grid style=dashed,
-    ]
-    \addplot[
-        color=blue,
-        mark=square,
-        dashed, thick,
-        ]
-        coordinates {
-            (25, 5.2)
-            (50, 12.5)
-            (75, 18.9)
-            (100, 25.1)
-            (250, 67.3)
-            (500, 137.7)
-            (750, 216.0)
-        };
-    \addlegendentry{4 Naive}
-    \addplot[
-        color=blue,
-        mark=o,
-        ]
-        coordinates {
-            (25, 54.3)
-            (50, 56.8)
-            (75, 57.7)
-            (100, 59.9)
-            (250, 66.9)
-            (500, 67.1)
-            (750, 68.5)
-        };
-    \addlegendentry{4 Fast}
-    
-    \addplot[
-        color=red,
-        mark=square,
-        dashed, thick
-        ]
-        coordinates {
-            (25, 5.4)
-            (50, 11.1)
-            (75, 17.6)
-            (100, 23.2)
-            (250, 65.8)
-            (500, 137.5)
-            (750, 223.0)
-            (1000, 313.8)
-            (1500, 484.0)
-            (2000, 639.8)
-        };
-    \addlegendentry{5 Naive}
-    \addplot[
-        color=red,
-        mark=o,
-        ]
-        coordinates {
-            (25, 96.6)
-            (50, 100.8)
-            (75, 105.3)
-            (100, 106.5)
-            (250, 124.2)
-            (500, 138.6)
-            (750, 132.9)
-            (1000, 145.8)
-            (1500, 145.3)
-            (2000, 136.3)
-        };
-    \addlegendentry{5 Fast}
-    
-    \addplot[
-        color=green,
-        mark=square,
-        dashed, thick,
-        ]
-        coordinates {
-            (25, 5.6)
-(50, 11.6)
-(75, 17.9)
-(100, 25.1)
-(250, 64.5)
-(500, 136.8)
-(750, 212.7)
-(1000, 313.6)
-(1500, 498.0)
-(2000, 669.3)
-        };
-    \addlegendentry{6 Naive}
-    \addplot[
-        color=green,
-        mark=o,
-        ]
-        coordinates {
-            (25, 200.7)
-(50, 206.4)
-(75, 222.4)
-(100, 233.0)
-(250, 226.7)
-(500, 240.7)
-(750, 248.6)
-(1000, 281.1)
-(1500, 279.3)
-(2000, 303.0)
-        };
-    \addlegendentry{6 Fast}
-    \end{axis}
-    \end{tikzpicture}
-}
-
-% 7-12
-\hskip-2cm
-\resizebox{8cm}{!}{
-    \begin{tikzpicture}
-    \begin{axis}[
-        title={Range query times for 7-9},
-        xmode=log,
-        ymode=log,
-        xlabel={k},
-        ylabel={Range query time (ms)},
-        legend pos=outer north east,
-        ymajorgrids=true,
-        grid style=dashed,
-    ]
-    \addplot[
-        color=blue,
-        mark=square,
-        dashed, thick,
-        ]
-        coordinates {
-            (25, 5.6)
-            (50, 13.2)
-            (75, 20.7)
-            (100, 26.2)
-            (250, 68.5)
-            (500, 145.1)
-            (750, 230.1)
-        };
-    \addlegendentry{7 Naive}
-    \addplot[
-        color=blue,
-        mark=o,
-        ]
-        coordinates {
-            (25, 56.4)
-            (50, 59.7)
-            (75, 62.5)
-            (100, 62.4)
-            (250, 67.0)
-            (500, 72.4)
-            (750, 72.7)
-        };
-    \addlegendentry{7 Fast}
-    
-    \addplot[
-        color=red,
-        mark=square,
-        dashed, thick
-        ]
-        coordinates {
-            (25, 5.7)
-(50, 11.7)
-(75, 17.3)
-(100, 25.1)
-(250, 66.7)
-(500, 140.9)
-(750, 230.3)
-(1000, 321.5)
-(1500, 518.3)
-(2000, 673.7)
-        };
-    \addlegendentry{8 Naive}
-    \addplot[
-        color=red,
-        mark=o,
-        ]
-        coordinates {
-            (25, 115.6)
-(50, 118.3)
-(75, 114.5)
-(100, 126.6)
-(250, 131.9)
-(500, 128.4)
-(750, 151.1)
-(1000, 159.7)
-(1500, 166.5)
-(2000, 158.1)
-        };
-    \addlegendentry{8 Fast}
-    
-    \addplot[
-        color=green,
-        mark=square,
-        dashed, thick,
-        ]
-        coordinates {
-            (25, 5.8)
-(50, 12.4)
-(75, 18.4)
-(100, 25.6)
-(250, 70.5)
-(500, 142.4)
-(750, 225.0)
-(1000, 316.5)
-(1500, 499.8)
-(2000, 644.4)
-        };
-    \addlegendentry{9 Naive}
-    \addplot[
-        color=green,
-        mark=o,
-        ]
-        coordinates {
-            (25, 210.0)
-(50, 239.6)
-(75, 239.5)
-(100, 235.9)
-(250, 269.6)
-(500, 259.9)
-(750, 264.2)
-(1000, 279.5)
-(1500, 287.4)
-(2000, 268.6)
-        };
-    \addlegendentry{9 Fast}
-    \end{axis}
-    \end{tikzpicture}
-}
-\resizebox{8cm}{!}{
-    \begin{tikzpicture}
-    \begin{axis}[
-        title={Range query times for 10-12},
+        title={Range query times for 2D-\{1,10,100\}-$k$-10-100-200-95 },
         xmode=log,
         ymode=log,
         xlabel={k},
@@ -372,27 +137,27 @@
         coordinates {
             (25, 5.0)
 (50, 12.0)
-(75, 18.7)
-(100, 23.4)
-(250, 64.2)
-(500, 131.5)
-(750, 207.3)
+(75, 17.9)
+(100, 24.0)
+(250, 62.8)
+(500, 131.3)
+(750, 202.3)
         };
-    \addlegendentry{10 Naive}
+    \addlegendentry{$n=1e3$ Naive}
     \addplot[
         color=blue,
         mark=o,
         ]
         coordinates {
             (25, 50.2)
-(50, 53.6)
+(50, 53.2)
 (75, 55.6)
-(100, 57.5)
-(250, 61.5)
+(100, 57.2)
+(250, 60.4)
 (500, 63.9)
-(750, 65.8)
+(750, 63.2)
         };
-    \addlegendentry{10 Fast}
+    \addlegendentry{$n=1e3$ Fast}
     
     \addplot[
         color=red,
@@ -400,35 +165,35 @@
         dashed, thick
         ]
         coordinates {
-            (25, 5.1)
-(50, 11.1)
+            (25, 5.0)
+(50, 10.6)
 (75, 16.6)
-(100, 22.2)
-(250, 61.6)
-(500, 127.5)
-(750, 206.9)
-(1000, 281.2)
-(1500, 436.2)
-(2000, 599.6)
+(100, 22.1)
+(250, 58.7)
+(500, 123.4)
+(750, 201.9)
+(1000, 275.5)
+(1500, 432.5)
+(2000, 587.5)
         };
-    \addlegendentry{11 Naive}
+    \addlegendentry{$n=1e4$ Naive}
     \addplot[
         color=red,
         mark=o,
         ]
         coordinates {
-            (25, 89.2)
-(50, 92.6)
-(75, 96.3)
-(100, 97.6)
-(250, 105.5)
-(500, 106.8)
-(750, 111.8)
-(1000, 115.6)
-(1500, 113.9)
-(2000, 117.4)
+            (25, 84.5)
+(50, 92.5)
+(75, 93.8)
+(100, 92.7)
+(250, 101.9)
+(500, 108.0)
+(750, 109.9)
+(1000, 109.9)
+(1500, 115.2)
+(2000, 112.8)
         };
-    \addlegendentry{11 Fast}
+    \addlegendentry{$n=1e4$ Fast}
     
     \addplot[
         color=green,
@@ -436,35 +201,506 @@
         dashed, thick,
         ]
         coordinates {
-            (25, 5.3)
+            (25, 5.2)
 (50, 11.0)
-(75, 17.5)
-(100, 24.2)
-(250, 66.1)
-(500, 129.7)
-(750, 203.8)
-(1000, 282.3)
-(1500, 437.5)
-(2000, 604.3)
+(75, 16.4)
+(100, 22.4)
+(250, 60.5)
+(500, 125.4)
+(750, 198.1)
+(1000, 279.6)
+(1500, 432.0)
+(2000, 586.9)
         };
-    \addlegendentry{12 Naive}
+    \addlegendentry{$n=1e5$ Naive}
     \addplot[
         color=green,
         mark=o,
         ]
         coordinates {
-            (25, 193.8)
-(50, 194.3)
-(75, 199.6)
-(100, 237.2)
-(250, 235.5)
-(500, 217.2)
-(750, 223.7)
-(1000, 227.2)
-(1500, 233.9)
-(2000, 235.8)
+            (25, 177.2)
+(50, 187.2)
+(75, 190.4)
+(100, 196.8)
+(250, 209.2)
+(500, 217.1)
+(750, 227.6)
+(1000, 229.2)
+(1500, 239.1)
+(2000, 239.0)
         };
-    \addlegendentry{12 Fast}
+    \addlegendentry{$n=1e5$ Fast}
     \end{axis}
     \end{tikzpicture}
 }
+
+% All data
+% % A1-6
+% \hskip-2cm
+% \resizebox{8cm}{!}{
+%     \begin{tikzpicture}
+%     \begin{axis}[
+%         title={Range query times for 1-3},
+%         xmode=log,
+%         ymode=log,
+%         xlabel={k},
+%         ylabel={Range query time (ms)},
+%         legend pos=outer north east,
+%         ymajorgrids=true,
+%         grid style=dashed,
+%     ]
+%     \addplot[
+%         color=blue,
+%         mark=square,
+%         dashed, thick,
+%         ]
+%         coordinates {
+%             (25, 5.2)
+% (50, 14.0)
+% (75, 20.1)
+% (100, 26.2)
+% (250, 68.6)
+% (500, 137.1)
+% (750, 211.0)
+%         };
+%     \addlegendentry{1 Naive}
+%     \addplot[
+%         color=blue,
+%         mark=o,
+%         ]
+%         coordinates {
+%             (25, 55.0)
+% (50, 54.1)
+% (75, 57.8)
+% (100, 59.7)
+% (250, 64.0)
+% (500, 67.2)
+% (750, 65.8)
+%         };
+%     \addlegendentry{1 Fast}
+    
+%     \addplot[
+%         color=red,
+%         mark=square,
+%         dashed, thick
+%         ]
+%         coordinates {
+%             (25, 5.2)
+% (50, 10.5)
+% (75, 16.6)
+% (100, 22.1)
+% (250, 60.4)
+% (500, 126.4)
+% (750, 204.6)
+% (1000, 275.9)
+% (1500, 436.0)
+% (2000, 616.6)
+%         };
+%     \addlegendentry{2 Naive}
+%     \addplot[
+%         color=red,
+%         mark=o,
+%         ]
+%         coordinates {
+%             (25, 105.2)
+% (50, 97.7)
+% (75, 99.3)
+% (100, 100.1)
+% (250, 103.8)
+% (500, 109.6)
+% (750, 123.8)
+% (1000, 113.4)
+% (1500, 122.7)
+% (2000, 132.5)
+%         };
+%     \addlegendentry{2 Fast}
+    
+%     \addplot[
+%         color=green,
+%         mark=square,
+%         dashed, thick,
+%         ]
+%         coordinates {
+%             (25, 5.5)
+% (50, 10.6)
+% (75, 17.6)
+% (100, 25.3)
+% (250, 63.0)
+% (500, 133.9)
+% (750, 206.6)
+% (1000, 279.0)
+% (1500, 429.1)
+% (2000, 593.1)
+%         };
+%     \addlegendentry{3 Naive}
+%     \addplot[
+%         color=green,
+%         mark=o,
+%         ]
+%         coordinates {
+%           (25, 211.0)
+% (50, 194.2)
+% (75, 211.8)
+% (100, 230.2)
+% (250, 218.6)
+% (500, 225.7)
+% (750, 223.5)
+% (1000, 227.0)
+% (1500, 236.0)
+% (2000, 237.0)  
+%         };
+%     \addlegendentry{3 Fast}
+%     \end{axis}
+%     \end{tikzpicture}
+% }
+% \resizebox{8cm}{!}{
+%     \begin{tikzpicture}
+%     \begin{axis}[
+%         title={Range query times for 4-6},
+%         xmode=log,
+%         ymode=log,
+%         xlabel={k},
+%         ylabel={Range query time (ms)},
+%         legend pos=outer north east,
+%         ymajorgrids=true,
+%         grid style=dashed,
+%     ]
+%     \addplot[
+%         color=blue,
+%         mark=square,
+%         dashed, thick,
+%         ]
+%         coordinates {
+%             (25, 5.1)
+% (50, 11.7)
+% (75, 17.6)
+% (100, 23.6)
+% (250, 62.7)
+% (500, 125.8)
+% (750, 200.5)
+%         };
+%     \addlegendentry{4 Naive}
+%     \addplot[
+%         color=blue,
+%         mark=o,
+%         ]
+%         coordinates {
+%             (25, 50.4)
+% (50, 52.5)
+% (75, 53.4)
+% (100, 54.9)
+% (250, 60.1)
+% (500, 61.0)
+% (750, 63.1)
+%         };
+%     \addlegendentry{4 Fast}
+    
+%     \addplot[
+%         color=red,
+%         mark=square,
+%         dashed, thick
+%         ]
+%         coordinates {
+%             (25, 5.1)
+% (50, 10.4)
+% (75, 15.8)
+% (100, 21.9)
+% (250, 59.1)
+% (500, 124.3)
+% (750, 201.0)
+% (1000, 275.1)
+% (1500, 429.8)
+% (2000, 585.2)
+%         };
+%     \addlegendentry{5 Naive}
+%     \addplot[
+%         color=red,
+%         mark=o,
+%         ]
+%         coordinates {
+%             (25, 85.8)
+% (50, 89.0)
+% (75, 90.0)
+% (100, 93.3)
+% (250, 100.0)
+% (500, 104.9)
+% (750, 105.7)
+% (1000, 109.6)
+% (1500, 111.5)
+% (2000, 114.3)
+%         };
+%     \addlegendentry{5 Fast}
+    
+%     \addplot[
+%         color=green,
+%         mark=square,
+%         dashed, thick,
+%         ]
+%         coordinates {
+%             (25, 5.3)
+% (50, 11.7)
+% (75, 16.5)
+% (100, 22.6)
+% (250, 60.6)
+% (500, 129.8)
+% (750, 203.2)
+% (1000, 276.0)
+% (1500, 441.6)
+% (2000, 592.7)
+%         };
+%     \addlegendentry{6 Naive}
+%     \addplot[
+%         color=green,
+%         mark=o,
+%         ]
+%         coordinates {
+%             (25, 176.2)
+% (50, 187.3)
+% (75, 189.0)
+% (100, 194.3)
+% (250, 204.3)
+% (500, 217.3)
+% (750, 225.0)
+% (1000, 227.5)
+% (1500, 249.7)
+% (2000, 237.2)
+%         };
+%     \addlegendentry{6 Fast}
+%     \end{axis}
+%     \end{tikzpicture}
+% }
+
+% % 7-12
+% \hskip-2cm
+% \resizebox{8cm}{!}{
+%     \begin{tikzpicture}
+%     \begin{axis}[
+%         title={Range query times for 7-9},
+%         xmode=log,
+%         ymode=log,
+%         xlabel={k},
+%         ylabel={Range query time (ms)},
+%         legend pos=outer north east,
+%         ymajorgrids=true,
+%         grid style=dashed,
+%     ]
+%     \addplot[
+%         color=blue,
+%         mark=square,
+%         dashed, thick,
+%         ]
+%         coordinates {
+%             (25, 4.9)
+% (50, 12.2)
+% (75, 17.7)
+% (100, 23.7)
+% (250, 62.2)
+% (500, 129.2)
+% (750, 200.8)
+%         };
+%     \addlegendentry{7 Naive}
+%     \addplot[
+%         color=blue,
+%         mark=o,
+%         ]
+%         coordinates {
+%             (25, 49.2)
+% (50, 53.6)
+% (75, 54.4)
+% (100, 54.6)
+% (250, 59.2)
+% (500, 62.2)
+% (750, 63.0)
+%         };
+%     \addlegendentry{7 Fast}
+    
+%     \addplot[
+%         color=red,
+%         mark=square,
+%         dashed, thick
+%         ]
+%         coordinates {
+%             (25, 5.0)
+% (50, 10.3)
+% (75, 16.2)
+% (100, 22.0)
+% (250, 58.5)
+% (500, 123.5)
+% (750, 197.7)
+% (1000, 266.9)
+% (1500, 421.8)
+% (2000, 585.5)
+%         };
+%     \addlegendentry{8 Naive}
+%     \addplot[
+%         color=red,
+%         mark=o,
+%         ]
+%         coordinates {
+%             (25, 85.8)
+% (50, 90.2)
+% (75, 91.3)
+% (100, 96.7)
+% (250, 99.1)
+% (500, 105.6)
+% (750, 105.4)
+% (1000, 110.0)
+% (1500, 110.2)
+% (2000, 116.9)
+%         };
+%     \addlegendentry{8 Fast}
+    
+%     \addplot[
+%         color=green,
+%         mark=square,
+%         dashed, thick,
+%         ]
+%         coordinates {
+%             (25, 5.4)
+% (50, 10.9)
+% (75, 16.2)
+% (100, 23.2)
+% (250, 60.8)
+% (500, 130.3)
+% (750, 200.0)
+% (1000, 275.7)
+% (1500, 441.0)
+% (2000, 600.9)
+%         };
+%     \addlegendentry{9 Naive}
+%     \addplot[
+%         color=green,
+%         mark=o,
+%         ]
+%         coordinates {
+%             (25, 178.7)
+% (50, 188.4)
+% (75, 190.0)
+% (100, 196.2)
+% (250, 207.9)
+% (500, 219.9)
+% (750, 225.7)
+% (1000, 226.9)
+% (1500, 232.9)
+% (2000, 239.3)
+%         };
+%     \addlegendentry{9 Fast}
+%     \end{axis}
+%     \end{tikzpicture}
+% }
+% \resizebox{8cm}{!}{
+%     \begin{tikzpicture}
+%     \begin{axis}[
+%         title={Range query times for 10-12},
+%         xmode=log,
+%         ymode=log,
+%         xlabel={k},
+%         ylabel={Range query time (ms)},
+%         legend pos=outer north east,
+%         ymajorgrids=true,
+%         grid style=dashed,
+%     ]
+%     \addplot[
+%         color=blue,
+%         mark=square,
+%         dashed, thick,
+%         ]
+%         coordinates {
+%             (25, 5.0)
+% (50, 12.0)
+% (75, 17.9)
+% (100, 24.0)
+% (250, 62.8)
+% (500, 131.3)
+% (750, 202.3)
+%         };
+%     \addlegendentry{10 Naive}
+%     \addplot[
+%         color=blue,
+%         mark=o,
+%         ]
+%         coordinates {
+%             (25, 50.2)
+% (50, 53.2)
+% (75, 55.6)
+% (100, 57.2)
+% (250, 60.4)
+% (500, 63.9)
+% (750, 63.2)
+%         };
+%     \addlegendentry{10 Fast}
+    
+%     \addplot[
+%         color=red,
+%         mark=square,
+%         dashed, thick
+%         ]
+%         coordinates {
+%             (25, 5.0)
+% (50, 10.6)
+% (75, 16.6)
+% (100, 22.1)
+% (250, 58.7)
+% (500, 123.4)
+% (750, 201.9)
+% (1000, 275.5)
+% (1500, 432.5)
+% (2000, 587.5)
+%         };
+%     \addlegendentry{11 Naive}
+%     \addplot[
+%         color=red,
+%         mark=o,
+%         ]
+%         coordinates {
+%             (25, 84.5)
+% (50, 92.5)
+% (75, 93.8)
+% (100, 92.7)
+% (250, 101.9)
+% (500, 108.0)
+% (750, 109.9)
+% (1000, 109.9)
+% (1500, 115.2)
+% (2000, 112.8)
+%         };
+%     \addlegendentry{11 Fast}
+    
+%     \addplot[
+%         color=green,
+%         mark=square,
+%         dashed, thick,
+%         ]
+%         coordinates {
+%             (25, 5.2)
+% (50, 11.0)
+% (75, 16.4)
+% (100, 22.4)
+% (250, 60.5)
+% (500, 125.4)
+% (750, 198.1)
+% (1000, 279.6)
+% (1500, 432.0)
+% (2000, 586.9)
+%         };
+%     \addlegendentry{12 Naive}
+%     \addplot[
+%         color=green,
+%         mark=o,
+%         ]
+%         coordinates {
+%             (25, 177.2)
+% (50, 187.2)
+% (75, 190.4)
+% (100, 196.8)
+% (250, 209.2)
+% (500, 217.1)
+% (750, 227.6)
+% (1000, 229.2)
+% (1500, 239.1)
+% (2000, 239.0)
+%         };
+%     \addlegendentry{12 Fast}
+%     \end{axis}
+%     \end{tikzpicture}
+% }
