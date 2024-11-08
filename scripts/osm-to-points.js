@@ -2,8 +2,9 @@ const { Image } = require('imagescript');
 const fs = require('fs')
 const path = require('path')
 
-const RELATIVE_DATA_DIR = '../data/osm'
-const FILENAME = 'bbg'
+const RELATIVE_DATA_DIR = '../data/osm/raw'
+const RELATIVE_OUTPUT_DIR = '../data/osm'
+const FILENAMES = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10']
 const FILE_EXTENSION = '.png'
 
 const SAMPLING_RATE = 3 // sample every xth pixel horizontally / vertically
@@ -30,8 +31,8 @@ function rgbaToRGB(color) {
   return '#'+ (color >> 8 & 0xFFFFFF).toString(16).toUpperCase();
 }
 
-const run = async() => {
-  const buff = fs.readFileSync(path.resolve(`${RELATIVE_DATA_DIR}/${FILENAME}${FILE_EXTENSION}`))
+const run = async(name) => {
+  const buff = fs.readFileSync(path.resolve(`${RELATIVE_DATA_DIR}/${name}${FILE_EXTENSION}`))
   const input = await Image.decode(buff)
 
   const points = []
@@ -51,7 +52,7 @@ const run = async() => {
 
   // output points
   const lines = points.map(({ x, y, c }) => `${x};${y};${c}`)
-  fs.writeFileSync(path.resolve(`${RELATIVE_DATA_DIR}/${FILENAME}.points`), lines.filter(x => x.length).join("\n"))
+  fs.writeFileSync(path.resolve(`${RELATIVE_OUTPUT_DIR}/${name}.points`), lines.filter(x => x.length).join("\n"))
 }
 
-run()
+FILENAMES.forEach(async name => await run(name))
