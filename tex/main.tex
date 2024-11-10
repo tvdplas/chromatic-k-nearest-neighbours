@@ -1,4 +1,5 @@
 \documentclass{article}
+\usepackage{float}
 \usepackage{graphicx} 
 \usepackage[
     backend=biber,
@@ -48,29 +49,17 @@
 \end{abstract}
 
 \section{Introduction}
-\todo{TODO: Main talking points:
-    \begin{itemize}
-        \item  What is Chromatic k-Nearest Neighbour and what is it used for
-        \item What are known fast methods (largely based on discussion in Thijs' paper), and
-              what are there limitations (dependency on $k$ and/or $c$)
-        \item What will we be implementing (Thijs' paper, along with discussion of which
-              subset of algorithms was selected due to time constraints)
-        \item Why is this selection interesting
-    \end{itemize}
-}
-
 \fb{
     Classification algorithms are widely used in order to make predictions about new data points based on historical data. In general, a query point $q$ is compared to a collection $P$ of $n$ existing data points with known classes. The class of $q$ is then determined by considering the classes of points in $P$ which are similar to $q$. Different algorithms apply different similarity metrics and techniques in order to determine what class is the most likely fit for our query. \\\\
-    One widely used example of a classification algorithm is that of $k$-Nearest Neighbours ($k$-NN). In this, the $k$ points which are closest to $q$ are considered. From this set, the mode class is selected as a prediction for the class of $q$. When modeling this as a geometric problem, generic class labels are often replaced with colors. Additionally, data points are represented as points in $d$-dimensional space. This version is generally known as a Chromatic $k$-Nearest Neighbours algorithm. \\\\
+    One widely used example of a classification algorithm is that of $k$-Nearest Neighbours ($k$-NN). In this, the $k$ points which are closest to $q$ are considered. From this set, the mode (or most frequently occuring) class is selected as a prediction for the class of $q$. When modeling this as a geometric problem, generic class labels are often replaced with colors. Additionally, data points are represented as points in $d$-dimensional space. This version is generally known as a Chromatic $k$-Nearest Neighbours algorithm. \\\\
     We are currently aware of only two results on the theory of chromatic $k$-NN algorithms. The first of these two is attributed to by Mount et al. \cite{MOUNT200097}. They introduced an approach using linear space datastructures that are able to answer theories efficiently if colors within $P$ are packed close together. For this, they devised a metric which they refer to as the chromatic density $\rho$ which allowed them to get a query time of $O(\log^2 n + (1/\rho)^d\log(1/\rho))$.\\
     The second result is attributed to van der Horst et al. \cite{vanderhorst_et_al:LIPIcs.ESA.2022.67}. Their goal was to introduce a set of algorithms that with near-linear space usage could answer queries with a running time only dependent on $n$. They note that this would be especially advantagous in the event that either $k$ or the amount of unique colors in $P$ are close to $n$. \\
     Our goal for this research is to get a better understanding of the advantages of having query times that are only dependent on $n$. We do this by implementing a selection of the algorithms presented in van der Horst et al. and comparing these with implementations of naive approaches. \\\\
-    Van der Horst et al. proposed a selection of different algorithms. They provide exact approaches for solving in 1, 2, or $d$ dimensions with $L_2$, $L_\infty$ and $L_m$ distance metrics. They additionally provide approximation algorithms for $d=1$ and $d=2$ with a decreased runtime. In this research we will be focussing solely on the exact $L_\infty$ approaches in both 1D and 2D. \\
-    This selection was made as it provides a good base going forward. The 1D case provides us with the smallest possible instance of this problem, in which points are simply represented on a number line. The 2D case on the other hand forms the basis of the $d$-dimensional approach that was proposed, thereby allowing it to serve as a test of the real world applicability of the algorithm as a whole. \\\\
-    Each of the algorithms proposed by van der Horst et al. is split into two major steps. The first of this is range finding, in which the $k$th closest point from $q$ is determined. This allows us to determine a radius from $q$ in which all points lie that need to be considered. After this we apply mode finding, in which given $q$ and our previously determined radius, we determine the mode color of the $k$ closest points to $q$. This second step allows us to answer our query. \\
-    Following this two step split, we attempt to implement 4 seperate algorithms: 1D range finding, 1D mode finding, 2D range finding and 2D mode finding. Of these, we implemented the first three as described by the original paper. 2D mode finding on the other hand could not directly be implemented as originally described. This is due to the fact that the preprocessing of this algorithm requires arrangements of planes to be built in 3D. As far as we are aware, major geometric libraries used for implementing these types of algorithms currently do not support this feature. As a result, we decided to alter the original algorithm in order to only require arrangements in 2D. The underlying mechanisms of the algorithm were preserved, however due to this adjustment we can no longer answer mode queries for a certain radius. Instead, a halfplane mode query is performed. We note that once 3D arrangements become available in geometric computation libraries, the groundwork that we laid down now should be easily adaptable in order to truly return the required mode queries. We will therefore analyse the runtime of this algorithm just as with the 3 that were implemented without alteration. \\\\
+    Van der Horst et al. proposed a selection of different algorithms. They provide exact approaches for solving in 1, 2, or $d$ dimensions with $L_2$, $L_\infty$ and $L_m$ distance metrics. They additionally provide approximation algorithms for $d=1$ and $d=2$ with a decreased runtime. In this research we will limit ourselves to implementing the exact $L_\infty$ approaches in both 1D and 2D. This selection was made as it provides a good base going forward. The 1D case provides us with the smallest possible instance of this problem, in which points are simply represented on a number line. The 2D case on the other hand forms the basis of the exact $d$-dimensional approach that was proposed, thereby allowing it to serve as a test of the real world applicability of the algorithm as a whole. \\\\
+    Each of the algorithms proposed by van der Horst et al. is split into two major steps. The first of these is range finding, in which the $k$th closest point from $q$ is determined. This allows us to determine a radius from $q$ in which all points lie that need to be considered. After this we apply mode finding, in which given $q$ and our previously determined radius, we determine the mode color of the $k$ closest points to $q$. This second step allows us to answer our query. \\
+    Following this two step split, we attempt to implement 4 seperate algorithms: 1D range finding, 1D mode finding, 2D range finding and 2D mode finding. Of these, we implement the first three as described by the original paper. 2D mode finding on the other hand could not directly be implemented as originally described; the preprocessing of this algorithm requires arrangements of planes to be built in 3D, however as far as we are aware major geometric computation libraries currently do not support this feature. As a result, we alter the original algorithm in order to only require arrangements in 2D. The underlying mechanisms of the algorithm are preserved, however due to this adjustment we can no longer answer mode queries for a certain radius. Instead, a halfplane mode query can be answered. We note that once 3D arrangements become available in geometric computation libraries, the groundwork that we laid down now should be easily adaptable allowing for radius based mode queries. We will therefore analyse the runtime of the implemented algorithm just as with the other 3 that were implemented without alteration. \\\\
     \fbnote{Based on Frank's feedback: I wanted to still fully split 2D range finding and 2D mode finding, however I didn't have the time to fully seperate the two as that would require major rewrites of certain parts. Current setup isn't ideal, however I hope it is clear enough to a reader that the mode is a halfplane query.}
-    The structure of this paper will be as follows. For all sections except the conclusion, we will seperate the 1D and 2D implementations. In this, we will split further on the range and mode finding operations seperately.\\
+    The structure of this paper will be as follows. For all sections except the conclusion, we will seperate the 1D and 2D implementations. In this, we will split further by discussing range and mode finding operations seperately.\\
      In Section 2, we will provide a summary of all the algorithms that were implemented. This also includes the naive approaches that were included as benchmarks for our results. In Section 3, we will discuss implementation details for each of the algorithms derived from van der Horst et al. Here we also discuss any possible modifications that were made in order to make algorithms computationally feasible. In Section 4, we discuss the test instances that we used and the results that our implementation produced. Then finally in Section 5, we will conclude, reflect and provide an overview of possible future work. 
 }
 \section{Methods}
@@ -82,40 +71,34 @@ overview of all runtimes and space usage of the algorithms can be found in
 Table \ref{tab:runtimes}.
 \begin{table}[h]
     \centering
-    \begin{tabular}{|l|ccc|}
-        \hline
+    \begin{tabular}{llll}
+        \toprule
         Algorithm   & Preprocessing time & Space         & Query time                 \\
-        \hline
-        \hline
-        \multicolumn{4}{|c|}{1D}                                                      \\
-        \hline
-        Naive range & $O(n \log n)$      & $O(n)$        & $O(\log n + k)$            \\
-        Fast range  & $O(n \log n)$      & $O(n)$        & $O(\log n)$                \\
-        Naive mode  & \fb{$O(n \log n)$} & \fb{$O(n)$}   & \fb{$O(\log n + k)$}       \\
-        Fast mode   & $O(n^{3/2})$       & $O(n)$        & $O(\sqrt{n})$              \\
-        \hline
-        \multicolumn{4}{|c|}{2D - $L_\infty$}                                         \\
-        \hline
-        Naive range & $O(n \log n)$      & $O(n)$        & $O(\log n + k)$            \\
-        Fast range  & $O(n \log n)$      & $O(n \log n)$ & $O(\log^2 n)$              \\
-        Naive mode  & $\fb{O(n \log n)}$ & $O(n)$        & \fb{$O(\log n + k)$}       \\
-        Fast halfplane mode   & $\fb{O(nr^2)^*}$   & $O(nr)^*$     & $\fb{O((n/r) \polylog n)}$ \\
-        \hline
+        \cmidrule(lr){1-1}\cmidrule(lr){2-4}
+        1D $L_{m}$ Naive range & $O(n \log n)$      & $O(n)$        & $O(\log n + k)$            \\
+        1D $L_{m}$ Fast range  & $O(n \log n)$      & $O(n)$        & $O(\log n)$                \\
+        1D $L_{m}$ Naive mode  & \fb{$O(n \log n)$} & \fb{$O(n)$}   & \fb{$O(\log n + k)$}       \\
+        1D $L_{m}$ Fast mode   & $O(n^{3/2})$       & $O(n)$        & $O(\sqrt{n})$              \\
+        \addlinespace[0.6em]
+        2D $L_{\infty}$ Naive range & \fb{-}      & \fb{$O(n)$}       & \fb{$O(n \log n )$}           \\
+        2D $L_{\infty}$ Fast range  & $O(n \log n)$      & $O(n \log n)$ & $O(\log^2 n)$              \\
+        2D $L_{\infty}$ Naive mode  & $\fb{O(n \log n)}$ & $O(n)$        & \fb{$O(\log n + k)$}       \\
+        2D $L_{\infty}$ Fast halfplane mode   & $\fb{O(nr^2)^*}$   & $O(nr)^*$     & $\fb{O((n/r) \polylog n)}$ \\
+        \bottomrule
     \end{tabular}
     \caption{Computational complexities of the implemented algorithms. * indicates a deviation from the reference material.}
     \label{tab:runtimes}
 \end{table}
-\todo{Looptijden van van alle dingen herhalen tijdens algoritme.}\\
 \subsection{1D}
 \subsubsection{Naive range finding}
-\textit{Preprocessing}: Sort the pointset $P$, save this sorted list. \\\\
-\textit{Query}: Binary search to find the index of the point closest to the query point $q$ within the pointset $P$. Using this index $q_i$, then find the $k$th nearest point by stepping either left or right from $q_i$ in the index range $[q_i-k, q_i+k]$. \fb{Return the distance between $q$ and the $k$th nearest point.}
+\textit{Preprocessing} ($O(n \log n)$ time, $O(n)$ space): Sort the pointset $P$, save this sorted list. \\\\
+\textit{Query} ($O(\log n + k)$ time): Binary search to find the index of the point closest to the query point $q$ within the pointset $P$. Using this index $q_i$, then find the $k$th nearest point by stepping either left or right from $q_i$ in the index range $[q_i-k, q_i+k]$. \fb{Return the distance between $q$ and the $k$th nearest point.}
 \subsubsection{Fast range finding}
 Based on the algorithm described in section 2.1 of the paper by Van der Horst
 et al. \cite{vanderhorst_et_al:LIPIcs.ESA.2022.67}. \\\\ 
-\textit{Preprocessing}: Sort the points, then save
+\textit{Preprocessing} ($O(n \log n)$ time, $O(n)$ space): Sort the points, then save
 points in a node-valued binary search tree $T$ that contains size annotations.
-\\\\ \textit{Query}: Based on the query point $q$, split $T$ into two trees
+\\\\ \textit{Query} ($O(\log n)$ time): Based on the query point $q$, split $T$ into two trees
 $T_{P^<}$ and $T_{P^{\geq}}$ that contain the points $< q$ and $\geq q$
 respectively. Note that both these trees have their points ordered on distance
 from $q$, however orderings are flipped between the two trees. \\ Now, let $R$
@@ -123,7 +106,7 @@ be the tree whose root is farther from $q$, and let $B$ be the other tree. For
 $R$, let $r$ be its root, $R^<$ be the subtree containing elements closer to
 $q$ and $R^>$ be the other tree. Let $B$ have identical definitions for $b$,
 $B^<$ and $B^>$. Lastly, let $\ell = |B^<| + |R^<| + 1$. \\ Based on this
-$\ell$, we now have two distinct cases. \fb{These are visualised in Figure \ref{fig:vanderHorst_treesplit}, which appeared as Figure 3 of van der Horst et al. their work.} \\ 
+$\ell$, we now have two distinct cases. \fb{These are visualised in Figure \ref{fig:vanderHorst_treesplit}, which appeared as Figure 3 of van der Horst et al.} \\ 
 $\ell \geq k$: target element is
 not $r$ or in $R^>$; let $R \leftarrow R^<$\\ $\ell < k$: target element is not
 $b$ or in $B^<$; let $B \leftarrow B^>$, and let $k \leftarrow k - (|B^<| +
@@ -138,11 +121,12 @@ which the $k$th element can be found trivially using the size annotations.
     \label{fig:vanderHorst_treesplit}%
 \end{figure}
 \subsubsection{Naive mode finding}
-\textit{Preprocessing}: \fb{Sort the pointset $P$, save this sorted list.} \\\\
-\textit{Query}: \fb{Based on $q$ and the provided radius, determine the indices into $P$ that fall within the radius around $q$ using a binary search for the lower and upper bound. Afterwards, count the frequency of each color within our index range using a dictionary. Return the color with the highest counted frequency.}
+\textit{Preprocessing} ($O(n \log n)$ time, $O(n)$ space): \fb{Sort the pointset $P$, save this sorted list.} \\\\
+\textit{Query} ($O(\log n + k)$ time): \fb{Based on $q$ and the provided radius, determine the indices into $P$ that fall within the radius around $q$ using a binary search for the lower and upper bound. Afterwards, count the frequency of each color within our index range using a dictionary. Return the color with the highest counted frequency.}
 \subsubsection{Fast mode finding}
 Based on the algorithm described in section 3 of the paper by Chan et al.
-\cite{Chan2014}. \\\\ \textit{Preprocessing}: Transform an array $\bar{A}$ in
+\cite{Chan2014}. \\\\ 
+\textit{Preprocessing} ($O(n^{3/2})$ time, $O(n)$ space): Transform an array $\bar{A}$ in
 which each entry contains a color in the range $[0, \Delta)$ into a set of
 arrays $Q_a$ for $a \in [0, \Delta)$ such that $Q_a$ contains an ordered list
 of indexes into $\bar{A}$ where $\bar{A}[i] = a$. Additionally, create an array
@@ -152,8 +136,8 @@ length $t = \sqrt{n}$. Do this by storing two tables $S$ and $S'$ each of size
 $t \times t$ such that for any $0\leq b_i \leq b_j < t$, $S[b_i, b_j]$ contains
 the mode color of $\bar{A}[b_it : (b_j + 1)t)$, and $S'[b_i, b_j]$ contains the
 corresponding frequency. These precomputed spans can be determined using a
-naive counting implementation. \\\\ \textit{Query}: Given a query range $[i,
-    j)$, calculate $b_i=\lceil i/t \rceil$ and $b_j=\lfloor j/t \rfloor - 1$,
+naive counting implementation. \\\\ 
+\textit{Query} ($O(\sqrt{n})$ time): Given a query range $[i, j)$, calculate $b_i=\lceil i/t \rceil$ and $b_j=\lfloor j/t \rfloor - 1$,
 representing the indices of the first and last precomputed spans fully within
 the query range. Let the range $[i : \min{b_it, j})$ (in range elements before
 the first precomputed span) be known as the prefix, and let the suffix be
@@ -172,14 +156,18 @@ candidate $c$ and $f_c$ can then be updated to be $c \leftarrow \bar{A}[x]$ and
 $f_c \leftarrow f_x$.
 \subsection{2D - $L_\infty$}
 \subsubsection{Naive range finding}
-\textit{Preprocessing} Sort $P$ into two arrays $A_x$ and $A_y$, where $A_x$ contains all points sorted on $x$ coordinates and $A_y$ contains all points sorted on $y$. \\\\
-\textit{Query} A generalized version of the stepping performed in the 1D case. Binary search in $x$ and $y$ in order to find the index of point $q$ in $A_x$ and $A_y$. From this index $q_i$, expand the bounding square around $q_i$ $k$ times by stepping towards the closest point in any cardinal direction, taking care not to double count points that might have been already seen when stepping in a different dimension. Return the radius of the bounding square once done.
+\fbnote{I made a mistake here (as well as in the naive mode) by using a definition of $L_{\infty}$ that uses a \textit{minimum} instead of a \textit{maximum}. I don't really know how this happened. For the mode, I now made the naive case simply do a range tree query + color counting. For range finding on the other hand, I couldn't figure something out in time that was simpler than the algorithm already proposed while still having a decent (and ideally $k$ dependent) runtime. I therefore opted to use the most naive of all approaches by simply sorting all distances. I am aware that this is not an ideal baseline, however given the time this is the best I could still do. }
+\fb{
+\textit{Preprocessing} ($O(n)$ space): None, only saving the pointset $P$. \\\\
+\textit{Query} ($O(n \log n)$ time): Determine the distance between all points in $P$ and $q$. Sort the list, and return the $k$th entry.
+}
 \subsubsection{Fast range finding}
 Based on the algorithm provided in Section 3.1 of the paper by Van der Horst et
-al. \cite{vanderhorst_et_al:LIPIcs.ESA.2022.67}.\\\\ \textit{Preprocessing}
-Create a rangetree $R$ \fb{with size annotations} on our pointset $P$. Additionally, sort $P$ into two
+al. \cite{vanderhorst_et_al:LIPIcs.ESA.2022.67}.\\\\ 
+\textit{Preprocessing} ($O(n \log n)$ time, $O(n \log n)$ space): Create a rangetree $R$ \fb{with size annotations} on our pointset $P$. Additionally, sort $P$ into two
 arrays $A_x$ and $A_y$, where $A_x$ contains all points sorted on $x$
-coordinates and $A_y$ contains all points sorted on $y$. \\\\ \textit{Query}
+coordinates and $A_y$ contains all points sorted on $y$. \\\\ 
+\textit{Query} ($O(\log^2 n)$ time):
 Let $x_0, ..., x_\ell$ be the x-coordinates that are at most $q_x$. Let $x_i$
 be one of these coordinates; let $r = q_x - x_i$. We can now find the amount of
 points in the bounding square around $q$ defined by $x_i$ by doing a counting
@@ -189,15 +177,17 @@ bounding box with smallest $r$ that contains at least $k$ points. Repeat for
 the $x$ coordinates greater than $q_x$ as well as the smaller and larger $y$
 coordinates, then return the smallest $r$.
 \subsubsection{Naive mode finding}
-\textit{Preprocessing} None \\\\
-\textit{Query} Let $[x_i, x_j]$ and $[y_i, y_j]$ be index ranges into arrays representing the x and y coordinates of the points respectively. For both of these arrays, count the frequency of each color while taking care to not double count points. Return the mode.
+\fb{
+\textit{Preprocessing} ($O(n \log n)$ time, $O(n \log n)$ space): Create a rangetree $R$ on our pointset $P$. \\\\
+\textit{Query} ($O(\log n + k)$ time): Given a radius $r$, query $R$ for the points in $[q_x - r, q_x + r] \times [q_y - r, q_y + r]$. Determine the mode color of these points by counting using a dictionary and returning the color with highest frequency. 
+}
 \subsubsection{Fast halfplane mode finding}
 \textbf{Note: } the algorithm provided here does \textit{not} find the mode of a k-nearest neighbour query; it instead returns the mode color of a halfplane query. More details on the algorithm and the reason for this choice are provided in Section 3.2. \\
 Adapted from the algorithm provided in Section 4.2 of the paper by Van der Horst et al. \cite{vanderhorst_et_al:LIPIcs.ESA.2022.67}. \\\\
 \fbnote{For this section, all mention of face $f$ has been replaced with face $a$ in order to reduce confusion with frequencies $f_x$.}
-\textit{Preprocessing} Let $L$ be the set of dual lines corresponding to our initial pointset $P$. \fb{Using a random subset $L_{\mathcal{A}}$ of $r \log r$ lines in $L$, create an arrangement $\mathcal{A}$ and triangulate it. By Theorem 14 of Chazelle and Friedman \cite{21970}, $\mathcal{A}$ has a constant probability of being a $1/r$ cutting of $L$. If it is not, retry with different sets $L_{\mathcal{A}}$ until a $1/r$ cutting $\mathcal{A}$ is found.}\\ A conflict list $C$ can then be constructed, in which for each face $a$ in $\mathcal{A}$, $C_a$ stores references to all lines in $L$ that intersect that face. If the maximum amount of lines intersecting a faces is more than $n/r$, the cutting is rejected and we start over, otherwise we accept the cutting. \\
+\textit{Preprocessing} ($O(nr^2)$ time, $O(nr)$ space): Let $L$ be the set of dual lines corresponding to our initial pointset $P$. \fb{Using a random subset $L_{\mathcal{A}}$ of $r \log r$ lines in $L$, create an arrangement $\mathcal{A}$ and triangulate it. By Theorem 14 of Chazelle and Friedman \cite{21970}, $\mathcal{A}$ has a constant probability of being a $1/r$ cutting of $L$. If it is not, retry with different sets $L_{\mathcal{A}}$ until a $1/r$ cutting $\mathcal{A}$ is found.}\\ A conflict list $C$ can then be constructed, in which for each face $a$ in $\mathcal{A}$, $C_a$ stores references to all lines in $L$ that intersect that face. If the maximum amount of lines intersecting a faces is more than $n/r$, the cutting is rejected and we start over, otherwise we accept the cutting. \\
 \fb{Precompute a trapezoidal decomposition $\mathcal{T}$ of $\mathcal{A}$ in order to answer point queries efficiently. Annotate each face $a$ in $\mathcal{A}$ in order to store the mode color $m$ and corresponding frequency $f_m$ of the colors of $C_a$. Additionally, let $L_a$ be the set of lines that lie fully below a face $a$. Add the frequency $f_c$ in $L_a$ of any color $c$ that occurs both in $L_a$ as well as $C_a$ to our annotation of $a$ as well.}\\\\
-\textit{Query} Given a halfspace $h$ in our primal space, transform it to its point dual $q_h$. Find the face $a$ that contains $q_h$ by performing a point location query on $\mathcal{T}$. Using the annotations on the face $a$ and the conflict list $C_a$, count the colors of the lines in $C_a$ that are below $q_h$. Combine these with the precomputed frequencies $f_c$, and return the mode.
+\textit{Query} ($O((n/r) \polylog n)$ time): Given a halfspace $h$ in our primal space, transform it to its point dual $q_h$. Find the face $a$ that contains $q_h$ by performing a point location query on $\mathcal{T}$. Using the annotations on the face $a$ and the conflict list $C_a$, count the colors of the lines in $C_a$ that are below $q_h$. Combine these with the precomputed frequencies $f_c$, and return the mode.
 \section{Implementation details}
 In this section, we discuss implementation details for the selected algorithms
 along with modifications made to the reference material used in order to make
@@ -324,12 +314,7 @@ in $O(\sqrt{n})$ time. We additionally note that this implementation also
 prevents $b_j$ from becoming a negative index in the event that the end of the
 query span is in the first precomputed span.
 \subsection{2D}
-\todo{TODO: ik ben niet helemaal blij met waar ik het alternatieve algoritme nu
-    uitleg, maar ik weet ook niet zo goed waar ik het anders kan neerzetten
-    (behalve die algorithm overview in sectie 2, maar dan is een beetje in strijd
-    met het feit dat dat allemaal kort is).}
-
-The 2D algorithms described in Van der Horst et al. their work required the use
+The 2D algorithms described in van der Horst et al. required the use
 of several well known geometric datastructures and algorithms. As implementing
 these is prone to subtle issues, requires a significant level of expertise and
 is generally a lot of work, the decision was made to use an existing library to
@@ -339,7 +324,7 @@ that we will need to proceed. This allowed us to focus on the novel ideas
 proposed in the paper. \\\\ For range finding, Van der Horst et al. their
 description for the algorithm could once again be followed. Mode finding on the
 other hand could not directly be implemented. The reason for this was a
-limitation in CGAL itself \cite{cgal:arrangement}. The original intent was to
+limitation in CGAL itself. The original intent was to
 use the library in order to generate 3D arrangements from planes, as this forms
 the basis of the precomputed datastructure used for answering queries in the
 original work. When initially selecting this library however, we failed to
@@ -350,7 +335,10 @@ halfplanes instead. \fbnote{As a response to Erwin's feedback: Emphasis on this 
 seen in the original, however it has been adjusted to work with 2D arrangements
 instead. By providing this alternate version, we hope to both get a general
 idea of the performance of mode queries using this basis, as well as providing
-a framework which can be expanded upon when 3D arrangements can be easily made.
+a framework which can be expanded upon when 3D arrangements can be easily made. \\\\
+\fb{
+    A last thing of note is that the introduction of a second dimension can lead to degeneracies such as duplicate x or y coordinates. Due to time constraints, no expansive validation was performed to ensure that our implementation could handle all edge cases caused by this. As a workaround, datapoints are slightly offset in order to discourage degeneracies from forming.
+}
 \subsubsection{Fast range finding}
 As noted before, the range finding algorithm was directly implemented as
 described by Van der Horst et al. The method requires the use of a range tree
@@ -405,69 +393,69 @@ full overview of unformatted results, we refer the reader to the Appendices.
 release mode using default compiler settings, and run on a Intel i7-10750H CPU
 using 40GB of RAM.
 \subsection{1D}
-For 1D, both artificial and real life data were used in order to perform
-computational experiments. The use of artificial data for this section was
-largely due to the fact that real life data often has more than a single
-dimension, thus making the acquisition of a comprehensive dataset difficult.
-Some real life data was included in order to validate the results that were
-achieved in the artificial counterpart, however this was based on an originally
-2D dataset which was projected in order to match our requirements.
+For 1D, both artificial and real life data \fb{are} used in order to perform
+computational experiments. The use of artificial data for this section \fb{is} largely due to the fact that real life data often has more than a single
+dimension, making the acquisition of a comprehensive dataset difficult.
+Some real life data \fb{is} included in order to validate the results that were
+achieved in the artificial counterpart, however this \fb{is} based on an originally
+2D dataset which \fb{is} projected in order to match our requirements.
 \subsubsection*{Artificial data} Both the naive and tree-based range finding
 approaches are not dependent on the spatial distribution of sample points, as
 both methods work in rank space. Therefore, a simple uniform distribution in
-the arbitrarily chosen range [-50000, 50000] was used in order to generate the
+the arbitrarily chosen range [-50000, 50000] \fb{is} used in order to generate the
 location of both the sample as well as the query points. \\\\ The color of the
 points does have influence on the runtime of the mode determination; The naive
 case is unaffected, however the faster implementation mentioned in Chan et al.
 requires less steps when a color appears multiple times in the prefix and
 suffix of the mode interval \cite{Chan2014}. Therefore, two different
-generation methods were employed:
+generation methods \fb{are} employed:
 \begin{itemize}
     \item Uniformly sampled colors in the integer range [0, $\Delta$). This represents a
           situation in which the position of the point has no correlation its color.
     \item $\gamma \leq n$ random points are selected and given a color uniformly sampled from [0, $\Delta$). Then, for all other points, their color is the same as the closest point with a chance $\alpha$, or randomly sampled from [0, $\Delta$) otherwise. This models a situation in which clusters of colors are present, however a certain degree of variability is still included. Note that the previous case can also be modeled this way by setting $\gamma=\alpha=0$.
 \end{itemize}
-Using these methods, the following test scenarios were generated. \fb{In this, we use a scenario naming scheme of 1D-$\{n/1000\}$-$k$-$\Delta$-$\gamma$-$\{\alpha \cdot 100\}$.} \\
+Using these methods, the test scenarios \fb{seen in Table \ref{tab:1dscenarios} were generated. In this, we use a scenario naming scheme of 1D-$\{n/1000\}$-$k$-$\Delta$-$\gamma$-$\{\alpha \cdot 100\}$.} \\
 
-\fbnote{Adjusted the centering of these tables by adjusting overall margins of the document based on feedback from Frank.}
 \begin{center}
-    \begin{tabular}{|l||l|c|c|c|c|}
-    \hline
-    \multicolumn{5}{|c|}{Uniform color scenarios}                 \\
-    \hline
-    Scenario           & \multicolumn{1}{|c|}{$n$}     & $\Delta$ & $\gamma$ & $\alpha$ \\
-    \hline
-    1D-1-$k$-20-0-0    & 1,000   & 20       & 0        & 0        \\
-    1D-10-$k$-20-0-0   & 10,000  & 20       & 0        & 0        \\
-    1D-100-$k$-20-0-0  & 100,000 & 20       & 0        & 0        \\
-    1D-1-$k$-100-0-0   & 1,000   & 100      & 0        & 0        \\
-    1D-10-$k$-100-0-0  & 10,000  & 100      & 0        & 0        \\
-    1D-100-$k$-100-0-0 & 100,000 & 100      & 0        & 0        \\
-    \hline
-\end{tabular}
-\:\:
-\begin{tabular}{|l||l|c|c|c|c|}
-    \hline
-    \multicolumn{5}{|c|}{Clustered color scenarios}                  \\
-    \hline
-    Scenario              & \multicolumn{1}{|c|}{$n$}     & $\Delta$ & $\gamma$ & $\alpha$ \\
-    \hline
-    1D-1-$k$-20-30-95     & 1,000   & 20       & 30       & 0.95     \\
-    1D-10-$k$-20-30-95    & 10,000  & 20       & 30       & 0.95     \\
-    1D-100-$k$-20-30-95   & 100,000 & 20       & 30       & 0.95     \\
-    1D-1-$k$-100-150-95   & 1,000   & 100      & 150      & 0.95     \\
-    1D-10-$k$-100-150-95  & 10,000  & 100      & 150      & 0.95     \\
-    1D-100-$k$-100-150-95 & 100,000 & 100      & 150      & 0.95     \\
-    \hline
-\end{tabular}
+\begin{table}
+    \subfloat[Uniform color scenarios]{
+    \begin{tabular}{lrcccc}
+        \toprule
+        Scenario           & \multicolumn{1}{c}{$n$}     & $\Delta$ & $\gamma$ & $\alpha$ \\
+        \cmidrule(lr){1-1} \cmidrule(lr){2-5}
+        1D-1-$k$-20-0-0    & 1,000   & 20       & 0        & 0        \\
+        1D-10-$k$-20-0-0   & 10,000  & 20       & 0        & 0        \\
+        1D-100-$k$-20-0-0  & 100,000 & 20       & 0        & 0        \\
+        1D-1-$k$-100-0-0   & 1,000   & 100      & 0        & 0        \\
+        1D-10-$k$-100-0-0  & 10,000  & 100      & 0        & 0        \\
+        1D-100-$k$-100-0-0 & 100,000 & 100      & 0        & 0        \\
+        \bottomrule
+    \end{tabular}}
+    \:\:
+    \subfloat[Clustered color scenarios]{
+    \begin{tabular}{lrcccc}
+        \toprule
+        Scenario              & \multicolumn{1}{c}{$n$}     & $\Delta$ & $\gamma$ & $\alpha$ \\
+        \cmidrule(lr){1-1} \cmidrule(lr){2-5}
+        1D-1-$k$-20-30-95     & 1,000   & 20       & 30       & 0.95     \\
+        1D-10-$k$-20-30-95    & 10,000  & 20       & 30       & 0.95     \\
+        1D-100-$k$-20-30-95   & 100,000 & 20       & 30       & 0.95     \\
+        1D-1-$k$-100-150-95   & 1,000   & 100      & 150      & 0.95     \\
+        1D-10-$k$-100-150-95  & 10,000  & 100      & 150      & 0.95     \\
+        1D-100-$k$-100-150-95 & 100,000 & 100      & 150      & 0.95     \\
+        \bottomrule
+    \end{tabular}}
+    \caption{\fb{Overview of 2D artificial scenarios}}
+    \label{tab:1dscenarios}
+\end{table}
 \end{center}
-For each of these scenarios 10 unique data sets were generated. On these, testing was done using $k=\{10, 25, 50, 75, 100, 520, 500, 750, 1000, 1500, 2000\}$ (with $k\geq1000$ only on scenarios with $n > 1000$) and $Q=1000$ uniformly sampled query points. Results across the data sets of each scenario were averaged in order to produce computation times in milliseconds for each of the operations. \\\\
+For each of these scenarios 10 unique data sets were generated. On these, testing \fb{is} done using $k=\{10, 25, 50, 75, 100, 520, 500, 750, 1000, 1500, 2000\}$ (with $k\geq1000$ only on scenarios with $n > 1000$) and $Q=1000$ uniformly sampled query points. Results across the data sets of each scenario are averaged in order to produce computation times in milliseconds for each of the operations. \\\\
 In addition to these scenarios, a seperate test was run in which the effects of $k$ as a fraction of $n$ were determined. This was done by doing an performing additional computations on 1D-10-$k$-100-0-0 and 1D-10-$k$-100-150-95, in which $k$ was taken to be $0.1n, 0.2n, ..., 0.9n$. The number of runs was also reduced from $10$ to $5$, in order to reduce the computational load for this set of tests. We note that this might increase the variability of the results, however as we are only looking for a rough trend this was deemed acceptable.\\ Other than that, parameters for the scenarios were kept the same. 1D-10-$k$-100-0-0 and 1D-10-$k$-100-150-95 were arbitrarily selected for this process, however we note that they both have a reasonable instance size ($n=10,000$) and did not show any major deviation from the performance of the other scenarios. We therefore felt that these would be suitable in order to run this additional experiment. \\
-In order to maintain a clear separation within the results overview, these tests are labeled 1D-10-$k$-100-0-0-FRAC and 1D-10-$k$-100-150-95-FRAC for the runs concerning 1D-10-$k$-100-0-0 and 1D-10-$k$-100-150-95 respectively.
+\fbrm{In order t}To maintain a clear separation within the results overview, these tests are labeled 1D-10-$k$-100-0-0-FRAC and 1D-10-$k$-100-150-95-FRAC for the runs concerning 1D-10-$k$-100-0-0 and 1D-10-$k$-100-150-95 respectively.
 
 \subsubsection*{Real life data}
 For the real life points, low dimensional data was gathered and projected to 1D. The primary source used is community gathered temperature data provided by the UK MetOffice's WOW project \cite{Met}, which is distributed under the open government licence. \\\\
-Geolocated temperature data for a total of 10 days was used, spanning from 02-06-2024 to 12-06-2024, where each day consisted of a approximately $6200$ data points. For each of these points, a color was determined by binning temperature values in $5\degree$C intervals. This resulted in a map such as the one displayed in Figure \ref{fig:temp-data}. Note that for the sake of visual clarity, this view of the collected data is cropped to only include Europe. Large amounts of sample points are also present in the continental United States and Oceania, and are sparse elsewhere. \\\\
+Geolocated temperature data for a total of 10 days was used, spanning from 02-06-2024 to 12-06-2024, where each day consisted of a approximately $6200$ data points. For each of these points, a color was determined by binning temperature values in $2.5\degree$C intervals, \fb{resulting in a total of 21 possible colors}. This resulted in a map such as the one displayed in Figure \ref{fig:temp-data}. Note that for the sake of visual clarity, this view of the collected data is cropped to only include Europe. Large amounts of sample points are also present in the continental United States and Oceania, and are sparse elsewhere. \\\\
 Data was then projected along the longitude (y-axis) or latitude (x-axis) in order to get a 1D dataset; We shall call these datasets 1D-TMP-LON-$k$ and 1D-TMP-LAT-$k$ respectively. Afterwards, testing was once again done using $k=\{10, 25, 50, 75, 100, 520, 500, 750, 1000, 1500, 2000\}$ and $Q=1000$ uniformly sampled query points, and results were averaged over the 10 days.
 \begin{figure}
     \centering
@@ -476,12 +464,8 @@ Data was then projected along the longitude (y-axis) or latitude (x-axis) in ord
     \label{fig:temp-data}
 \end{figure}
 \subsubsection*{Results}
-For each scenario, the average time in milliseconds over the 10 runs is given for 6 distinct operations:
+For each scenario, the average time in milliseconds over the 10 runs is given for 5 distinct operations:
 \begin{itemize}
-    \item Generation of the test data for the scenario. This includes the time spent
-          selecting randomized points and colors, as well as the sorting of points. Note
-          that these times are not present for the temperature data, as this is not
-          generated at runtime.
     \item The building of the tree datastructure for range queries. We note that at time
           of writing, this could still be significantly improved by better memory
           allocation procedures.
@@ -490,7 +474,8 @@ For each scenario, the average time in milliseconds over the 10 runs is given fo
     \item Executing the corresponding $Q$ mode queries using the fast approach.
     \item Executing the corresponding $Q$ mode queries using the naive approach.
 \end{itemize}
-The results for range and mode queries have been compiled into graphs. Additionally, the raw tables can be found in the Appendix. As results between groups of instances did not show large differences, a representative selection is displayed instead of all individual instances. \fbnote{Cleaned up legends of graphs a bit by aligning scenario names properly} \\
+\fbnote{Reaction to Franks question on doing performance effect by doing range-mode in sets of 1 instead of batching them: I didn't get around to testing this, but I'm guessing that the way we're doing it now would be slightly faster as more of the range(/mode) datastructure can remain cached.}
+The results for range and mode queries have been compiled into graphs. Additionally, the raw tables can be found in the Appendix. As results between groups of instances did not show large differences, a representative selection is displayed instead of all individual instances. \fbnote{Cleaned up legends of graphs a bit by aligning scenario names properly, adjusted colors, added figure numbers} \\
 \input{figs/tex/1drange}
 \input{figs/tex/1dmode}
 
@@ -515,62 +500,59 @@ highlighted.
     \item For the clustered color scenarios, the distance measure used for determining
           which color a point gets is $L_\infty$. This was chosen due to the fact that
           this is also the metric used in the algorithms themselves.
-    \item $\gamma=200$ colors are now seeded in the clustered cases instead of 150 for the large instances.
 \end{itemize}
 \fbnote{Response to feedback from Erwin: I decided to keep this section here instead of moving it due to the fact that I feel that this discussion of which $r$ is used is only interesting for these specific instances, however I do understand the critique.}
 \fb{For our mode operation, we now also have an additional parameter $r$. In van der Horst et al. this value was chosen to be $\sqrt{n}$ in order to get a $O(\sqrt{n} \polylog n)$ query time, however during testing we found that preprocessing using our current implemention was exceedingly slow. We therefore decided to use a small constant $r$ instead for all artificial instances. In order to determine a suitable value, the scenario 2D-10-25-$r$-20-0-0 was selected and run with $r=\{ 5, 10, 25, 50 \}$. Larger values than this were not tested, as preprocessing times would exceed 1 hour per run of an instance. A balance between preprocessing and query time was then selected by using $r=10$, which required $~6$ seconds of preprocessing time for a single run. We refer to the raw results in the Appendix for more details on this experiment. Experiments including variable $r$ will be discussed in more detail for the real life instances.} \\\\
-An overview of the tested artificial scenarios is as follows. \fb{In this, we use a scenario naming scheme of 2D-$\{n/1000\}$-$k$-$r$-$\Delta$-$\gamma$-$\{\alpha \cdot 100\}$.}  \\
+An overview of the tested artificial scenarios can be seen in \fb{Table \ref{tab:2dscenarios}. In this, we use a scenario naming scheme of 2D-$\{n/1000\}$-$k$-$r$-$\Delta$-$\gamma$-$\{\alpha \cdot 100\}$.}
 \begin{center}
-    
-    \begin{tabular}{|l||l|c|c|c|c|}
-        \hline
-        \multicolumn{5}{|c|}{Uniform color scenarios}                     \\
-        \hline
-        Scenario               & \multicolumn{1}{|c|}{$n$}     & $\Delta$ & $\gamma$ & $\alpha$ \\
-        \hline
+\begin{table}
+    \subfloat[Uniform color scenarios]{
+    \begin{tabular}{lrcccc}
+        \toprule
+        Scenario               & \multicolumn{1}{c}{$n$}     & $\Delta$ & $\gamma$ & $\alpha$ \\
+        \cmidrule(lr){1-1} \cmidrule(lr){2-5}
         2D-1-$k$-$r$-20-0-0    & 1,000   & 20       & 0        & 0        \\
         2D-10-$k$-$r$-20-0-0   & 10,000  & 20       & 0        & 0        \\
         2D-100-$k$-$r$-20-0-0  & 100,000 & 20       & 0        & 0        \\
         2D-1-$k$-$r$-100-0-0   & 1,000   & 100      & 0        & 0        \\
         2D-10-$k$-$r$-100-0-0  & 10,000  & 100      & 0        & 0        \\
         2D-100-$k$-$r$-100-0-0 & 100,000 & 100      & 0        & 0        \\
-        \hline
+        \bottomrule
     \end{tabular}
+    }
     \:\:
-    \begin{tabular}{|l||l|c|c|c|c|}
-        \hline
-        \multicolumn{5}{|c|}{Clustered color scenarios}                      \\
-    \hline
-    Scenario                  & \multicolumn{1}{|c|}{$n$}    & $\Delta$ & $\gamma$ & $\alpha$ \\
-    \hline
-    2D-1-$k$-$r$-20-30-95     & 1,000   & 20       & 30       & 0.95     \\
-    2D-10-$k$-$r$-20-30-95    & 10,000  & 20       & 30       & 0.95     \\
-    2D-100-$k$-$r$-20-30-95   & 100,000 & 20       & 30       & 0.95     \\
-    2D-1-$k$-$r$-100-200-95   & 1,000   & 100      & 200      & 0.95     \\
-    2D-10-$k$-$r$-100-200-95  & 10,000  & 100      & 200      & 0.95     \\
-    2D-100-$k$-$r$-100-200-95 & 100,000 & 100      & 200      & 0.95     \\
-    \hline
-\end{tabular}
+    \subfloat[Clustered color scenarios]{
+    \begin{tabular}{lrcccc}
+        \toprule
+        Scenario                  & \multicolumn{1}{c}{$n$}    & $\Delta$ & $\gamma$ & $\alpha$ \\
+        \cmidrule(lr){1-1} \cmidrule(lr){2-5}
+        2D-1-$k$-$r$-20-30-95     & 1,000   & 20       & 30       & 0.95     \\
+        2D-10-$k$-$r$-20-30-95    & 10,000  & 20       & 30       & 0.95     \\
+        2D-100-$k$-$r$-20-30-95   & 100,000 & 20       & 30       & 0.95     \\
+        2D-1-$k$-$r$-100-200-95   & 1,000   & 100      & 200      & 0.95     \\
+        2D-10-$k$-$r$-100-200-95  & 10,000  & 100      & 200      & 0.95     \\
+        2D-100-$k$-$r$-100-200-95 & 100,000 & 100      & 200      & 0.95     \\
+        \bottomrule
+    \end{tabular}
+    }
+    \caption{\fb{Overview of 2D artificial scenarios}}
+    \label{tab:2dscenarios}
+\end{table}
 \end{center}
 \subsubsection*{Real life data}
-As we already had a usable dataset in the form of the weather based one generated for 1D testing, this was reused when testing the 2D implementation. We will refer to this instance as 2D-TMP-$k$-$r$. Additional data was however also added, as 2D datasets are widely available. \\\\
-We chose to use annotated map data as our secondary source of test data. OpenStreetMap \cite{OpenStreetMap} was used in order to download map data from 10 places in the Utrecht region, and QGIS \cite{QGIS_software} was used in order to render a simplified version of the map. See Figure \ref{fig:uithof} for an example. In selecting test data, attempts were made in order to include regions that showcased a large amount of different colors. A single test instance was also included which was mostly farmland, allowing for validation when the variation in colors is low. For more details on the exact test cases, we refer to the renderings of the selected maps which are available on GitHub \cite{vanderPlasImplementation}. \\
+\fb{As we already had a usable dataset in the form of the weather based one generated for 1D testing, this was reused when testing the 2D implementation. We will refer to this instance as 2D-TMP-$k$-$r$. Using this dataset, the difference in preprocessing and query time for the mode as a function of $r$ were visualised \todo{Gekozen waardes van r}.} \\\\
+Additional data was however also considered, as 2D datasets are widely available. We chose to use annotated map data as our secondary source of test data. OpenStreetMap \cite{OpenStreetMap} was used in order to download map data from 10 places in the Utrecht region, and QGIS \cite{QGIS_software} was used in order to render a simplified version of the map. See Figure \ref{fig:uithof} for an example. In selecting test data, attempts were made in order to include regions that showcased a large amount of different colors. A single test instance was also included which was mostly farmland, allowing for validation when the variation in colors is low. For more details on the exact test cases, we refer to the renderings of the selected maps which are available on GitHub \cite{vanderPlasImplementation}. \\
 The map renderings were then sampled in order to produce colored points. The location of the point was taken to be the pixel coordinate in the map view image, along with a small randomized offset. This offset was uniformly sampled within a distance of 0.05 from the pixel coordinate, and was included in order to discourage exact $x$ and $y$ coordinate matches for different points. Sampling rate was set such that the total instance size was around $50,000$ points for each of the included maps. An example of the resulting sampled map can be found in Figure \ref{fig:uithof-points}. \\\\
-As the amount of sample points is relatively high, we chose to include random subsets of the full point sets as additional instances. We will refer to the instances as 2D-MAP-$k$-$r$-$p$, where $0 < p \leq 100$ represents the percentage of total map points used in the instance. \\\\
-Results over all maps were once again averaged in order to produce the average computation times for each instance.
+\fb{As the amount of sample points is relatively high, we chose to generate instances based on random subsets of the full point sets. These were then used in order to visualize the dependency on $n$ seen in the algorithms by van der Horst et al. In this, $r$ was once again fixed at $10$ as was the case with the artificial test cases. We will refer to the instances as 2D-MAP-$k$-$p$, where $0 < p \leq 100$ represents the percentage of total map points used in the instance. $p=\{ 1, 5, 10, 25, 50, 75, 100 \}$ were selected in order to make instances, and each was run with the the same selection of $k$ values as used in the temperature data.} \\\\
+\fb{For each instance, all maps were once again run with $Q=1000$. Results from the different maps were then averaged in order to produce computation times for a certain instance.}
 
-\begin{figure}
-    \centering
-    \includegraphics[width=10cm]{figs/usp.png}
-    \caption{Simplified map view of Utrecht Science Park, centered on the Buys Ballot Building.}
-    \label{fig:uithof}
-\end{figure}
 
-\begin{figure}
+\begin{figure}[!tbp]
     \centering
-    \includegraphics[width=10cm]{figs/usp_points.png}
-    \caption{Point sampling taking from the simplified map view.}
-    \label{fig:uithof-points}
+    \subfloat[Simplified map view of Utrecht Science Park, centered on the Buys Ballot Building.]{\includegraphics[width=0.45\textwidth]{figs/usp.png}\label{fig:uithof}}
+    \hfill
+    \subfloat[Point sampling taking from the simplified map view.]{\includegraphics[width=0.45\textwidth]{figs/usp_points.png}\label{fig:uithof-points}}
+    \caption{2D map data to pointset conversion}
 \end{figure}
 
 \subsubsection*{Results}
@@ -579,26 +561,22 @@ Results over all maps were once again averaged in order to produce the average c
 \input{figs/tex/2dpre}
 
 \subsubsection*{Discussion}
-The range query results only somewhat match our expectations. The naive implementation once again seems to follow a linear relation with $k$, which nicely matches our $O(\log n + k)$ theoretical query time. The fast implementation on the other hand also seems to have a slightly increased query time for larger $k$; \fb{this is best visible in the 2D-$\{1,10,100\}$-k-10-100-200-95 instances}. \\
-This anomaly was however explained when directly looking at the performance metrics in Visual Studio. We found here that for larger $k$, more time is spent querying large windows in our range tree. This in turn resulted in longer path traversals within the range tree, causing an increased runtime. \fb{As this seems to be the only source of computation time increase between small and large $k$ tests, we can therefore still conclude that our worst case is bounded by $O(\log^2 n)$.} \\\\
-When looking at mode queries, the results directly seem to match our expectations. The naive implementation shows a linear relation with $k$, matching our $O(k)$ described algorithm. The query times of the fast implementation seem to be completely independent of $k$. \todo{TODO: hier nog iets toevoegen over $n/r$ als ik dit voor de real life instances heb gedaan, kan al wel in Table 1 van de 2D appendix worden gezien.} \\\\
+\fb{The range query results only somewhat match our expectations. When only looking at Figure \ref{fig:2dresrangeartificial}, the naive implementation seems to only be dependent on $n$, which could match the theoretical $O(n \log n)$ query time. Looking at \todo{DEPENDENT ON N}, we see a near linear relationship, which all but confirms the theoritical result. Of note is that for $n=1000$ in Figure \ref{fig:2dresrangeartificial}, the naive approach actually outperforms the fast implementation; we can therefore conclude that the hidden constant for our fast $O(\log n)$ approach must be rather large. \\\\
+The fast implementation does seem to have a slightly increased query time for larger $k$; this is best visible in Figure \ref{fig:2dresrangeartificial}b. This anomaly was however explained when directly looking at the performance metrics in Visual Studio. We found here that for larger $k$, more time is spent querying large windows in our range tree. This in turn resulted in longer path traversals within the range tree, causing an increased runtime. As this seems to be the only source of computation time increase between small and large $k$ tests, we can therefore still conclude that our worst case is bounded by $O(\log^2 n)$. \\\\
+When looking at mode queries, the results directly seem to match our expectations. In Figure \ref{fig:2dresmodeartificial}, we see that the naive implementation shows a linear relation with $k$ with different starting points for our smallest $k$, matching our $O(\log n + k)$ described algorithm. The query times of the fast implementation seem to be completely independent of $k$, thereby possibly matching our $O((n/r) \polylog n)$ query time. Looking at Figure \todo{FIG}, we can see that the $r$ factor is also clearly apparent. \\\\
 The preprocessing times for both the range and mode datastructures seem to follow a roughly linear relation with $n$. For the range datastructure this is no surprise, as the small number of sampled $n$ and scale of the graph would make it hard to see the $\log n$ factor that is included in the theoretical runtime. Additionally, as the default sorting method in C++ was used this might internally run faster than $O(n \log n)$ time by using something like a bucket sort approach depending on the input sequence. \\
-As for the mode, this following a roughly linear relation is also not surprising. As $r$ was fixed for all test cases currently considered \todo{TODO: meer test cases consideren!}, the linear relation matches the expected \fb{$O(nr^2)$} time.
+As for the mode, this following a roughly linear relation is also not surprising. As $r$ was fixed for all test cases currently considered \todo{TODO: meer test cases consideren!}, the linear relation matches the expected \fb{$O(nr^2)$} time}.
 \section{Conclusion}
 \todo{TODO: talking points:
     \begin{itemize}
         \item general conclusion showing that all algorithms seem to succesfully be
               independent from k.
         \item Recommendations for when to use this approach (aka k at which naive > fast)
-        \item Reflection on flaws in the implementation (mostly focused on the 2d mode).
-        \item Recommendation to expand the study with more rigorous testing (such as grid
-              x/y, larger instances), expand with different cgal point types than double, try
-              to expand to 2D $L_2$.
     \end{itemize}
 }
 
 \fb{
-    Some things of note can still be directly improved in our implementation. For 2D mode finding specifically, we deviated both from the theoretically optimal running time as well as space usage by using a naive approach for handling conflict lists. Implementing the improvements described in the original paper here could drastically decrease the preprocessing time of the algorithm, thereby allowing larger $r$ values to be used for even lower query times. If feasible, this would also allow for the theoretical $r=\sqrt{n}$ to be used. Secondly, the implementation as a whole can probably still be improved. More agressive compiler optimizations could have probably been used given some more testing, and due to a lack of experience with C++11 and CGAL some additional possibilities for speedup have most likely been overlooked. \\\\
+    Some things of note can still be directly improved in our implementation. For 2D mode finding specifically, we deviated both from the theoretically optimal running time as well as space usage by using a naive approach for handling conflict lists. Implementing the improvements described in the original paper here could drastically decrease the preprocessing time of the algorithm, thereby allowing larger $r$ values to be used for even lower query times. If feasible, this would also allow for the theoretical $r=\sqrt{n}$ to be used. Secondly, the implementation as a whole can probably still be improved. More agressive compiler optimizations can still be used given some more testing, and due to a lack of experience with C++11 and CGAL some additional possibilities for speedup were likely overlooked. \\\\
     Due to time constraints, something that was left out of testing was handling of all edge cases within the implementation. Especially for the 2D implementation, testing should still be done using duplicate data points, overlapping query and data points and grid-like datasets in which x and y coordinates are strictly not unique to validate that the correct result is still returned. In addition to this, experiments may be run with different numerical data types in CGAL in order to quantify the performance decrease associated with higher precision point locations and line intersections. \\\\
     Once 3D arrangements are available, further experimentation should also be done in order to fully implement 2D mode finding. Once this is done, results may also be generalised to higher dimensions.
 }

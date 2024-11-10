@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.26 (MiKTeX 24.4) (preloaded format=pdflatex 2024.10.25)  27 OCT 2024 22:53
+This is pdfTeX, Version 3.141592653-2.6-1.40.26 (MiKTeX 24.4) (preloaded format=pdflatex 2024.10.25)  10 NOV 2024 12:48
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -534,6 +534,12 @@ LaTeX Warning: `h' float specifier changed to `ht'.
 LaTeX Warning: `h' float specifier changed to `ht'.
 
 
+LaTeX Warning: Float too large for page by 180.16182pt on input line 259.
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+
 
 [2
 
@@ -541,7 +547,9 @@ LaTeX Warning: `h' float specifier changed to `ht'.
 
 [3]
 
-[4] (c:\Users\thoma\Desktop\chromatic-k-nearest-neighbours\tex\figs\tex\build\appendix-2d.aux)
+[4]
+
+[5] (c:\Users\thoma\Desktop\chromatic-k-nearest-neighbours\tex\figs\tex\build\appendix-2d.aux)
  ***********
 LaTeX2e <2024-06-01> patch level 2
 L3 programming layer <2024-09-10>
@@ -553,15 +561,15 @@ Package logreq Info: Writing requests to 'appendix-2d.run.xml'.
 Here is how much of TeX's memory you used:
  12320 strings out of 473899
  235422 string characters out of 5726499
- 1147554 words of memory out of 5000000
+ 1189557 words of memory out of 5000000
  35091 multiletter control sequences out of 15000+600000
  561104 words of font info for 46 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  69i,9n,81p,767b,852s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <C:/Users/thoma/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi10.pfb><C:/Users/thoma/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Users/thoma/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Users/thoma/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr17.pfb>
-Output written on c:\Users\thoma\Desktop\chromatic-k-nearest-neighbours\tex\figs\tex\build\appendix-2d.pdf (4 pages, 66661 bytes).
+Output written on c:\Users\thoma\Desktop\chromatic-k-nearest-neighbours\tex\figs\tex\build\appendix-2d.pdf (5 pages, 75025 bytes).
 PDF statistics:
- 35 PDF objects out of 1000 (max. 8388607)
+ 38 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
  1 words of extra memory for PDF output out of 10000 (max. 10000000)
 

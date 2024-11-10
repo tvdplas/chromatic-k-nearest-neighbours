@@ -5,10 +5,44 @@
 #include <chrono> 
 #include <numeric>
 #include <set>
+#include <CGAL/constructions_d.h>
 #include "../2D/range_query.cpp"
 #include "../2D/mode_query.cpp";
 
 namespace N2D {
+	static vec<string> split(string str) {
+		vec<string> substrings = {};
+		string token;
+		istringstream tokenStream(str);
+
+		while (getline(tokenStream, token, ';')) {
+			substrings.push_back(token);
+		}
+
+		return substrings;
+	}
+
+
+	static vec<pair<Point_d, Color>> read_file(string filename) {
+		string text;
+		vec<pair<Point_d, Color>> points = {};
+
+		ifstream file(filename);
+
+		while (getline(file, text)) {
+			vec<string> args = split(text);
+
+			points.push_back(pair<Point_d, Color>(
+				Point_d({ stod(args[0]), stod(args[1]) }), 
+				(Color)stoi(args[args.size() - 1])
+			));
+		}
+
+		file.close();
+
+		return points;
+	}
+
 	static vec<Point_d> generate_locations(NumTy min, NumTy max, int count) {
 		vec<Point_d> positions(count);
 
@@ -39,8 +73,8 @@ namespace N2D {
 		vec<Point_d> gamma_locations(gamma);
 		vec<Color> gamma_colors(count);
 
-		std::default_random_engine re(chrono::system_clock::now().time_since_epoch().count());
-		std::uniform_real_distribution<double> rnd(0, 1);
+		default_random_engine re(chrono::system_clock::now().time_since_epoch().count());
+		uniform_real_distribution<double> rnd(0, 1);
 		
 		for (int i = 0; i < count; i++) {
 			gamma_colors[i] = (Color)delta;
@@ -92,91 +126,30 @@ namespace N2D {
 		return pair<vec<Point_d>, vec<Color>>(locations, colors);
 	}
 
-	// returns radius of D_k(q)
-	static NumTy naive_range(vec<pair_ni>* sorted_x_pairs, vec<pair_ni>* sorted_y_pairs, Point_d q, int k) {
-		// find q within the sorted x and y arrays;
-		auto comp = [](pair_ni pair, pair_ni val) {
-			return pair.first < val.first;
-		};
-		auto q_x = q.x();
-		auto q_y = q.y();
-		int q_x_index = distance(sorted_x_pairs->begin(), upper_bound(sorted_x_pairs->begin(), sorted_x_pairs->end(), pair_ni(q.x(), -1), comp));
-		int q_y_index = distance(sorted_y_pairs->begin(), upper_bound(sorted_y_pairs->begin(), sorted_y_pairs->end(), pair_ni(q.y(), -1), comp));
-
-		set<int> visited_points;
-		int x_lower = q_x_index - 1,
-			x_upper = q_x_index,
-			y_lower = q_y_index - 1,
-			y_upper = q_y_index;
-		NumTy max_distance = numeric_limits<NumTy>::max();
-		NumTy curr_min_distance = max_distance;
-		
-
-		// now step k times
-		for (int i = 0; i < k; i++) {
-			// find distances for each possible step that has not yet been visited
-			NumTy d_x_lower, d_x_upper, d_y_lower, d_y_upper;
-			while (true) {
-				if (x_lower <= 0) { d_x_lower = max_distance; break; }
-				if (visited_points.count((*sorted_x_pairs)[x_lower].second)) { x_lower--; continue; }
-				d_x_lower = abs((*sorted_x_pairs)[x_lower].first - q.x()); break;
-			}
-			while (true) {
-				if (x_upper >= sorted_x_pairs->size() - 1) { d_x_upper = max_distance; break; }
-				if (visited_points.count((*sorted_x_pairs)[x_upper].second)) { x_upper++; continue; }
-				d_x_upper = abs((*sorted_x_pairs)[x_upper].first - q.x()); break;
-			}
-			while (true) {
-				if (y_lower <= 0) { d_y_lower = max_distance; break; }
-				if (visited_points.count((*sorted_y_pairs)[y_lower].second)) { y_lower--; continue; }
-				d_y_lower = abs((*sorted_y_pairs)[y_lower].first - q.y()); break;
-			}
-			while (true) {
-				if (y_upper >= sorted_y_pairs->size() - 1) { d_y_upper = max_distance; break; }
-				if (visited_points.count((*sorted_y_pairs)[y_upper].second)) { y_upper++; continue; }
-				d_y_upper = abs((*sorted_y_pairs)[y_upper].first - q.y()); break;
-			}
-			
-			// select minimum distance
-			curr_min_distance = min({ d_x_lower, d_x_upper, d_y_lower, d_y_upper });
-			if (d_x_lower == curr_min_distance) {
-				visited_points.insert((*sorted_x_pairs)[x_lower].second);
-				x_lower--;
-			}
-			else if (d_x_upper == curr_min_distance) {
-				visited_points.insert((*sorted_x_pairs)[x_upper].second);
-				x_upper++;
-			}
-			else if (d_y_lower == curr_min_distance) {
-				visited_points.insert((*sorted_x_pairs)[y_lower].second);
-				y_lower--;
-			}
-			else {
-				visited_points.insert((*sorted_x_pairs)[y_upper].second);
-				y_upper++;
-			}
+	// As the range tree implementation is already pretty simple, the only thing naiver than this that I could come 
+	// up with is the O(n log n) sorting of all points and then taking the kth element
+	static NumTy naive_range(vec<Point_d>* locations, Point_d q, int k) {
+		vec<NumTy> distances(locations->size());
+		for (int i = 0; i < distances.size(); i++) {
+			auto dx = abs((*locations)[i].x() - q.x());
+			auto dy = abs((*locations)[i].y() - q.y());
+			distances[i] = max(dx, dy);
 		}
-
-		return curr_min_distance;
+		sort(distances.begin(), distances.end());
+		return distances[k];
 	}
 
-	static pair<Color, int> naive_mode(vec<pair_ni>* sorted_x_pairs, vec<pair_ni>* sorted_y_pairs, vec<Color>* colors, Point_d q, NumTy r) {
-		auto comp = [](pair_ni a, pair_ni b) { return a.first <= b.first; };
-		auto x_start = lower_bound(sorted_x_pairs->begin(), sorted_x_pairs->end(), pair_ni(q.x() - r, -1), comp);
-		auto x_end = lower_bound(sorted_x_pairs->begin(), sorted_x_pairs->end(), pair_ni(q.x() + r, -1), comp);
-		auto y_start = lower_bound(sorted_y_pairs->begin(), sorted_y_pairs->end(), pair_ni(q.y() - r, -1), comp);
-		auto y_end = lower_bound(sorted_y_pairs->begin(), sorted_y_pairs->end(), pair_ni(q.y() - r, -1), comp);
-
-		set<int> indexes;
-		for (auto x = x_start; x < x_end; x++) indexes.insert(x->second);
-		for (auto y = y_start; y < y_end; y++) indexes.insert(y->second);
+	// Get mode by querying the radius using a range tree.
+	// O(log n + k) complexity.
+	static pair<Color, int> naive_mode(Tree rt, Point_d q, NumTy r) {
+		Point_d lower({ q.x() - r, q.y() - r }), upper({ q.x() + r, q.y() + r });
+		auto points = rt->pointsInRange(lower, upper);
 		map<Color, int> candidate_modes;
-		for (int index : indexes) {
-			auto color = (*colors)[index];
+		for (auto point : points) {
+			auto color = point.value();
 			if (candidate_modes.count(color)) candidate_modes[color]++;
 			else candidate_modes[color] = 1;
 		}
-		
 		auto mode = *max_element(
 			begin(candidate_modes),
 			end(candidate_modes),
@@ -185,10 +158,18 @@ namespace N2D {
 		return mode;
 	}
 
+	static void run_2d_single(
+		int Q,
+		int k,
+		int r,
+		vec<vec<Point_d>>* pre_gen_points,
+		vec<vec<Color>>* pre_gen_colors
+	) {
+		if (pre_gen_points->size() != pre_gen_colors->size()) return;
 
-	static void run_2d_single(int num_runs, int N, int k, int r, NumTy min, NumTy max, int Q, int delta, double gamma, double alpha) {
+		int num_runs = pre_gen_points->size();
+
 		vec<long>
-			generation_times = {},
 			range_tree_build_times = {},
 			range_tree_query_times = {},
 			range_naive_query_times = {},
@@ -200,11 +181,9 @@ namespace N2D {
 			auto run_start = chrono::high_resolution_clock::now();
 
 			// generate dataset
-			auto dataset = generate_sequence(min, max, N, delta, gamma, alpha);
-			auto locations = dataset.first;
-			auto colors = dataset.second;
-			auto query_points = generate_locations(min, max, Q);
-			auto gen_end = chrono::high_resolution_clock::now();
+			
+			auto locations = (*pre_gen_points)[run_num - 1];
+			auto colors = (*pre_gen_colors)[run_num - 1];
 			vec<NumTy> radii = {};
 
 			// generate tree
@@ -213,6 +192,13 @@ namespace N2D {
 			auto sorted_y_pairs = generate_sorted_dim_pairs(&locations, 1);
 			auto sorted_x_values = get_sorted_dim_values(&sorted_x_pairs);
 			auto sorted_y_values = get_sorted_dim_values(&sorted_y_pairs);
+
+			// TODO: fix st entire rectangle can be queried
+			auto query_points = generate_locations(
+				max(sorted_x_values[1], sorted_y_values[1]),
+				min(sorted_x_values[sorted_x_values.size() - 2], sorted_y_values[sorted_y_values.size() - 2]),
+				Q
+			);
 			auto gen_tree_end = chrono::high_resolution_clock::now();
 
 			// perform range queries using quick method
@@ -223,7 +209,7 @@ namespace N2D {
 
 			// perform range queries using naive method
 			for (int i = 0; i < Q; i++) {
-				radii.push_back(naive_range(&sorted_x_pairs, &sorted_y_pairs, query_points[i], k));
+				radii.push_back(naive_range(&locations, query_points[i], k));
 			}
 			auto range_naive_end = chrono::high_resolution_clock::now();
 
@@ -244,14 +230,13 @@ namespace N2D {
 
 			// perform mode queries using naive method
 			for (int i = 0; i < Q; i++) {
-				naive_mode(&sorted_x_pairs, &sorted_y_pairs, &colors, query_points[i], radii[i]);
+				naive_mode(&tree, query_points[i], radii[i]);
 			}
 			auto naive_mode_end = chrono::high_resolution_clock::now();
 
 
 			// push times to array
-			generation_times.push_back(chrono::duration_cast<chrono::microseconds>(gen_end - run_start).count());
-			range_tree_build_times.push_back(chrono::duration_cast<chrono::microseconds>(gen_tree_end - gen_end).count());
+			range_tree_build_times.push_back(chrono::duration_cast<chrono::microseconds>(gen_tree_end - run_start).count());
 			range_tree_query_times.push_back(chrono::duration_cast<chrono::microseconds>(range_tree_end - gen_tree_end).count());
 			range_naive_query_times.push_back(chrono::duration_cast<chrono::microseconds>(range_naive_end - range_tree_end).count());
 			mode_gen_times.push_back(chrono::duration_cast<chrono::microseconds>(gen_mode_end - range_naive_end).count());
@@ -260,7 +245,6 @@ namespace N2D {
 		}
 
 		// finalize times
-		auto avg_gen = ((long)(accumulate(generation_times.begin(), generation_times.end(), 0) / num_runs / 100.0)) / 10.0;
 		auto avg_range_tree_build = ((long)(accumulate(range_tree_build_times.begin(), range_tree_build_times.end(), 0) / num_runs / 100.0)) / 10.0;
 		auto avg_range_tree_query = ((long)(accumulate(range_tree_query_times.begin(), range_tree_query_times.end(), 0) / num_runs / 100.0)) / 10.0;
 		auto avg_range_naive_query = ((long)(accumulate(range_naive_query_times.begin(), range_naive_query_times.end(), 0) / num_runs / 100.0)) / 10.0;
@@ -269,16 +253,93 @@ namespace N2D {
 		auto avg_mode_naive = ((long)(accumulate(mode_naive_times.begin(), mode_naive_times.end(), 0) / num_runs / 100.0)) / 10.0;
 
 		// print to console
-		std::cout << fixed << setprecision(1);
-		std::cout 
-			<< avg_gen << " & " 
-			<< avg_range_tree_build << " & " 
-			<< avg_range_tree_query << " & " 
+		cout << fixed << setprecision(1);
+		cout
+			<< avg_range_tree_build << " & "
+			<< avg_range_tree_query << " & "
 			<< avg_range_naive_query << " & "
 			<< avg_mode_gen << " & "
 			<< avg_mode_fast << " & "
 			<< avg_mode_naive << " & "
 			<< "\\\\" << endl;
+	}
+
+	static void run_2d_single(int num_runs, int N, int k, int r, NumTy min, NumTy max, int Q, int delta, double gamma, double alpha) {
+		vec<vec<Point_d>> pre_gen_points = {};
+		vec<vec<Color>> pre_gen_colors = {};
+		
+		for (int i = 0; i < num_runs; i++) {
+			auto dataset = generate_sequence(min, max, N, delta, gamma, alpha);
+			pre_gen_points.push_back(dataset.first);
+			pre_gen_colors.push_back(dataset.second);
+		}
+
+		run_2d_single(Q, k, r, &pre_gen_points, &pre_gen_colors);
+	}
+
+	static void run_2d_real() {
+		int Q = 1000;
+		string rel_dir = "..\\data\\osm\\";
+
+		vec<string> files = {
+			"1.points",
+			"2.points",
+			"3.points",
+			"4.points",
+			"5.points",
+			"6.points",
+			"7.points",
+			"8.points",
+			"9.points",
+			"10.points",
+		};
+
+		vec<vec<pair<Point_d, Color>>> bases = {};
+		vec<int> sizes = {};
+		for (int i = 0; i < files.size(); i++) {
+			auto data = read_file(rel_dir + files[i]);
+			bases.push_back(data);
+			sizes.push_back(data.size());
+		}
+
+		auto min_size = *min_element(sizes.begin(), sizes.end());
+
+		vec<double> frac_n = { 0.01, 0.05, 0.1, 0.25, 0.5, 0.75, 1 };
+		vec<int> ks = { 25 , 50, 75, 100, 250, 500, 750, 1000, 1500, 2000 };
+		vec<int> rs = { 10 };
+
+		for (int i_n = 0; i_n < frac_n.size(); i_n++) {
+			for (int i_k = 0; i_k < ks.size() && ks[i_k] < min_size * frac_n[i_n]; i_k++) {
+				for (int i_r = 0; i_r < rs.size(); i_r++) {
+					// Subsample each base
+					vec<vec<Point_d>> sampled_locations = {};
+					vec<vec<Color>> sampled_colors = {};
+					for (int i = 0; i < bases.size(); i++) {
+						auto s = random_split(&bases[i], frac_n[i_n] * bases[i].size());
+						auto considered = s.first;
+
+						vec<Point_d> locations = {};
+						vec<Color> colors = {};
+						for (int j = 0; j < considered.size(); j++) {
+							locations.push_back(considered[j].first);
+							colors.push_back(considered[j].second);
+						}
+						sampled_locations.push_back(locations);
+						sampled_colors.push_back(colors);
+					}
+
+					cout << defaultfloat;
+					cout
+						<< "2D-MAP-" << (int)ks[i_k]
+						<< "-" << (int)rs[i_r]
+						<< "-" << (int)(100 * frac_n[i_n])
+						<< " & " << (int)(frac_n[i_n] * min_size) << " & ";
+
+					run_2d_single(Q, ks[i_k], 10, &sampled_locations, &sampled_colors);
+				}
+			}
+			cout << "\\hline \\\\" << endl;;
+		}
 	}
 
 	static void run_2d_generated() {
@@ -308,8 +369,8 @@ namespace N2D {
 			for (int r_index = 0; r_index < rs.size(); r_index++) {
 				for (int k_index = 0; k_index < ks.size(); k_index++) {
 					if (ks[k_index] >= scenario[0]) continue; // skip due to k >= n
-					std::cout << defaultfloat;
-					std::cout 
+					cout << defaultfloat;
+					cout 
 						<< "2D-" << (int)scenario[0] 
 						<< "-" << rs[r_index]
 						<< "-" << ks[k_index] 

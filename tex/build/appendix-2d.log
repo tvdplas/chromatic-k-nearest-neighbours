@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.26 (MiKTeX 24.4) (preloaded format=pdflatex 2024.10.25)  27 OCT 2024 20:24
+This is pdfTeX, Version 3.141592653-2.6-1.40.26 (MiKTeX 24.4) (preloaded format=pdflatex 2024.10.25)  10 NOV 2024 13:02
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -528,35 +528,8 @@ LaTeX Warning: `h' float specifier changed to `ht'.
 LaTeX Warning: `h' float specifier changed to `ht'.
 
 
+LaTeX Warning: `h' float specifier changed to `ht'.
 
-[1
-
-
-{C:/Users/thoma/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}]
-
-[2]
-
-[3] (c:\Users\thoma\Desktop\chromatic-k-nearest-neighbours\tex\build\appendix-2d.aux)
- ***********
-LaTeX2e <2024-06-01> patch level 2
-L3 programming layer <2024-09-10>
- ***********
-Package logreq Info: Writing requests to 'appendix-2d.run.xml'.
-\openout1 = `appendix-2d.run.xml'.
-
- ) 
-Here is how much of TeX's memory you used:
- 12320 strings out of 473899
- 235305 string characters out of 5726499
- 1148527 words of memory out of 5000000
- 35091 multiletter control sequences out of 15000+600000
- 561104 words of font info for 46 fonts, out of 8000000 for 9000
- 1141 hyphenation exceptions out of 8191
- 69i,9n,81p,758b,852s stack positions out of 10000i,1000n,20000p,200000b,200000s
-<C:/Users/thoma/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi10.pfb><C:/Users/thoma/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Users/thoma/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Users/thoma/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr17.pfb>
-Output written on c:\Users\thoma\Desktop\chromatic-k-nearest-neighbours\tex\build\appendix-2d.pdf (3 pages, 71376 bytes).
-PDF statistics:
- 32 PDF objects out of 1000 (max. 8388607)
- 0 named destinations out of 1000 (max. 500000)
- 1 words of extra memory for PDF output out of 10000 (max. 10000000)
-
+c:/Users/thoma/Desktop/chromatic-k-nearest-neighbours/tex/appendix-2d.tex:281: You can't use `\hrule' here except with leaders.
+\caption@hrule ->\hrule 
+                        \@height

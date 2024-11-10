@@ -31,6 +31,17 @@ function rgbaToRGB(color) {
   return '#'+ (color >> 8 & 0xFFFFFF).toString(16).toUpperCase();
 }
 
+function getRandomSample(array, n) {
+  let shuffled = array.slice();
+
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+
+  return shuffled.slice(0, n);
+}
+
 const run = async(name) => {
   const buff = fs.readFileSync(path.resolve(`${RELATIVE_DATA_DIR}/${name}${FILE_EXTENSION}`))
   const input = await Image.decode(buff)
@@ -51,7 +62,8 @@ const run = async(name) => {
   }
 
   // output points
-  const lines = points.map(({ x, y, c }) => `${x};${y};${c}`)
+  let lines = points.map(({ x, y, c }) => `${x};${y};${c}`)
+  lines = getRandomSample(lines, 50000);
   fs.writeFileSync(path.resolve(`${RELATIVE_OUTPUT_DIR}/${name}.points`), lines.filter(x => x.length).join("\n"))
 }
 

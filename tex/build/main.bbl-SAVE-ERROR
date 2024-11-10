@@ -19,6 +19,98 @@
 
 \refsection{0}
   \datalist[entry]{ynt/global//global/global/global}
+    \entry{21970}{inproceedings}{}{}
+      \name{author}{2}{}{%
+        {{hash=5da2a861988750273049b20a9ede1e8e}{%
+           family={Chazelle},
+           familyi={C\bibinitperiod},
+           given={B.},
+           giveni={B\bibinitperiod}}}%
+        {{hash=1744c71a13ec525bb87612fff17bcfe1}{%
+           family={Friedman},
+           familyi={F\bibinitperiod},
+           given={J.},
+           giveni={J\bibinitperiod}}}%
+      }
+      \strng{namehash}{d0614b68967e5d9633e3014544616a91}
+      \strng{fullhash}{d0614b68967e5d9633e3014544616a91}
+      \strng{fullhashraw}{d0614b68967e5d9633e3014544616a91}
+      \strng{bibnamehash}{d0614b68967e5d9633e3014544616a91}
+      \strng{authorbibnamehash}{d0614b68967e5d9633e3014544616a91}
+      \strng{authornamehash}{d0614b68967e5d9633e3014544616a91}
+      \strng{authorfullhash}{d0614b68967e5d9633e3014544616a91}
+      \strng{authorfullhashraw}{d0614b68967e5d9633e3014544616a91}
+      \field{labelalpha}{CF88}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{[Proceedings 1988] 29th Annual Symposium on Foundations of Computer Science}
+      \field{title}{A deterministic view of random sampling and its use in geometry}
+      \field{year}{1988}
+      \field{pages}{539\bibrangedash 549}
+      \range{pages}{11}
+      \verb{doi}
+      \verb 10.1109/SFCS.1988.21970
+      \endverb
+      \keyw{Sampling methods;Polynomials;Computational geometry;Computer science;Nearest neighbor searches}
+    \endentry
+    \entry{MOUNT200097}{article}{}{}
+      \name{author}{4}{}{%
+        {{hash=827b83f56eb6ef772078b4c0c8d497aa}{%
+           family={Mount},
+           familyi={M\bibinitperiod},
+           given={David\bibnamedelima M.},
+           giveni={D\bibinitperiod\bibinitdelim M\bibinitperiod}}}%
+        {{hash=ad1aab57432f622d5ec53161cfe9b366}{%
+           family={Netanyahu},
+           familyi={N\bibinitperiod},
+           given={Nathan\bibnamedelima S.},
+           giveni={N\bibinitperiod\bibinitdelim S\bibinitperiod}}}%
+        {{hash=63937971a65222d15155d3b83cbb477c}{%
+           family={Silverman},
+           familyi={S\bibinitperiod},
+           given={Ruth},
+           giveni={R\bibinitperiod}}}%
+        {{hash=9ac5ae372527081632cbd23275ac73df}{%
+           family={Wu},
+           familyi={W\bibinitperiod},
+           given={Angela\bibnamedelima Y.},
+           giveni={A\bibinitperiod\bibinitdelim Y\bibinitperiod}}}%
+      }
+      \strng{namehash}{219adf2ee84eafe27d815563c6192920}
+      \strng{fullhash}{376f2478749eb05238c282cfa5e9ddbd}
+      \strng{fullhashraw}{376f2478749eb05238c282cfa5e9ddbd}
+      \strng{bibnamehash}{219adf2ee84eafe27d815563c6192920}
+      \strng{authorbibnamehash}{219adf2ee84eafe27d815563c6192920}
+      \strng{authornamehash}{219adf2ee84eafe27d815563c6192920}
+      \strng{authorfullhash}{376f2478749eb05238c282cfa5e9ddbd}
+      \strng{authorfullhashraw}{376f2478749eb05238c282cfa5e9ddbd}
+      \field{labelalpha}{Mou+00}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{The nearest neighbor problem is that of preprocessing a set P of n data points in Rd so that, given any query point q, the closest point in P to q can be determined efficiently. In the chromatic nearest neighbor problem, each point of P is assigned a color, and the problem is to determine the color of the nearest point to the query point. More generally, given k⩾1, the problem is to determine the color occurring most frequently among the k nearest neighbors. The chromatic version of the nearest neighbor problem is used in many applications in pattern recognition and learning. In this paper we present a simple algorithm for solving the chromatic k nearest neighbor problem. We provide a query sensitive analysis, which shows that if the color classes form spatially well separated clusters (as often happens in practice), then queries can be answered quite efficiently. We also allow the user to specify an error bound ε⩾0, and consider the same problem in the context of approximate nearest neighbor searching. We present empirical evidence that for well clustered data sets, this approach leads to significant improvements in efficiency.}
+      \field{issn}{0925-7721}
+      \field{journaltitle}{Computational Geometry}
+      \field{number}{3}
+      \field{title}{Chromatic nearest neighbor searching: A query sensitive approach}
+      \field{volume}{17}
+      \field{year}{2000}
+      \field{pages}{97\bibrangedash 119}
+      \range{pages}{23}
+      \verb{doi}
+      \verb https://doi.org/10.1016/S0925-7721(00)00021-3
+      \endverb
+      \verb{urlraw}
+      \verb https://www.sciencedirect.com/science/article/pii/S0925772100000213
+      \endverb
+      \verb{url}
+      \verb https://www.sciencedirect.com/science/article/pii/S0925772100000213
+      \endverb
+      \keyw{Chromatic nearest neighbors,Classification algorithms,Pattern recognition,Multidimensional searching,BBD trees,Branch-and-bound search,Query sensitive analysis}
+    \endentry
     \entry{Chan2014}{article}{}{}
       \name{author}{5}{}{%
         {{hash=97a8989aef0940ca6e7fc0ae977e3594}{%
@@ -335,6 +427,37 @@
       \field{labeltitlesource}{title}
       \field{howpublished}{\url{ https://www.openstreetmap.org }}
       \field{title}{{Planet dump retrieved from https://planet.osm.org }}
+      \field{year}{2024}
+    \endentry
+    \entry{vanderPlasImplementation}{misc}{}{}
+      \name{author}{1}{}{%
+        {{hash=17662e3d58acabedb71164a0d1f18e98}{%
+           family={Plas},
+           familyi={P\bibinitperiod},
+           given={T.D.},
+           giveni={T\bibinitperiod},
+           prefix={van\bibnamedelima der},
+           prefixi={v\bibinitperiod\bibinitdelim d\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {GitHub}%
+      }
+      \strng{namehash}{17662e3d58acabedb71164a0d1f18e98}
+      \strng{fullhash}{17662e3d58acabedb71164a0d1f18e98}
+      \strng{fullhashraw}{17662e3d58acabedb71164a0d1f18e98}
+      \strng{bibnamehash}{17662e3d58acabedb71164a0d1f18e98}
+      \strng{authorbibnamehash}{17662e3d58acabedb71164a0d1f18e98}
+      \strng{authornamehash}{17662e3d58acabedb71164a0d1f18e98}
+      \strng{authorfullhash}{17662e3d58acabedb71164a0d1f18e98}
+      \strng{authorfullhashraw}{17662e3d58acabedb71164a0d1f18e98}
+      \field{labelalpha}{Pla24}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{howpublished}{\url{https://github.com/tvdplas/chromatic-k-nearest-neighbours/}}
+      \field{journaltitle}{GitHub repository}
+      \field{title}{Chromatic k Nearest Neighbours}
       \field{year}{2024}
     \endentry
     \entry{QGIS_software}{manual}{}{}

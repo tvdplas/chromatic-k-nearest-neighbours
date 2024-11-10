@@ -1241,21 +1241,16 @@ namespace RangeTree {
         * @return the number of points in the rectangle.
         */
         std::vector<RTPoint<S> > pointsInRange(const Point_d& lower,
-            const Point_d& upper,
-            const std::vector<bool>& withLower,
-            const std::vector<bool>& withUpper) const {
-            if (lower.dimension() != upper.dimension() || lower.dimension() != withLower.size() ||
-                lower.dimension() != withUpper.size()) {
+            const Point_d& upper) const {
+            if (lower.dimension() != upper.dimension()) {
                 throw std::logic_error("All vectors inputted to pointsInRange must have the same length.");
             }
             for (int i = 0; i < lower.dimension(); i++) {
-                if (((!withUpper[i] || !withLower[i]) && lower[i] >= upper[i]) ||
-                    lower[i] > upper[i]) {
+                if (lower[i] > upper[i]) {
                     return std::vector<RTPoint<S> >();
                 }
             }
-            return root->pointsInRange(getModifiedLower(lower, withLower),
-                getModifiedUpper(upper, withUpper));
+            return root->pointsInRange(lower, upper);
         }
 
         void print() const {
