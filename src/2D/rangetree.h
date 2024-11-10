@@ -368,9 +368,6 @@ namespace RangeTree {
                 int k = 0;
                 for (int i = 1; i < points.size(); i++) {
                     if (pointOrdering.equals(*(pointsSortedByCurrentDim[k]), *points[i])) {
-                        if (pointsSortedByCurrentDim[k]->value() != points[i]->value()) {
-                            throw std::logic_error("Input points have same position but different values");
-                        }
                         pointsSortedByCurrentDim[k]->increaseCountBy(points[i]->count());
                     }
                     else {

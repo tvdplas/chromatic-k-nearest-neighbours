@@ -279,19 +279,19 @@ namespace N2D {
 
 	static void run_2d_real() {
 		int Q = 1000;
-		string rel_dir = "..\\data\\osm\\";
+		string rel_dir = "..\\data\\temperature\\";
 
 		vec<string> files = {
-			"1.points",
-			"2.points",
-			"3.points",
-			"4.points",
-			"5.points",
-			"6.points",
-			"7.points",
-			"8.points",
-			"9.points",
-			"10.points",
+			"temperature-03-06-2024.points",
+			"temperature-04-06-2024.points",
+			"temperature-05-06-2024.points",
+			"temperature-06-06-2024.points",
+			"temperature-07-06-2024.points",
+			"temperature-08-06-2024.points",
+			"temperature-09-06-2024.points",
+			"temperature-10-06-2024.points",
+			"temperature-11-06-2024.points",
+			"temperature-02-06-2024.points"
 		};
 
 		vec<vec<pair<Point_d, Color>>> bases = {};
@@ -304,13 +304,13 @@ namespace N2D {
 
 		auto min_size = *min_element(sizes.begin(), sizes.end());
 
-		vec<double> frac_n = { 0.01, 0.05, 0.1, 0.25, 0.5, 0.75, 1 };
-		vec<int> ks = { 25 , 50, 75, 100, 250, 500, 750, 1000, 1500, 2000 };
-		vec<int> rs = { 10 };
+		vec<double> frac_n = { 1 };
+		vec<int> ks = { 25, 50, 75, 100, 250, 500, 750, 1000, 1500, 2000 };
+		vec<int> rs = { 2, 5, 10, 15, 20 };
 
 		for (int i_n = 0; i_n < frac_n.size(); i_n++) {
-			for (int i_k = 0; i_k < ks.size() && ks[i_k] < min_size * frac_n[i_n]; i_k++) {
-				for (int i_r = 0; i_r < rs.size(); i_r++) {
+			for (int i_r = 0; i_r < rs.size(); i_r++) {
+				for (int i_k = 0; i_k < ks.size() && ks[i_k] < min_size * frac_n[i_n]; i_k++) {
 					// Subsample each base
 					vec<vec<Point_d>> sampled_locations = {};
 					vec<vec<Color>> sampled_colors = {};
@@ -330,12 +330,11 @@ namespace N2D {
 
 					cout << defaultfloat;
 					cout
-						<< "2D-MAP-" << (int)ks[i_k]
+						<< "2D-TMP-" << (int)ks[i_k]
 						<< "-" << (int)rs[i_r]
-						<< "-" << (int)(100 * frac_n[i_n])
-						<< " & " << (int)(frac_n[i_n] * min_size) << " & ";
+						<< " & ";
 
-					run_2d_single(Q, ks[i_k], 10, &sampled_locations, &sampled_colors);
+					run_2d_single(Q, ks[i_k], rs[i_r], &sampled_locations, &sampled_colors);
 				}
 			}
 			cout << "\\hline \\\\" << endl;;

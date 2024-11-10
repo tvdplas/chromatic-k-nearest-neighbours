@@ -8,7 +8,7 @@
                     \begin{axis}[
                             xmode=log,
                             ymode=log,
-                            xlabel={k},
+                            xlabel={n},
                             ylabel={Preprocessing time (ms)},
                             legend pos=outer north east,
                             ymajorgrids=true,
@@ -94,7 +94,7 @@
                     \begin{axis}[
                             xmode=log,
                             ymode=log,
-                            xlabel={k},
+                            xlabel={n},
                             ylabel={Preprocessing time (ms)},
                             legend pos=outer north east,
                             ymajorgrids=true,
@@ -173,7 +173,262 @@
                     \end{axis}
                 \end{tikzpicture}
             }}
-            \caption{Preprocessing times of range and mode datastructures on 2D artificial instances. Range and mode are combined into a single graph in order to save space.}
+        \caption{Preprocessing times of range and mode datastructures on 2D artificial instances. Range and mode are combined into a single graph in order to save space.}
+        \label{fig:2drespreartificial}
+    \end{center}
+\end{figure}
+
+\begin{figure}[H]
+    \begin{center}
+        \subfloat[2D-MAP-$k$-$p$]{
+            \resizebox{8cm}{!}{
+                \begin{tikzpicture}
+                    \begin{axis}[
+                            xmode=log,
+                            ymode=log,
+                            xlabel={n},
+                            ylabel={Preprocessing time (ms)},
+                            legend pos=outer north east,
+                            ymajorgrids=true,
+                            grid style=dashed,
+                            legend cell align={left},
+                        ]
+                        \addplot[
+                            color=cyan,
+                            mark=square,
+                            only marks
+                        ]
+                        coordinates {
+                                (500, 316.3)
+                                (500, 323.1)
+                                (500, 303.3)
+                                (500, 296.8)
+                                (500, 307.7)
+                                (2500, 1521.8)
+                                (2500, 1473.8)
+                                (2500, 1607.0)
+                                (2500, 1572.8)
+                                (2500, 1503.6)
+                                (2500, 1685.9)
+                                (2500, 1535.6)
+                                (2500, 1595.4)
+                                (2500, 1564.3)
+                                (2500, 1568.5)
+                                (5000, 3007.6)
+                                (5000, 3177.0)
+                                (5000, 3106.4)
+                                (5000, 3078.2)
+                                (5000, 2981.6)
+                                (5000, 3004.1)
+                                (5000, 3095.4)
+                                (5000, 3120.5)
+                                (5000, 3221.3)
+                                (5000, 2956.6)
+                                (12500, 7519.7)
+                                (12500, 7322.1)
+                                (12500, 7200.6)
+                                (12500, 7188.0)
+                                (12500, 7222.8)
+                                (12500, 7941.4)
+                                (12500, 7374.4)
+                                (12500, 7622.1)
+                                (12500, 7867.4)
+                                (12500, 8226.2)
+                                (25000, 16726.5)
+                                (25000, 16908.1)
+                                (25000, 15505.4)
+                                (25000, 15918.3)
+                                (25000, 16499.0)
+                                (25000, 15938.0)
+                                (25000, 14783.7)
+                                (25000, 15420.1)
+                                (25000, 16203.9)
+                                (25000, 16400.8)
+                                (37500, 25126.3)
+                                (37500, 24456.6)
+                                (37500, 24246.6)
+                                (37500, 24970.0)
+                                (37500, 23849.4)
+                                (37500, 24971.8)
+                                (37500, 25355.0)
+                                (37500, 23858.3)
+                                (37500, 22575.4)
+                                (37500, 24733.7)
+                                (50000, 33830.7)
+                                (50000, 34026.3)
+                                (50000, 31423.4)
+                                (50000, 32916.3)
+                                (50000, 32877.1)
+                                (50000, 33291.0)
+                                (50000, 33645.6)
+                                (50000, 32458.6)
+                                (50000, 30991.8)
+                                (50000, 31473.5)
+                            };
+                        \addlegendentry{Mode}
+                        \addplot[
+                            color=purple,
+                            mark=o,
+                            only marks
+                        ]
+                        coordinates {
+                                (500, 1.9)
+                                (500, 2.2)
+                                (500, 1.9)
+                                (500, 1.8)
+                                (500, 1.8)
+                                (2500, 10.0)
+                                (2500, 9.6)
+                                (2500, 10.6)
+                                (2500, 10.4)
+                                (2500, 9.8)
+                                (2500, 10.7)
+                                (2500, 10.2)
+                                (2500, 10.6)
+                                (2500, 10.0)
+                                (2500, 11.3)
+                                (5000, 22.6)
+                                (5000, 21.5)
+                                (5000, 21.0)
+                                (5000, 20.9)
+                                (5000, 20.9)
+                                (5000, 20.5)
+                                (5000, 19.8)
+                                (5000, 21.2)
+                                (5000, 22.8)
+                                (5000, 21.7)
+                                (12500, 53.5)
+                                (12500, 52.9)
+                                (12500, 49.7)
+                                (12500, 48.5)
+                                (12500, 49.3)
+                                (12500, 52.8)
+                                (12500, 53.4)
+                                (12500, 51.9)
+                                (12500, 53.0)
+                                (12500, 55.4)
+                                (25000, 111.1)
+                                (25000, 124.2)
+                                (25000, 110.9)
+                                (25000, 110.3)
+                                (25000, 119.0)
+                                (25000, 108.0)
+                                (25000, 102.3)
+                                (25000, 107.1)
+                                (25000, 124.0)
+                                (25000, 112.3)
+                                (37500, 184.3)
+                                (37500, 170.8)
+                                (37500, 166.6)
+                                (37500, 180.4)
+                                (37500, 169.8)
+                                (37500, 170.7)
+                                (37500, 173.1)
+                                (37500, 170.1)
+                                (37500, 159.9)
+                                (37500, 165.0)
+                                (50000, 247.4)
+                                (50000, 259.8)
+                                (50000, 242.5)
+                                (50000, 231.2)
+                                (50000, 231.9)
+                                (50000, 234.6)
+                                (50000, 231.8)
+                                (50000, 229.0)
+                                (50000, 222.0)
+                                (50000, 219.9)
+                            };
+                        \addlegendentry{Range}
+                    \end{axis}
+                \end{tikzpicture}
+            }}
+        \subfloat[2D-TMP-$k$-$r$, $n \approx 6200$]{
+            \resizebox{8cm}{!}{
+                \begin{tikzpicture}
+                    \begin{axis}[
+                            xmode=log,
+                            ymode=log,
+                            xlabel={n},
+                            ylabel={Preprocessing time (ms)},
+                            legend pos=outer north east,
+                            ymajorgrids=true,
+                            grid style=dashed,
+                        ]
+                        \addplot[
+                            color=cyan,
+                            mark=square,
+                            only marks
+                        ]
+                        coordinates {
+                                (1000, 641.9)
+                                (1000, 654.7)
+                                (1000, 666.8)
+                                (1000, 639.9)
+                                (1000, 686.4)
+                                (1000, 725.0)
+                                (1000, 662.8)
+                                (10000, 6756.4)
+                                (10000, 6426.0)
+                                (10000, 6136.8)
+                                (10000, 6385.5)
+                                (10000, 6191.8)
+                                (10000, 6173.6)
+                                (10000, 6341.3)
+                                (10000, 6533.7)
+                                (10000, 6330.1)
+                                (10000, 6527.9)
+                                (100000, 69919.7)
+                                (100000, 72765.9)
+                                (100000, 72580.6)
+                                (100000, 72537.4)
+                                (100000, 71871.3)
+                                (100000, 73452.0)
+                                (100000, 71176.7)
+                                (100000, 70560.9)
+                                (100000, 71612.7)
+                                (100000, 71010.2)
+                            };
+                        \addlegendentry{Mode}
+                        \addplot[
+                            color=purple,
+                            mark=o,
+                            only marks
+                        ]
+                        coordinates {
+                                (1000, 3.4)
+                                (1000, 3.3)
+                                (1000, 3.2)
+                                (1000, 3.2)
+                                (1000, 3.2)
+                                (1000, 3.5)
+                                (1000, 3.3)
+                                (10000, 37.0)
+                                (10000, 35.9)
+                                (10000, 37.7)
+                                (10000, 36.9)
+                                (10000, 36.7)
+                                (10000, 36.8)
+                                (10000, 37.7)
+                                (10000, 36.9)
+                                (10000, 37.9)
+                                (10000, 38.1)
+                                (100000, 3515.6)
+                                (100000, 3497.3)
+                                (100000, 3513.5)
+                                (100000, 3513.6)
+                                (100000, 3516.8)
+                                (100000, 3499.9)
+                                (100000, 3489.7)
+                                (100000, 3507.5)
+                                (100000, 3499.3)
+                                (100000, 3512.7)
+                            };
+                        \addlegendentry{Range}
+                    \end{axis}
+                \end{tikzpicture}
+            }}
+        \caption{Preprocessing times of range and mode datastructures on 2D real life instances. Range and mode are combined into a single graph in order to save space.}
+        \label{fig:2dresprerl}
     \end{center}
 \end{figure}
 
@@ -186,7 +441,7 @@
 %                 title={Preprocessing times for 1-3},
 %                 xmode=log,
 %                 ymode=log,
-%                 xlabel={k},
+%                 xlabel={n},
 %                 ylabel={Preprocessing time (ms)},
 %                 legend pos=outer north east,
 %                 ymajorgrids=true,
@@ -270,7 +525,7 @@
 %                 title={Preprocessing times for 4-6},
 %                 xmode=log,
 %                 ymode=log,
-%                 xlabel={k},
+%                 xlabel={n},
 %                 ylabel={Preprocessing time (ms)},
 %                 legend pos=outer north east,
 %                 ymajorgrids=true,
@@ -356,7 +611,7 @@
 %                 title={Preprocessing times for 7-9},
 %                 xmode=log,
 %                 ymode=log,
-%                 xlabel={k},
+%                 xlabel={n},
 %                 ylabel={Preprocessing time (ms)},
 %                 legend pos=outer north east,
 %                 ymajorgrids=true,
@@ -440,7 +695,7 @@
 %                 title={Preprocessing times for 10-12},
 %                 xmode=log,
 %                 ymode=log,
-%                 xlabel={k},
+%                 xlabel={n},
 %                 ylabel={Preprocessing time (ms)},
 %                 legend pos=outer north east,
 %                 ymajorgrids=true,

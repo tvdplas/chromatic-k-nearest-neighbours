@@ -6,9 +6,3 @@
   Generating qrc_Triangulation_2.cpp
   Building Custom Rule C:/Users/thoma/Desktop/chromatic-k-nearest-neighbours/CMakeLists.txt
   mocs_compilation_Debug.cpp
-  qrc_CGAL.cpp
-  qrc_Input.cpp
-  qrc_File.cpp
-  qrc_Triangulation_2.cpp
-  Generating Code...
-  CGAL_Qt6_moc_and_resources.vcxproj -> C:\Users\thoma\Desktop\chromatic-k-nearest-neighbours\build\Debug\CGAL_Qt6_moc_and_resources.lib
