@@ -19,7 +19,7 @@
 \usepackage[a4paper, total={6.5in, 9in}]{geometry}
 \pgfplotsset{width=10cm,compat=1.9}
 
-\title{A Computational Analysis of a Novel Chromatic k-Nearest Neighbours Algorithm}
+\title{Computational Analysis of a Novel Chromatic $k$-Nearest Neighbours Algorithm}
 \author{Thomas van der Plas, Frank Staals, Erwin Glazenburg}
 \date{10 November 2024}
 
@@ -31,9 +31,13 @@
 % things that still are todo
 \newcommand{\todo}[1]{{\color{red}[#1]}}
 % things changes after first feedback round
-\newcommand{\fb}[1]{{\color{blue}#1}}
-\newcommand{\fbrm}[1]{{\color{blue}\st{#1}}}
-\newcommand{\fbnote}[1]{{\color{blue}[FEEDBACK NOTE: #1]\\}}
+% \newcommand{\fb}[1]{{\color{blue}#1}}
+% \newcommand{\fbrm}[1]{{\color{blue}\st{#1}}}
+% \newcommand{\fbnote}[1]{{\color{purple}[FEEDBACK NOTE: #1]\\}}
+
+\newcommand{\fb}[1]{{#1}}
+\newcommand{\fbrm}[1]{{}}
+\newcommand{\fbnote}[1]{{}}
 
 \DeclareMathOperator{\polylog}{polylog}
 
@@ -414,7 +418,7 @@ generation methods \fb{are} employed:
     \item $\gamma \leq n$ random points are selected and given a color uniformly sampled from [0, $\Delta$). Then, for all other points, their color is the same as the closest point with a chance $\alpha$, or randomly sampled from [0, $\Delta$) otherwise. This models a situation in which clusters of colors are present, however a certain degree of variability is still included. Note that the previous case can also be modeled this way by setting $\gamma=\alpha=0$.
 \end{itemize}
 Using these methods, the test scenarios \fb{seen in Table \ref{tab:1dscenarios} were generated. In this, we use a scenario naming scheme of 1D-$\{n/1000\}$-$k$-$\Delta$-$\gamma$-$\{\alpha \cdot 100\}$.} \\
-
+\fbnote{Reation to Frank's feedback for renaming scenario's: I didn't get around to doing this as it would mean updating all existing tables + graphs, however I definitely understand why it would be nicer to have shorter names (only thing good about this is uniformity between all generated cases, but it is very long).}
 \begin{center}
 \begin{table}
     \subfloat[Uniform color scenarios]{
@@ -473,17 +477,17 @@ For each scenario, the average time in milliseconds over the 10 runs is given fo
     \item Executing the corresponding $Q$ mode queries using the fast approach.
     \item Executing the corresponding $Q$ mode queries using the naive approach.
 \end{itemize}
-\fbnote{Reaction to Franks question on doing performance effect by doing range-mode in sets of 1 instead of batching them: I didn't get around to testing this, but I'm guessing that the way we're doing it now would be slightly faster as more of the range(/mode) datastructure can remain cached.}
+\fbnote{Reaction to Franks question on performance effect by doing range-mode in sets of 1 instead of batching them: I didn't get around to testing this, but I'm guessing that the way we're doing it now would be slightly faster as more of the range(/mode) datastructure can remain cached.}
 The results for range and mode queries have been compiled into graphs. Additionally, the raw tables can be found in the Appendix. As results between groups of instances did not show large differences, a representative selection is displayed instead of all individual instances. \fbnote{Cleaned up legends of graphs a bit by aligning scenario names properly, adjusted colors, added figure numbers} \\
 \input{figs/tex/1drange}
 \input{figs/tex/1dmode}
 
 \subsubsection*{Discusssion}
-For range queries, the results we see are largely expected. In Figure \ref{fig:1dresrangeartificial} we see that the naive implementation follows a roughly linear relation between $k$ and the query time, mat\fb{ch}ing our expectation of \fbrm{it being} $O(\log n + k)$. In Figure \ref{fig:1dresrangerl}a, we do see that computation time of the naive approach seems to taper off for larger $k$ values. This is most likely due to the fact that a large part of the window size for sorting is outside of array bounds as $2k > n$, thus reducing the amount of computation required. 
+For range queries, the results we see are largely expected. In Figure \ref{fig:1dresrangeartificial} we see that the naive implementation follows a roughly linear relation between $k$ and the query time, mat\fb{ch}ing our expectation of \fbrm{it being} $O(\log n + k)$. In Figure \ref{fig:1dresrangearl}a, we do see that computation time of the naive approach seems to taper off for larger $k$ values. This is most likely due to the fact that a large part of the window size for sorting is outside of array bounds as $2k > n$, thus reducing the amount of computation required. 
 When looking at the range queries as described by Van der Horst et al., expectations are again met. Query time stays roughly the same over all values of $k$, and on average we see a slight increase in query time for scenarios with a larger $n$. We note that it appears that the overhead associated with the tree query is rather high, as can be seen due to the minor query time differences between $n=1000$ and $n=100,000$. In general, we see that when $k \gtrapprox 100$ the fast method seems to outperform the naive in all given figures. \\\\
 \fb{
-    For mode, results are also mostly in line with expectation. We do note that in Figure \ref{fig:1dresmodeartificial} we seem to see an initial jump in computation time for large $k$ with $n=1e5$, and then a decrease in computation time for even larger $k$ values. When investigating this, this bump in the curve is most likely due to there is an initial high overhead for use of the precomputed structure (when compared to doing queries that fall completely within a single precomputed span, thus using a naive counting approach). As $k$ becomes larger, this initial overhead is less pronounced causing a flattening of the curve. \\
-    In general, when $k \gtrapprox 300-500$ our fast approach seems to be better than the naive.
+    For mode, results are also mostly in line with expectation. We do note that in Figure \ref{fig:1dresmodeartificial} we seem to see an initial jump in computation time of our fast method for large $k$ with $n=1e5$, after which computation time seems to stabilize or even slightly decrease for even larger $k$ values. When investigating this, this bump in the curve is most likely due to a high initial overhead for use of the precomputed structure (when compared to doing queries that fall completely within a single precomputed span, thus using a naive counting approach). As $k$ becomes larger, this initial overhead is less pronounced causing a flattening of the curve. \\
+    In general for mode, when $k \gtrapprox 300-500$ our fast approach seems to be better than the naive.
 }
 
 
@@ -567,8 +571,8 @@ The map renderings were then sampled in order to produce colored points. The loc
 \fb{The range query results only somewhat match our expectations. When only looking at Figure \ref{fig:2dresrangeartificial}, the naive implementation seems to only be dependent on $n$, which could match the theoretical $O(n \log n)$ query time. Looking at Figure \ref{fig:2dresrangerl}a, we see a near linear relationship, which all but confirms the theoritical result. Of note is that for $n=1000$ in Figure \ref{fig:2dresrangeartificial}, the naive approach actually outperforms the fast implementation; we can therefore conclude that the hidden constant for our fast $O(\log n)$ approach must be rather large. \\\
 The fast implementation does seem to have a slightly increased query time for larger $k$; this is best visible in Figure \ref{fig:2dresrangeartificial}b and is also the cause of the vertical spread in Figure \ref{fig:2dresrangerl}a. This anomaly was however explained when directly looking at the performance metrics in Visual Studio. We found here that for larger $k$, more time is spent querying large windows in our range tree. This in turn resulted in longer path traversals within the range tree, causing an increased runtime. As this seems to be the only source of computation time increase between small and large $k$ tests, we can therefore still conclude that our worst case is bounded by $O(\log^2 n)$. \\\\
 When looking at mode queries, the results directly seem to match our expectations. In Figure \ref{fig:2dresmodeartificial}, we see that the naive implementation shows a linear relation with $k$ with different starting points for our smallest $k$, matching our $O(\log n + k)$ described algorithm. The query times of the fast implementation seem to be completely independent of $k$, thereby possibly matching our $O((n/r) \polylog n)$ query time. Looking at Figure \ref{fig:2dresmodeartificial}a we clearly see some dependency on $n$, and \ref{fig:2dresmodeartificial}b shows the inverse relationship with $r$. Due to the high dependence on $n$ it is hard to pinpoint an exact $k$ value at wich query times are lower than the naive approach, however it seems to be in the neighbourhood of $0.01n$ to $0.1n$.\\\\
-Looking at only Figure \ref{fig:2drespreartificial}, preprocessing times for both the range and mode datastructures seem to follow a roughly linear relation with $n$. For the range datastructure this is no surprise, as the small number of sampled $n$ and scale of the graph would make it hard to see the $\log n$ factor that is included in the theoretical runtime. Additionally, as the default sorting method in C++ was used this might internally run faster than $O(n \log n)$ time by using something like a bucket sort approach depending on the input sequence. \\
-As for the mode, this following a roughly linear relation is also expected. As $r$ was fixed for all these test cases currently considered, the linear relation matches the expected \fb{$O(nr^2)$} time. Only when we look at Figure \ref{fig:2dresprerl}b do we see the additional dependence on $r$. We once again note that this preprocessing time can most likely be reduced with a better implementation; as it stands, preprocessing for large $r$ is often not worth it due to the amount of queries that would be required to offset the initial workload.}
+Looking at only Figure \ref{fig:2drespreartificial}, preprocessing times for both the range and mode datastructures seem to follow a roughly linear relation with $n$. For the range datastructure this is no surprise, as the small number of sampled $n$ and scale of the graph would make it hard to see the $\log n$ factor that is included in the theoretical $O(n \log n)$ runtime. \\
+As for the mode preprocessing, this following a roughly linear relation is also expected. As $r$ was fixed for all these test cases currently considered, the linear relation matches the expected \fb{$O(nr^2)$} time. Only when we look at Figure \ref{fig:2dresprerl}b do we see the additional dependence on $r$. We once again note that this preprocessing time can most likely be reduced with a better implementation; as it stands, preprocessing for large $r$ is often not worth it due to the amount of queries that would be required to offset the initial workload.}
 \section{Conclusion}
 \fb{
     In this paper, we have succesfully implemented a selection of algorithms from van der Horst et al. \cite{vanderhorst_et_al:LIPIcs.ESA.2022.67}. In doing this, we showed that Chromatic $k$-Nearest Neighbours can be answered in a computationally efficient manner with no other dependence than the number of input points $n$, and have provided a base implementation that may be generalized to higher dimensions and other distance metrics. \\\\

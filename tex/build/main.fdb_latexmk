@@ -1,12 +1,12 @@
 # Fdb version 4
-["biber build/main"] 1731245108.39577 "build/main.bcf" "build/main.bbl" "build/main" 1731250946.52966 0
-  "build/main.bcf" 1731250946 110405 9a3b9e37bb2b9532ed94a05e9adbb361 "pdflatex"
+["biber build/main"] 0 "build/main.bcf" "build/main.bbl" "build/main" 1731270416.42327 -1
+  "build/main.bcf" 1731270416 110405 9a3b9e37bb2b9532ed94a05e9adbb361 "pdflatex"
   "lib.bib" 1730998983 7767 c868d7a6d3ffd51afa385fd9cb28c76e ""
   (generated)
   "build/main.bbl"
   "build/main.blg"
   (rewritten before read)
-["pdflatex"] 1731250939.95535 "c:/Users/thoma/Desktop/chromatic-k-nearest-neighbours/tex/main.tex" "build/main.pdf" "main" 1731250946.53098 0
+["pdflatex"] 1731270410.70654 "c:/Users/thoma/Desktop/chromatic-k-nearest-neighbours/tex/main.tex" "build/main.pdf" "main" 1731270416.42411 0
   "C:/Users/thoma/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map" 1731230847 80909 eab91d9745dd2edfd62a31d53cd5fe15 ""
   "C:/Users/thoma/AppData/Local/MiKTeX/fonts/pk/ljfour/jknappen/ec/dpi600/tcrm1000.pk" 1729848325 11548 25a0dc78235e5f88491fc275cbd9de73 ""
   "C:/Users/thoma/AppData/Local/MiKTeX/miktex/data/le/pdftex/pdflatex.fmt" 1729848265 11948238 79ef6cd15da600518e845d2084c67592 ""
@@ -241,22 +241,22 @@
   "C:/Users/thoma/AppData/Local/Programs/MiKTeX/tex/latex/varwidth/varwidth.sty" 1238469540 10894 d359a13923460b2a73d4312d613554c8 ""
   "C:/Users/thoma/AppData/Local/Programs/MiKTeX/tex/latex/xcolor/xcolor.sty" 1729265222 55384 b454dec21c2d9f45ec0b793f0995b992 ""
   "C:/Users/thoma/AppData/Local/Programs/MiKTeX/tex/latex/xkeyval/xkeyval.sty" 1656236919 4937 4ce600ce9bd4ec84d0250eb6892fcf4f ""
-  "build/main.aux" 1731250946 13998 935c925e0579571e2c052d86db5431a2 "pdflatex"
+  "build/main.aux" 1731270416 13934 20373796b6858ede06411ff1ec096f88 "pdflatex"
   "build/main.bbl" 1731245115 28381 ff9518d20e7dfc947709b0a04f0add30 "biber build/main"
-  "build/main.run.xml" 1731250946 2304 bed573be658f4b0d42ab12425a2918b5 "pdflatex"
-  "c:/Users/thoma/Desktop/chromatic-k-nearest-neighbours/tex/main.tex" 1731250939 59738 6b70d9cb91b20e85b33320cde11fecd0 ""
+  "build/main.run.xml" 1731270416 2304 bed573be658f4b0d42ab12425a2918b5 "pdflatex"
+  "c:/Users/thoma/Desktop/chromatic-k-nearest-neighbours/tex/main.tex" 1731270404 59985 896f5e5fff245d1ec559b2f26c9aaac1 ""
   "figs/fig1.eps" 1729847217 20208 993592be36f436ed8eb93a5109d60f29 ""
   "figs/fig2.eps" 1729847219 20017 b256c5a9533b09af0864956b7165ce27 ""
   "figs/opt_rank.pdf" 1730989022 60311 667b647864c74eb2ecd87d13a81dd2da ""
   "figs/temperature-02-06-2024-cropped.png" 1729847216 16299 93af38ae5651986f4a35a7d8a3de9bac ""
   "figs/tex/1dmode.tex" 1731245418 31970 ae70de28345e88bd103ba75f84f5be80 ""
   "figs/tex/1drange.tex" 1731245294 32842 f1cebd6616698ead6287ae067054be54 ""
-  "figs/tex/2dmode.tex" 1731243763 27507 afb39c4601cc6e9162754ed55e8ee775 ""
-  "figs/tex/2dpre.tex" 1731244400 30647 b64cce32cf7e9fa34a1edf1de9280e58 ""
-  "figs/tex/2drange.tex" 1731244192 23588 6f937c688b71a30746ee56f1c14efe5c ""
+  "figs/tex/2dmode.tex" 1731252050 30918 dc492ada74f3fe43d0bdc31f7fe73409 ""
+  "figs/tex/2dpre.tex" 1731251820 29861 597767bbc937005ca439014b81eb51ae ""
+  "figs/tex/2drange.tex" 1731253546 23588 aa52c30665a06528ad5a0d9bffbc8dea ""
   "figs/usp.png" 1729847221 347187 46ed87ff3d55e63c1964dbcf1d47e370 ""
   "figs/usp_points.png" 1729847223 852764 48eeedfb0e1f42f215ac9bd52042f9cc ""
-  "main.tex" 1731250939 59738 6b70d9cb91b20e85b33320cde11fecd0 ""
+  "main.tex" 1731270404 59985 896f5e5fff245d1ec559b2f26c9aaac1 ""
   (generated)
   "build/main.aux"
   "build/main.bcf"

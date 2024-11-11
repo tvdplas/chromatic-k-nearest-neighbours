@@ -23,8 +23,8 @@
 
 \begin{document}
 \maketitle
-\begin{center}
 \begin{table}[h]
+    \begin{center}
         \begin{tabular}{|l||c|c|c|c|c|c|c|}
             \hline
             \multicolumn{1}{|c|}{Scenario} & gen & pre range & fast range & naive range & pre mode & fast mode & naive mode \\
@@ -39,10 +39,10 @@
             \hline
         \end{tabular}
         \caption{Computational results for 2D - Experiment to determine $r$ value for artificial testing. All times averaged over 10 runs, presented in ms. $r$ higher than 50 not computed due to preprocessing being $>1$ hour per run.}
+    \end{center}
     \end{table}
-\end{center}
-\begin{center}
     \begin{table}[h]
+        \begin{center}
         \hskip0.8cm
         \begin{tabular}{|l||c|c|c|c|c|c|c|}
             \hline
@@ -113,9 +113,10 @@
             \hline
         \end{tabular}
         \caption{Computational results for 2D - Generated Uniform with $r=10$. All times averaged over 10 runs, presented in ms.}
+    \end{center}
     \end{table}
     \begin{table}[h]
-        \hskip0.8cm
+        \begin{center}
         \begin{tabular}{|l||c|c|c|c|c|c|c|}
             \hline
             \multicolumn{1}{|c|}{Scenario} & gen  & pre range & fast range & naive range & pre mode & fast mode & naive mode \\
@@ -185,11 +186,11 @@
             \hline
         \end{tabular}
         \caption{Computational results for 2D - Generated Clustered Colors with $r=10$. All times averaged over 10 runs, presented in ms.}
+    \end{center}
     \end{table}
-\end{center}
 
-\begin{center}
-\begin{table}[h]
+    \begin{table}[h]
+        \begin{center}
         \begin{tabular}{|l||c|c|c|c|c|c|c|}
             \hline
             \multicolumn{1}{|c|}{Scenario} & $n$   & pre range & fast range & naive range & pre mode & fast mode & naive mode \\
@@ -236,10 +237,10 @@
             \hline
         \end{tabular}
         \caption{Computational results for 2D - Real life map data Part 1. All times averaged over 10 maps, presented in ms.}
+    \end{center}
     \end{table}
-\end{center}
-\begin{center}
     \begin{table}[h]
+        \begin{center}
         \begin{tabular}{|l||c|c|c|c|c|c|c|}
             \hline
             \multicolumn{1}{|c|}{Scenario} & $n$   & pre range & fast range & naive range & pre mode & fast mode & naive mode \\
@@ -278,13 +279,13 @@
             2D-MAP-1500-100                & 50000 & 222.0     & 177.2      & 3998.4      & 30991.8  & 184.4     & 125.4      \\
             2D-MAP-2000-100                & 50000 & 219.9     & 174.6      & 3856.8      & 31473.5  & 192.5     & 177.7      \\
             \hline
-            \caption{Computational results for 2D - Real life map data Part 2. All times averaged over 10 maps, presented in ms.}
         \end{tabular}
+        \caption{Computational results for 2D - Real life map data Part 2. All times averaged over 10 maps, presented in ms.}
+    \end{center}
     \end{table}
-\end{center}
 
-\begin{center}
     \begin{table}[h]
+        \begin{center}
         \begin{tabular}{|l||c|c|c|c|c|c|}
             \hline
             \multicolumn{1}{|c|}{Scenario} & pre range & fast range & naive range & pre mode & fast mode & naive mode \\
@@ -345,9 +346,9 @@
             2D-TMP-1500-20                 & 24.1      & 95.6       & 399.7       & 27465.5  & 14.4      & 102.3      \\
             2D-TMP-2000-20                 & 25.7      & 105.8      & 403.5       & 28499.0  & 15.8      & 150.1      \\
             \hline
-            \caption{Computational results for 2D - Real life temperature data with varying $r$. All times averaged over 10 maps, presented in ms.}
         \end{tabular}
+        \caption{Computational results for 2D - Real life temperature data with varying $r$. All times averaged over 10 maps, presented in ms.}
+    \end{center}
     \end{table}
-\end{center}
 \restoregeometry
 \end{document}
