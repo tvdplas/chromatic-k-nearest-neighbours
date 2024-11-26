@@ -6,7 +6,7 @@
 #include "tests/2d.cpp"
 
 int main() {
-    N2D::run_2d_real();
+    N2D::run_2d_generated();
     string s;
     cout << "waiting for user input";
     cin >> s;

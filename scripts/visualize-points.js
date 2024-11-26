@@ -2,10 +2,10 @@ const {Image} = require('imagescript');
 const fs = require('fs')
 const path = require('path')
 
-const RELATIVE_DATA_DIR = '../data/osm'
-const NAME = "bbg"
-const OUTPUT_WIDTH = 3600
-const OUTPUT_HEIGHT = 1800
+const RELATIVE_DATA_DIR = '../data/generated'
+const NAME = "clustered"
+const OUTPUT_WIDTH = 800
+const OUTPUT_HEIGHT = 800
 
 const run = async () => {
     const pointsCsv = fs.readFileSync(path.resolve(`${RELATIVE_DATA_DIR}/${NAME}.points`)).toString()
@@ -18,7 +18,10 @@ const run = async () => {
       }
     })
 
+    console.log(points[0])
+
     const colorsCount = Math.max(...points.map(p => p.c)) + 1
+    console.log(colorsCount)
     const colors = Array.from({length: colorsCount + 1}).map(_ => {
       return Image.rgbToColor(Math.floor(Math.random() * 256), Math.floor(Math.random() * 256), Math.floor(Math.random() * 256))
     })

@@ -6,10 +6,13 @@
 #include <numeric>
 #include <set>
 #include <CGAL/constructions_d.h>
+#include <fstream>
 #include "../2D/range_query.cpp"
 #include "../2D/mode_query.cpp";
 
 namespace N2D {
+	typedef pair<pair<Point_d, Color>, int> gamma_triple;
+
 	static vec<string> split(string str) {
 		vec<string> substrings = {};
 		string token;
@@ -70,25 +73,16 @@ namespace N2D {
 	static pair<vec<Point_d>, vec<Color>> generate_sequence(NumTy min, NumTy max, int count, int delta, double gamma, double alpha) {
 		vec<Point_d> locations = generate_locations(min, max, count);
 		vec<Color> colors(count);
-		vec<Point_d> gamma_locations(gamma);
-		vec<Color> gamma_colors(count);
+		vec<gamma_triple>gammas(gamma);
 
 		default_random_engine re(chrono::system_clock::now().time_since_epoch().count());
 		uniform_real_distribution<double> rnd(0, 1);
 		
-		for (int i = 0; i < count; i++) {
-			gamma_colors[i] = (Color)delta;
-			colors[i] = (Color)delta;
-		}
 		for (int i = 0; i < gamma; i++) {
 			Color c = (Color)(rnd(re) * delta);
 			int index = rnd(re) * count;
-			gamma_colors[index] = c;
-			gamma_locations[i] = locations[index];
+			gammas[i] = gamma_triple(pair<Point_d, Color>(locations[index], c), index);
 		}
-
-		auto gamma_sorted_x_pairs = generate_sorted_dim_pairs(&gamma_locations, 0);
-		auto gamma_sorted_y_pairs = generate_sorted_dim_pairs(&gamma_locations, 1);
 
 		for (int i = 0; i < count; i++) {
 			if (rnd(re) >= alpha) {
@@ -99,29 +93,23 @@ namespace N2D {
 			else {
 				// find closest in gamma list
 				Color closest = (Color)delta;
-				auto f = [](pair_ni a, pair_ni b) { return a.first - b.first;  };
-				auto x_index = upper_bound(gamma_sorted_x_pairs.begin(), gamma_sorted_x_pairs.end(), pair_ni(locations[i].x(), -1), f) - gamma_sorted_x_pairs.begin();
-				auto y_index = upper_bound(gamma_sorted_y_pairs.begin(), gamma_sorted_y_pairs.end(), pair_ni(locations[i].y(), -1), f) - gamma_sorted_y_pairs.begin();
-
-				NumTy min_distance = x_index - 1 < gamma_sorted_x_pairs.size() ? abs(gamma_sorted_x_pairs[x_index - 1].first - locations[i].x()) : numeric_limits<NumTy>::max();
-				Color gamma_index = x_index - 1< gamma_sorted_x_pairs.size() ? gamma_sorted_x_pairs[x_index - 1].second : delta;
-				if (x_index < gamma_sorted_x_pairs.size() && abs(gamma_sorted_x_pairs[x_index].first - locations[i].x()) < min_distance) {
-					min_distance = abs(gamma_sorted_x_pairs[x_index].first - locations[i].x());
-					gamma_index = gamma_sorted_x_pairs[x_index].second;
-				}
-				if (y_index - 1 < gamma_sorted_y_pairs.size() && abs(gamma_sorted_y_pairs[y_index - 1].first - locations[i].y()) < min_distance) {
-					min_distance = abs(gamma_sorted_y_pairs[y_index - 1].first - locations[i].y());
-					gamma_index = gamma_sorted_y_pairs[y_index - 1].second;
-				}
-				if (y_index < gamma_sorted_y_pairs.size() && abs(gamma_sorted_y_pairs[y_index].first - locations[i].y()) < min_distance) {
-					min_distance = abs(gamma_sorted_y_pairs[y_index].first - locations[i].y());
-					gamma_index = gamma_sorted_y_pairs[y_index].second;
-				}
-
-				colors[i] = gamma_colors[gamma_index];
+				
+				auto f = [locations, i](gamma_triple a, gamma_triple b) { 
+					auto d1 = std::max(abs(locations[i].x() - a.first.first.x()), abs(locations[i].y() - a.first.first.y()));
+					auto d2 = std::max(abs(locations[i].x() - b.first.first.x()), abs(locations[i].y() - b.first.first.y()));
+					return d1 < d2;
+				};
+				sort(gammas.begin(), gammas.end(), f);
+				colors[i] = gammas[0].first.second;
 			}
 		}
 
+		ofstream points;
+		points.open(gamma > 0 ? "clustered.points" : "uniform.points", ofstream::trunc);
+		for (int i = 0; i < count; i++) {
+			points << locations[i].x() << ";" << locations[i].y() << ";" << colors[i] << endl;
+		}
+		points.close();
 
 		return pair<vec<Point_d>, vec<Color>>(locations, colors);
 	}
@@ -342,11 +330,12 @@ namespace N2D {
 	}
 
 	static void run_2d_generated() {
-		int num_runs = 5;
+		int num_runs = 1;
 		vec<vec<NumTy>> scenarios = {
 			// N, min, max, Q, Delta, gamma, alpha, 
-			{ 1e3, -5e4, 5e4, 1e3, 20, 0, 0},
-			{ 1e4, -5e4, 5e4, 1e3, 20, 0, 0},
+			//{ 1e4, 0, 1000, 200, 20, 0, 0},
+			{ 1e4, 0, 1000, 200, 20, 30, 0.95},
+		/*	{ 1e4, -5e4, 5e4, 1e3, 20, 0, 0},
 			{ 1e5, -5e4, 5e4, 1e3, 20, 0, 0},
 			{ 1e3, -5e4, 5e4, 1e3, 100, 0, 0},
 			{ 1e4, -5e4, 5e4, 1e3, 100, 0, 0},
@@ -356,12 +345,12 @@ namespace N2D {
 			{ 1e5, -5e4, 5e4, 1e3, 20, 30, 0.95},
 			{ 1e3, -5e4, 5e4, 1e3, 100, 150, 0.95},
 			{ 1e4, -5e4, 5e4, 1e3, 100, 150, 0.95},
-			{ 1e5, -5e4, 5e4, 1e3, 100, 150, 0.95},
+			{ 1e5, -5e4, 5e4, 1e3, 100, 150, 0.95},*/
 		};
 
 		vec<int> rs = { 10 };
 
-		vec<int> ks = { 25 , 50, 75, 100, 250, 500, 750, 1000, 1500, 2000 }; // k = 1000 only for N > 1000;
+		vec<int> ks = { 2 };// , 50, 75, 100, 250, 500, 750, 1000, 1500, 2000}; // k = 1000 only for N > 1000;
 		
 		for (int sIndex = 0; sIndex < scenarios.size(); sIndex++) {
 			auto scenario = scenarios[sIndex];
